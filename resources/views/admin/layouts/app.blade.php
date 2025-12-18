@@ -154,6 +154,28 @@
                         Orders
                     </span>
                 </a>
+
+                {{-- Users --}}
+                <a href="{{ route('admin.users.index') }}"
+                    class="{{ $linkBase }} {{ request()->routeIs('admin.users.*') ? $active : $idle }}">
+                    <span class="absolute left-0 top-2 bottom-2 w-[3px] rounded-r"
+                        style="background: {{ request()->routeIs('admin.users.*') ? '#D4AF37' : 'transparent' }};"></span>
+
+                    {{-- Heroicon: Users --}}
+                    <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.users.*') ? 'text-[#8f6a10]' : 'text-gray-500 group-hover:text-[#8f6a10]' }}"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                            d="M17 20h5v-1a4 4 0 00-4-4h-1M7 20H2v-1a4 4 0 014-4h1m8-6a3 3 0 11-6 0 3 3 0 016 0zm8 3a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+
+                    <span class="font-medium" x-show="!collapsed" x-cloak>Users</span>
+
+                    <span x-show="collapsed" x-cloak
+                        class="absolute left-full ml-3 px-2 py-1 rounded-lg text-xs bg-white border border-gray-200 shadow
+                opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap">
+                        Users
+                    </span>
+                </a>
             </nav>
 
             {{-- Logout --}}
