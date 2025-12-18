@@ -23,7 +23,7 @@ class AdminCategoryController extends Controller
             $q->where('is_active', $request->status === 'active');
         }
 
-        $categories = $q->orderBy('sort_order')->orderBy('name')->paginate(15)->withQueryString();
+        $categories = $q->orderBy('sort_order')->orderBy('name')->paginate(10)->withQueryString();
 
         return view('admin.categories.index', compact('categories'));
     }

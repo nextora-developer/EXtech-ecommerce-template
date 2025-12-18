@@ -8,8 +8,10 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductOption;
 use App\Models\ProductOptionValue;
+use App\Models\ProductImage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class AdminProductController extends Controller
 {
@@ -33,7 +35,7 @@ class AdminProductController extends Controller
             $q->where('category_id', $request->integer('category_id'));
         }
 
-        $products = $q->latest()->paginate(15)->withQueryString();
+        $products = $q->latest()->paginate(10)->withQueryString();
         $categories = Category::orderBy('sort_order')->orderBy('name')->get();
 
         return view('admin.products.index', compact('products', 'categories'));
@@ -59,8 +61,7 @@ class AdminProductController extends Controller
 
             'has_variants' => ['nullable', 'boolean'],
 
-            // 没有 variants 时必须填 price；
-            // 有 variants 时可以不用填 price
+            // 没有 variants 时必须填 price；有 variants 时可以不用填 price
             'price'  => ['nullable', 'numeric', 'min:0', 'required_without:variants'],
             'stock'  => ['nullable', 'integer', 'min:0'],
 
@@ -72,7 +73,13 @@ class AdminProductController extends Controller
             'variants.*.price'      => ['nullable', 'numeric', 'min:0'],
             'variants.*.stock'      => ['nullable', 'integer', 'min:0'],
 
+            // 多图上传
+            'images'     => ['nullable', 'array'],
+            'images.*'   => ['nullable', 'image', 'max:2048'],
+
+            // 旧的单图字段（form 不用的话也没关系，保留兼容）
             'image'     => ['nullable', 'image', 'max:2048'],
+
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -83,14 +90,13 @@ class AdminProductController extends Controller
         $data['is_active']    = (bool) ($data['is_active'] ?? false);
         $data['has_variants'] = (bool) ($data['has_variants'] ?? false);
 
-        // 先拿出来 variants，剩下的是 products 表的数据
+        // 先拿出来 variants & images，剩下的是 products 表的数据
         $variantsInput = $data['variants'] ?? [];
         unset($data['variants']);
 
-        // upload image
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
-        }
+        $imagesInput = $request->file('images', []); // 这里直接从 request 拿 file
+
+        // 如果你已经完全不用旧的 image 字段，这里可以不处理 $data['image']
 
         // 如果使用 variants，可以把主 stock 当总和（可选）
         if ($data['has_variants']) {
@@ -99,14 +105,12 @@ class AdminProductController extends Controller
                 $totalStock += (int) ($v['stock'] ?? 0);
             }
             $data['stock'] = $totalStock;
-            // 主 price 可以留空或当「参考价」
-            // $data['price'] = $data['price'] ?? null;
         } else {
             // 没有 variants：price 和 stock 在 validation 已经 required_without 处理
             $data['stock'] = $data['stock'] ?? 0;
         }
 
-        // 先创建产品
+        // 先创建产品（先不处理 image 字段）
         $product = Product::create($data);
 
         // 再存 variants（如果有）
@@ -130,10 +134,10 @@ class AdminProductController extends Controller
                 ];
 
                 $product->variants()->create([
-                    'sku'      => $variant['sku'] ?? null,
-                    'options'  => $options,  // 👈 存 JSON
-                    'price'    => isset($variant['price']) && $variant['price'] !== '' ? $variant['price'] : null,
-                    'stock'    => isset($variant['stock']) && $variant['stock'] !== '' ? (int) $variant['stock'] : 0,
+                    'sku'       => $variant['sku'] ?? null,
+                    'options'   => $options,  // 👈 存 JSON
+                    'price'     => isset($variant['price']) && $variant['price'] !== '' ? $variant['price'] : null,
+                    'stock'     => isset($variant['stock']) && $variant['stock'] !== '' ? (int) $variant['stock'] : 0,
                     'is_active' => true,
                 ]);
             }
@@ -141,6 +145,30 @@ class AdminProductController extends Controller
         } else {
             // 没有 variants 的话，确保把旧的 options 清掉（新商品一般没有旧的）
             $this->syncOptionsFromVariants($product, []);
+        }
+
+        // 处理多图上传：存去 product_images，并设第一张为封面
+        if (!empty($imagesInput)) {
+            foreach ($imagesInput as $index => $file) {
+                if (!$file) {
+                    continue;
+                }
+
+                $path = $file->store('products', 'public');
+
+                $image = new ProductImage([
+                    'path'       => $path,
+                    'is_primary' => $index === 0,  // 第一张当封面
+                    'sort_order' => $index,
+                ]);
+
+                $product->images()->save($image);
+
+                // 如果是封面，同步到 products.image 字段
+                if ($index === 0) {
+                    $product->update(['image' => $path]);
+                }
+            }
         }
 
         return redirect()
@@ -181,8 +209,6 @@ class AdminProductController extends Controller
             }
         }
 
-        // 如果没有任何可用的 group/value，直接清掉旧 options 就好
-        // （避免残留）
         // 先删掉旧的 options & values
         $oldOptionIds = $product->options()->pluck('id')->all();
         if (!empty($oldOptionIds)) {
@@ -218,7 +244,8 @@ class AdminProductController extends Controller
 
     public function edit(Product $product)
     {
-        $product->load('variants');
+        // 多 load 一个 images
+        $product->load('variants', 'images');
 
         $categories = Category::orderBy('sort_order')->orderBy('name')->get();
 
@@ -247,7 +274,13 @@ class AdminProductController extends Controller
             'variants.*.price'      => ['nullable', 'numeric', 'min:0'],
             'variants.*.stock'      => ['nullable', 'integer', 'min:0'],
 
+            // 多图上传
+            'images'     => ['nullable', 'array'],
+            'images.*'   => ['nullable', 'image', 'max:2048'],
+
+            // 旧的 image 字段
             'image'     => ['nullable', 'image', 'max:2048'],
+
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -262,10 +295,7 @@ class AdminProductController extends Controller
         $variantsInput = $data['variants'] ?? [];
         unset($data['variants']);
 
-        // 上传图片（如果有的话，可以顺便删旧的，看你要不要）
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
-        }
+        $imagesInput = $request->file('images', []);
 
         // 处理 stock（和 store() 一样）
         if ($data['has_variants']) {
@@ -278,7 +308,7 @@ class AdminProductController extends Controller
             $data['stock'] = $data['stock'] ?? 0;
         }
 
-        // 先更新 product 本体
+        // 先更新 product 本体（不动 image 字段，后面根据新图片再 update）
         $product->update($data);
 
         // 先把旧 variants 清掉，重新建
@@ -304,10 +334,10 @@ class AdminProductController extends Controller
                 ];
 
                 $product->variants()->create([
-                    'sku'      => $variant['sku'] ?? null,
-                    'options'  => $options, // 👈 把 label/value 放进 JSON
-                    'price'    => isset($variant['price']) && $variant['price'] !== '' ? $variant['price'] : null,
-                    'stock'    => isset($variant['stock']) && $variant['stock'] !== '' ? (int) $variant['stock'] : 0,
+                    'sku'       => $variant['sku'] ?? null,
+                    'options'   => $options, // 👈 把 label/value 放进 JSON
+                    'price'     => isset($variant['price']) && $variant['price'] !== '' ? $variant['price'] : null,
+                    'stock'     => isset($variant['stock']) && $variant['stock'] !== '' ? (int) $variant['stock'] : 0,
                     'is_active' => true,
                 ]);
             }
@@ -319,6 +349,39 @@ class AdminProductController extends Controller
             $this->syncOptionsFromVariants($product, []);
         }
 
+        // 更新时追加新图片；旧的图片保留
+        if (!empty($imagesInput)) {
+            $currentMaxOrder = $product->images()->max('sort_order') ?? 0;
+            $hasPrimary      = $product->images()->where('is_primary', true)->exists();
+            $primaryPath     = null;
+
+            foreach ($imagesInput as $index => $file) {
+                if (!$file) {
+                    continue;
+                }
+
+                $path = $file->store('products', 'public');
+
+                $isPrimary = false;
+                if (!$hasPrimary && $primaryPath === null && $index === 0) {
+                    $isPrimary  = true;
+                    $primaryPath = $path;
+                    $hasPrimary = true;
+                }
+
+                $product->images()->create([
+                    'path'       => $path,
+                    'is_primary' => $isPrimary,
+                    'sort_order' => $currentMaxOrder + $index + 1,
+                ]);
+            }
+
+            // 如果这次有设到新的 primary，同步到 products.image
+            if ($primaryPath) {
+                $product->update(['image' => $primaryPath]);
+            }
+        }
+
         return redirect()
             ->route('admin.products.index')
             ->with('success', 'Product updated.');
@@ -327,6 +390,21 @@ class AdminProductController extends Controller
 
     public function destroy(Product $product)
     {
+        // 顺便把图片文件删掉（避免 storage 爆掉）
+        foreach ($product->images as $img) {
+            if ($img->path) {
+                Storage::disk('public')->delete($img->path);
+            }
+        }
+
+        // 如果 products.image 也有存封面路径，可以一起删（重复删也不会出错）
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        // 删掉 images 记录（如果没有在 migration 里做 onDelete('cascade')）
+        $product->images()->delete();
+
         $product->delete();
 
         return redirect()

@@ -48,8 +48,30 @@
                             @endif
                         </td>
                         <td class="px-5 py-4 align-middle font-medium">{{ $p->name }}</td>
-                        <td class="px-5 py-4 align-middle whitespace-nowrap">RM
-                            {{ number_format($p->price_cents / 100, 2) }}</td>
+                        <td class="px-5 py-4 align-middle whitespace-nowrap">
+                            @if ($p->has_variants && $p->variants->count())
+                                @php
+                                    // 拿有填 price 的 variants
+                                    $variantPrices = $p->variants->whereNotNull('price');
+                                    $min = $variantPrices->min('price');
+                                    $max = $variantPrices->max('price');
+                                @endphp
+
+                                @if ($min === null)
+                                    {{-- 有 variants 但是都没有填价钱 --}}
+                                    RM 0.00
+                                @elseif ($min == $max)
+                                    {{-- 所有 variants 同一个价钱 --}}
+                                    RM {{ number_format($min, 2) }}
+                                @else
+                                    {{-- 显示价钱范围 --}}
+                                    RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
+                                @endif
+                            @else
+                                {{-- 没有 variants，用 product 本身的 price --}}
+                                RM {{ number_format($p->price ?? 0, 2) }}
+                            @endif
+                        </td>
                         <td class="px-5 py-4 align-middle whitespace-nowrap">{{ $p->stock }}</td>
                         <td class="px-5 py-4 align-middle">
                             <form method="POST" action="{{ route('admin.products.toggle', $p) }}">
