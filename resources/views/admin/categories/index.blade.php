@@ -38,14 +38,14 @@
         class="bg-white rounded-2xl border border-[#D4AF37]/18 overflow-hidden
             shadow-[0_18px_40px_rgba(0,0,0,0.06)]">
         <table class="w-full text-sm">
-            <thead class="bg-gray-50/60 text-gray-600">
+            <thead class="bg-gray-50 text-gray-600">
                 <tr>
-                    <th class="p-4 text-left font-medium w-[90px]">Icon</th>
-                    <th class="p-4 text-left font-medium">Name</th>
-                    <th class="p-4 text-left font-medium">Slug</th>
-                    <th class="p-4 text-left font-medium">Sort</th>
-                    <th class="p-4 text-left font-medium">Status</th>
-                    <th class="p-4 text-right font-medium">Action</th>
+                    <th class="p-4 text-left tw-[90px]">Icon</th>
+                    <th class="p-4 text-left ">Name</th>
+                    <th class="p-4 text-left">Slug</th>
+                    <th class="p-4 text-left">Sort</th>
+                    <th class="p-4 text-left">Status</th>
+                    <th class="p-4 text-right">Action</th>
                 </tr>
             </thead>
             <tbody class="text-gray-800">

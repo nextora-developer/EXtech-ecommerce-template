@@ -16,7 +16,6 @@
 
     <div class="flex items-start justify-between gap-4 mb-6">
         <div>
-            <div class="text-xs tracking-[0.35em] text-[#8f6a10]/60 mb-2">BRIF ADMIN</div>
             <h1 class="text-3xl font-semibold text-gray-900">Order {{ $order->order_no }}</h1>
             <p class="text-sm text-gray-500 mt-1">Review customer info and update order progress.</p>
         </div>
@@ -35,11 +34,25 @@
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div class="font-semibold text-gray-900">Order Summary</div>
 
-                <span
-                    class="inline-flex items-center px-2 py-1 rounded-md text-xs
-                    border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#8f6a10]">
-                    {{ strtoupper($order->status) }}
+                @php
+                    $status = strtoupper($order->status);
+
+                    $styles = [
+                        'PENDING' => 'border-yellow-500 bg-yellow-50 text-yellow-700',
+                        'PAID' => 'border-green-500 bg-green-50 text-green-700',
+                        'PROCESSING' => 'border-indigo-500 bg-indigo-50 text-indigo-700',
+                        'SHIPPED' => 'border-blue-500 bg-blue-50 text-blue-700',
+                        'COMPLETED' => 'border-emerald-500 bg-emerald-50 text-emerald-700',
+                        'CANCELLED' => 'border-red-500 bg-red-50 text-red-700',
+                    ];
+
+                    $color = $styles[$status] ?? 'border-gray-400 bg-gray-100 text-gray-700';
+                @endphp
+
+                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold {{ $color }}">
+                    {{ $status }}
                 </span>
+
             </div>
 
             <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
