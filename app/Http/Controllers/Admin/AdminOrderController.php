@@ -44,8 +44,8 @@ class AdminOrderController extends Controller
 
     public function show(Order $order)
     {
-        // If you have items relationship, load it:
-        // $order->load(['items.product']);
+        $order->load(['items.product']);
+        
         return view('admin.orders.show', compact('order'));
     }
 

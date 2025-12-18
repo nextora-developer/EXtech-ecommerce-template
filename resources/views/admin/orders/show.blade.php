@@ -84,6 +84,70 @@
                 </div>
             </div>
 
+            {{-- Order items --}}
+            <div class="px-5 py-5 border-t border-gray-100">
+                <div class="font-semibold text-gray-900 mb-3">Items</div>
+
+                @if ($order->items && $order->items->count())
+                    <div class="overflow-x-auto rounded-xl border border-gray-100">
+                        <table class="min-w-full text-sm">
+                            <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">Product</th>
+                                    <th class="px-4 py-2 text-left">Variant</th>
+                                    <th class="px-4 py-2 text-center">Qty</th>
+                                    <th class="px-4 py-2 text-right">Price</th>
+                                    <th class="px-4 py-2 text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @foreach ($order->items as $item)
+                                    <tr>
+                                        {{-- 产品名称：看你是存 snapshot name 还是关系 --}}
+                                        <td class="px-4 py-2 align-top text-gray-900">
+                                            {{ $item->product_name ?? ($item->product->name ?? '—') }}
+                                        </td>
+
+                                        {{-- Variant (可选) --}}
+                                        <td class="px-4 py-2 align-top text-gray-500">
+                                            @php
+                                                $variantLabel = $item->variant_label ?? null;
+                                                $variantValue = $item->variant_value ?? null;
+                                            @endphp
+
+                                            @if ($variantLabel || $variantValue)
+                                                {{ $variantLabel }}{{ $variantLabel && $variantValue ? ': ' : '' }}{{ $variantValue }}
+                                            @else
+                                                —
+                                            @endif
+                                        </td>
+
+                                        {{-- 数量 --}}
+                                        <td class="px-4 py-2 text-center text-gray-900">
+                                            {{ $item->quantity ?? 1 }}
+                                        </td>
+
+                                        {{-- 单价（假设是 *_cents） --}}
+                                        <td class="px-4 py-2 text-right text-gray-900">
+                                            RM {{ number_format(($item->price_cents ?? 0) / 100, 2) }}
+                                        </td>
+
+                                        {{-- 小计 --}}
+                                        <td class="px-4 py-2 text-right font-semibold text-gray-900">
+                                            RM
+                                            {{ number_format(($item->subtotal_cents ?? ($item->price_cents ?? 0) * ($item->quantity ?? 1)) / 100, 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-sm text-gray-500">No items found for this order.</p>
+                @endif
+            </div>
+
+
             {{-- Amount breakdown --}}
             <div class="px-5 py-5 border-t border-gray-100">
                 <div class="font-semibold text-gray-900 mb-3">Amount</div>
@@ -113,6 +177,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         {{-- RIGHT: Update Status --}}
@@ -148,6 +213,15 @@
 
                 <div class="mt-3 text-xs text-gray-500">Customer</div>
                 <div class="font-semibold text-gray-900">{{ $order->customer_name ?? '-' }}</div>
+
+                <div class="mt-3 text-xs text-gray-500">Customer Phone</div>
+                <div class="font-semibold text-gray-900">{{ $order->customer_phone ?? '-' }}</div>
+
+                <div class="mt-3 text-xs text-gray-500">Shipping Address</div>
+                <div class="font-semibold text-gray-900">{{ $fullAddress ?: '-' }}</div>
+
+                <div class="mt-3 text-xs text-gray-500">Created</div>
+                <div class="font-semibold text-gray-900">{{ optional($order->created_at)->format('Y-m-d H:i') }}</div>
             </div>
         </div>
     </div>
