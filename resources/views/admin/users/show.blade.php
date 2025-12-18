@@ -13,12 +13,6 @@
         </a>
     </div>
 
-    @if (session('success'))
-        <div class="mb-4 p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {{-- Left: basic info --}}
         <div class="lg:col-span-2 space-y-4">
@@ -34,6 +28,10 @@
                         <dd class="font-medium text-gray-900">{{ $user->email }}</dd>
                     </div>
                     <div>
+                        <dt class="text-gray-500">Phone</dt>
+                        <dd class="font-medium text-gray-900">{{ $user->phone ?? '-' }}</dd>
+                    </div>
+                    <div>
                         <dt class="text-gray-500">Registered at</dt>
                         <dd class="text-gray-800">
                             {{ $user->created_at?->format('Y-m-d H:i') }}
@@ -47,6 +45,43 @@
                     </div>
                 </dl>
             </div>
+
+            <div class="bg-white rounded-2xl border p-4 mt-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-gray-700">Addresses</h2>
+                    {{-- 以后可以做 Add new address 按钮 --}}
+                    {{-- <a href="#" class="text-xs text-[#8f6a10] font-semibold">+ Add address</a> --}}
+                </div>
+
+                @if ($user->addresses->isEmpty())
+                    <p class="text-sm text-gray-500">No addresses yet.</p>
+                @else
+                    <div class="space-y-3 text-sm">
+                        @foreach ($user->addresses as $address)
+                            <div
+                                class="border rounded-xl p-3 {{ $address->is_default ? 'bg-[#D4AF37]/5 border-[#D4AF37]/40' : '' }}">
+                                <div class="flex items-center justify-between">
+                                    <div class="font-medium text-gray-900">
+                                        {{ $address->recipient_name }}
+                                        <span class="text-gray-500 text-xs">({{ $address->phone }})</span>
+                                    </div>
+                                    @if ($address->is_default)
+                                        <span class="text-xs px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#8f6a10]">
+                                            Default
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="text-gray-700 mt-1">
+                                    {{ $address->address_line1 }}{{ $address->address_line2 ? ', ' . $address->address_line2 : '' }}<br>
+                                    {{ $address->postcode }} {{ $address->city }}, {{ $address->state }},
+                                    {{ $address->country }}
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
 
             {{-- 这里以后可以放 Recent Orders --}}
             <div class="bg-white rounded-2xl border p-4">

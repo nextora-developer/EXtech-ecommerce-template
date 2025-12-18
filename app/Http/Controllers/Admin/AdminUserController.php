@@ -36,7 +36,7 @@ class AdminUserController extends Controller
 
     public function show(User $user)
     {
-        // 之后你可以在这里 load orders: $user->load('orders');
+        $user->load('addresses', 'defaultAddress');
         return view('admin.users.show', compact('user'));
     }
 
@@ -55,12 +55,14 @@ class AdminUserController extends Controller
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
+            'phone' => ['nullable', 'string', 'max:30'],
             'password'  => ['nullable', 'string', 'min:8'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $user->name  = $data['name'];
         $user->email = $data['email'];
+        $user->phone = $data['phone'] ?? null;
         $user->is_active = (bool) ($data['is_active'] ?? false);
 
         if (!empty($data['password'])) {

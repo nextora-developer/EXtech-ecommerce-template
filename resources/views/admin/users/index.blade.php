@@ -35,9 +35,10 @@
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-gray-600">
                 <tr>
-                    <th class="px-5 py-3 text-left">ID</th>
+                    {{-- <th class="px-5 py-3 text-left">ID</th> --}}
                     <th class="px-5 py-3 text-left">Name</th>
                     <th class="px-5 py-3 text-left">Email</th>
+                    <th class="px-5 py-3 text-left">Phone</th>
                     <th class="px-5 py-3 text-left">Registered</th>
                     <th class="px-5 py-3 text-left">Status</th>
                     <th class="px-5 py-3 text-right">Action</th>
@@ -47,9 +48,9 @@
             <tbody>
                 @forelse ($users as $u)
                     <tr class="border-t hover:bg-[#D4AF37]/10">
-                        <td class="px-5 py-4 align-middle font-medium">
+                        {{-- <td class="px-5 py-4 align-middle font-medium">
                             {{ $u->id }}
-                        </td>
+                        </td> --}}
 
                         <td class="px-5 py-4 align-middle">
                             {{ $u->name }}
@@ -58,6 +59,9 @@
                         <td class="px-5 py-4 align-middle whitespace-nowrap">
                             {{ $u->email }}
                         </td>
+
+                        <td class="px-5 py-4 align-middle">{{ $u->phone ?? '-' }}</td>
+
 
                         <td class="px-5 py-4 align-middle text-gray-500 whitespace-nowrap">
                             {{ $u->created_at?->format('Y-m-d H:i') }}

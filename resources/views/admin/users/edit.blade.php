@@ -36,6 +36,12 @@
             </div>
 
             <div>
+                <label class="text-xs text-gray-500">Phone</label>
+                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}"
+                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+            </div>
+
+            <div>
                 <label class="text-xs text-gray-500">Password (optional)</label>
                 <input type="password" name="password"
                     class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
