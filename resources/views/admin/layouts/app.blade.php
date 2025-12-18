@@ -23,7 +23,10 @@
         }
     }" class="min-h-screen flex">
         {{-- SIDEBAR --}}
-        <aside class="bg-white border-r border-[#D4AF37]/20 flex flex-col" :class="collapsed ? 'w-20' : 'w-72'">
+        <aside
+            class="fixed inset-y-0 left-0 h-screen z-30
+           bg-white border-r border-[#D4AF37]/20 flex flex-col"
+            :class="collapsed ? 'w-20' : 'w-72'">
             {{-- Brand --}}
             <div class="px-5 py-5 border-b border-[#D4AF37]/15">
                 <div class="flex items-center" :class="collapsed ? 'justify-center' : 'justify-between'">
@@ -179,7 +182,7 @@
         </aside>
 
         {{-- MAIN --}}
-        <main class="flex-1">
+        <main class="flex-1 min-h-screen transition-all duration-300" :class="collapsed ? 'ml-20' : 'ml-72'">
             {{-- Top bar --}}
             <header class="bg-white border-b border-[#D4AF37]/15 px-6 py-4">
                 <div class="flex items-center justify-between">
@@ -206,7 +209,10 @@
                 @yield('content')
             </div>
         </main>
+
     </div>
+
+    @stack('scripts')
 </body>
 
 </html>

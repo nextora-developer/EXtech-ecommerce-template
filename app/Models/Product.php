@@ -2,24 +2,38 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'category_id',
         'name',
         'slug',
         'description',
-        'price_cents',
+        'price',
         'stock',
+        'has_variants',
         'is_active',
         'image'
     ];
 
-    public function category(): BelongsTo
+    public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(\App\Models\Category::class);
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    public function options()
+    {
+        return $this->hasMany(ProductOption::class);
     }
 }

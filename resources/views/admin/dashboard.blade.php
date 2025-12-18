@@ -7,6 +7,18 @@
             <h1 class="text-3xl font-semibold text-gray-900">Dashboard</h1>
             <p class="text-sm text-gray-500 mt-1">Orders & revenue overview</p>
         </div>
+        <div class="flex items-center gap-2 mt-3">
+            <span
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-white border border-[#D4AF37]/20 text-gray-700">
+                Today Orders: <span class="ml-1 font-semibold text-gray-900">{{ $todayOrders }}</span>
+            </span>
+
+            <span
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-white border border-[#D4AF37]/20 text-gray-700">
+                Today Revenue: <span class="ml-1 font-semibold text-gray-900">RM
+                    {{ number_format($todayRevenueCents / 100, 2) }}</span>
+            </span>
+        </div>
 
         <a href="{{ route('admin.orders.index') }}"
             class="px-4 py-2 rounded-xl bg-white border border-[#D4AF37]/35 text-[#8f6a10]

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 | Public Shop
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [ShopController::class, 'home'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/product/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
@@ -66,6 +67,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     Route::resource('categories', AdminCategoryController::class);
     Route::resource('products', AdminProductController::class);
+    Route::patch('products/{product}/toggle', [AdminProductController::class, 'toggle'])
+        ->name('products.toggle');
+
 
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');

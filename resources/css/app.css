@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===== BRIF Admin Form Components ===== */
+@layer components {
+    .form-label {
+        @apply text-sm font-medium text-gray-700 mb-1 block;
+    }
+
+    .form-input {
+        @apply w-full rounded-xl border-gray-300
+               focus:border-[#D4AF37]
+               focus:ring-[#D4AF37]/30;
+    }
+}

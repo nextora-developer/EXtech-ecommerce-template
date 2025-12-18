@@ -5,15 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class ProductOptionValue extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'slug',
-        'icon',
-        'is_active',
+        'product_option_id',
+        'value',
         'sort_order',
     ];
+
+    public function option()
+    {
+        return $this->belongsTo(ProductOption::class, 'product_option_id');
+    }
 }

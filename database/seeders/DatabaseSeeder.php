@@ -17,8 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         // Admin user
         User::create([
             'name' => 'Admin',
@@ -33,6 +31,14 @@ class DatabaseSeeder extends Seeder
             'email' => 'user@user.com',
             'password' => Hash::make('password'), // ✅ 一定要 hash
             'is_admin' => false,
+        ]);
+
+        $this->call([
+            CategorySeeder::class,
+        ]);
+
+        $this->call([
+            OrderSeeder::class,
         ]);
     }
 }
