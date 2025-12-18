@@ -42,6 +42,8 @@ class AdminUserController extends Controller
 
     public function edit(User $user)
     {
+        $user->load('addresses');
+
         return view('admin.users.edit', compact('user'));
     }
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AdminAddressController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -78,6 +79,24 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     Route::resource('users', AdminUserController::class)
         ->only(['index', 'show', 'edit', 'update']);
+
+
+    // 地址：新增依附 user，其他用 address id
+    Route::get('users/{user}/addresses/create', [AdminAddressController::class, 'create'])
+        ->name('addresses.create');
+    Route::post('users/{user}/addresses', [AdminAddressController::class, 'store'])
+        ->name('addresses.store');
+
+    Route::get('addresses/{address}/edit', [AdminAddressController::class, 'edit'])
+        ->name('addresses.edit');
+    Route::put('addresses/{address}', [AdminAddressController::class, 'update'])
+        ->name('addresses.update');
+
+    Route::delete('addresses/{address}', [AdminAddressController::class, 'destroy'])
+        ->name('addresses.destroy');
+
+    Route::post('addresses/{address}/make-default', [AdminAddressController::class, 'makeDefault'])
+        ->name('addresses.make-default');
 });
 
 require __DIR__ . '/auth.php';
