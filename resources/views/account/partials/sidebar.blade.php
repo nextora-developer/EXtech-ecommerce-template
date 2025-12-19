@@ -36,9 +36,9 @@
         </a>
 
         {{-- Orders --}}
-        <a href="{{ route('account.orders') }}"
+        <a href="{{ route('account.orders.index') }}"
             class="{{ $itemBase }}
-           {{ request()->routeIs('account.orders') ? 'bg-[#FFF9E6] text-[#8f6a10]' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]' }}">
+           {{ request()->routeIs('account.orders.*') ? 'bg-[#FFF9E6] text-[#8f6a10]' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]' }}">
             <span class="text-base">🛒</span>
             <span>Orders</span>
         </a>

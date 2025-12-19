@@ -63,7 +63,7 @@
                                 Latest Orders
                             </h2>
 
-                            <a href="{{ route('account.orders') }}"
+                            <a href="{{ route('account.orders.index') }}"
                                 class="text-xs font-medium text-[#8f6a10] hover:text-[#D4AF37]">
                                 View all →
                             </a>
@@ -71,7 +71,7 @@
 
                         @if ($latestOrders->count())
                             @foreach ($latestOrders as $order)
-                                <a href="{{ route('account.orders') }}"
+                                <a href="{{ route('account.orders.show', $order) }}"
                                     class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-center justify-between text-sm mb-2 hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50 transition cursor-pointer">
 
                                     <div>

@@ -58,7 +58,7 @@
                                     $active = $status === $key;
                                 @endphp
 
-                                <a href="{{ route('account.orders', ['status' => $key]) }}"
+                                <a href="{{ route('account.orders.index', ['status' => $key]) }}"
                                     class="{{ $active ? 'text-[#8f6a10] font-semibold' : 'text-gray-500 hover:text-gray-800' }}">
                                     {{ $label }} ({{ $counts[$key] ?? 0 }})
                                 </a>
@@ -66,7 +66,7 @@
                         </div>
 
                         {{-- Search --}}
-                        <form method="GET" action="{{ route('account.orders') }}"
+                        <form method="GET" action="{{ route('account.orders.index') }}"
                             class="mt-4 flex items-center gap-3">
                             <input type="hidden" name="status" value="{{ $status }}">
 
@@ -80,7 +80,7 @@
                             </button>
 
                             {{-- Reset --}}
-                            <a href="{{ route('account.orders', ['status' => $status]) }}"
+                            <a href="{{ route('account.orders.index', ['status' => $status]) }}"
                                 class="px-6 py-2.5 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition">
                                 Reset
                             </a>
@@ -97,7 +97,7 @@
                         </div>
 
                         @forelse ($orders as $order)
-                            <a href="{{ route('account.orders') }}"
+                            <a href="{{ route('account.orders.show', $order) }}"
                                 class="rounded-xl border border-gray-200 px-4 py-3 mb-3 bg-gray-50 flex justify-between text-sm mb-2 hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50 transition cursor-pointer">
                                 <div>
                                     <span class="font-medium text-[#8f6a10] hover:text-[#D4AF37]">

@@ -12,7 +12,10 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminAddressController;
 use App\Http\Controllers\Admin\AdminReportController;
+
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountOrderController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,19 +39,17 @@ Route::post('/cart/remove/{product}', [CartController::class, 'remove'])->name('
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
-    Route::post('/checkout', [CheckoutController::class, 'place'])->name('checkout.place');
-
-    Route::get('/my/orders', [CheckoutController::class, 'myOrders'])->name('orders.mine');
-    Route::get('/my/orders/{order}', [CheckoutController::class, 'myOrderShow'])->name('orders.mine.show');
 
     Route::middleware(['auth'])->prefix('account')->name('account.')->group(function () {
 
         Route::get('/', [AccountController::class, 'index'])
             ->name('index');
 
-        Route::get('/orders', [AccountController::class, 'orders'])
-            ->name('orders');
+        // Orders Listing
+        Route::get('/orders', [AccountOrderController::class, 'index'])->name('orders.index');
+
+        // Order Detail
+        Route::get('/orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
     });
 });
 
