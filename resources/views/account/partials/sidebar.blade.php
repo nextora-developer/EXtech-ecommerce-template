@@ -1,5 +1,3 @@
-{{-- resources/views/account/partials/sidebar.blade.php --}}
-
 @php
     // 确保有 user，可以从外面传，也可以用当前登录用户
     $user = $user ?? auth()->user();
@@ -31,7 +29,11 @@
         <a href="{{ route('account.index') }}"
             class="{{ $itemBase }}
            {{ request()->routeIs('account.index') ? 'bg-[#FFF9E6] text-[#8f6a10]' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]' }}">
-            <span class="text-base">≡</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 12a5 5 0 100-10 5 5 0 000 10zm8 9a8 8 0 10-16 0" />
+            </svg>
             <span>Account</span>
         </a>
 
@@ -39,25 +41,40 @@
         <a href="{{ route('account.orders.index') }}"
             class="{{ $itemBase }}
            {{ request()->routeIs('account.orders.*') ? 'bg-[#FFF9E6] text-[#8f6a10]' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]' }}">
-            <span class="text-base">🛒</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 8l1 12h10l1-12H6zm2-3a4 4 0 118 0v3H8V5z" />
+            </svg>
             <span>Orders</span>
         </a>
 
         {{-- Favorites（先占位，将来再做 page） --}}
         <a href="#" class="{{ $itemBase }} text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]">
-            <span class="text-base">♡</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M4.318 6.318a5.5 5.5 0 017.778 0L12 6.586l-.096-.097a5.5 5.5 0 117.778 7.778L12 21.192l-7.682-7.682a5.5 5.5 0 010-7.192z" />
+            </svg>
             <span>Favorites</span>
         </a>
 
         {{-- Addresses --}}
         <a href="#" class="{{ $itemBase }} text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]">
-            <span class="text-base">📍</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 11a4 4 0 100-8 4 4 0 000 8zm0 0c-5.333 0-8 3.333-8 6 0 3 3.333 6 8 6s8-3 8-6c0-2.667-2.667-6-8-6z" />
+            </svg>
             <span>Addresses</span>
         </a>
 
         {{-- Edit Profile --}}
         <a href="#" class="{{ $itemBase }} text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]">
-            <span class="text-base">✏️</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.232 5.232l3.536 3.536M4 20h4l9.536-9.536a2 2 0 00-2.828-2.828L5.172 17.172A2 2 0 004 18.586V20z" />
+            </svg>
             <span>Edit Profile</span>
         </a>
 
@@ -68,7 +85,10 @@
             @csrf
             <button type="submit"
                 class="w-full flex items-center gap-2 px-5 py-2.5 text-sm rounded-xl text-red-500 hover:bg-red-50">
-                <span class="text-base">↩</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+                </svg>
                 <span>Logout</span>
             </button>
         </form>

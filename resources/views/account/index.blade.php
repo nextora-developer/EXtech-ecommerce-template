@@ -64,7 +64,7 @@
                             </h2>
 
                             <a href="{{ route('account.orders.index') }}"
-                                class="text-xs font-medium text-[#8f6a10] hover:text-[#D4AF37]">
+                                class="text-base font-medium text-[#8f6a10] hover:text-[#D4AF37]">
                                 View all →
                             </a>
                         </div>
@@ -83,11 +83,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="text-right">
-                                        <div class="font-semibold text-[#0A0A0C]">
-                                            RM {{ number_format($order->total, 2) }}
-                                        </div>
-
+                                    <div class="flex items-center gap-5 font-medium text-[#0A0A0C]">
+                                        {{-- Status Badge --}}
                                         @php
                                             $colors = [
                                                 'pending' => 'bg-amber-100 text-[#8f6a10]',
@@ -102,6 +99,11 @@
                                         <span
                                             class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
                                             {{ ucfirst($order->status) }}
+                                        </span>
+
+                                        {{-- Total --}}
+                                        <span>
+                                            RM {{ number_format($order->total, 2) }}
                                         </span>
                                     </div>
                                 </a>
