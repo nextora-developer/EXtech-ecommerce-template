@@ -23,7 +23,7 @@ class CheckoutController extends Controller
             return redirect()->route('shop.index')->with('success', 'Your cart is empty');
         }
 
-        $subtotal = $cart->items->sum(fn($i) => $i->qty * $i->unit_price_cents);
+        $subtotal = $cart->items->sum(fn($i) => $i->qty * $i->unit_price);
         $shipping = 0;
         $total = $subtotal + $shipping;
 
@@ -58,7 +58,7 @@ class CheckoutController extends Controller
                 }
             }
 
-            $subtotal = $cart->items->sum(fn($i) => $i->qty * $i->unit_price_cents);
+            $subtotal = $cart->items->sum(fn($i) => $i->qty * $i->unit_price);
             $shipping = 0;
             $total = $subtotal + $shipping;
 
@@ -66,9 +66,9 @@ class CheckoutController extends Controller
                 'user_id' => $request->user()->id,
                 'order_no' => 'BRIF-' . strtoupper(Str::random(10)),
                 ...$data,
-                'subtotal_cents' => $subtotal,
-                'shipping_cents' => $shipping,
-                'total_cents' => $total,
+                'subtotal' => $subtotal,
+                'shipping_fee' => $shipping,
+                'total_' => $total,
                 'status' => 'pending',
             ]);
 
@@ -77,7 +77,7 @@ class CheckoutController extends Controller
                     'product_id' => $item->product_id,
                     'product_name' => $item->product->name,
                     'qty' => $item->qty,
-                    'unit_price_cents' => $item->unit_price_cents,
+                    'unit_price' => $item->unit_price,
                 ]);
 
                 // reduce stock

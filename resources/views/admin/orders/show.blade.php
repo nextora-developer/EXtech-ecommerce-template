@@ -127,15 +127,14 @@
                                             {{ $item->quantity ?? 1 }}
                                         </td>
 
-                                        {{-- 单价（假设是 *_cents） --}}
+                                        {{-- 单价 --}}
                                         <td class="px-4 py-2 text-right text-gray-900">
-                                            RM {{ number_format(($item->price_cents ?? 0) / 100, 2) }}
+                                            RM {{ number_format($item->unit_price, 2) }}
                                         </td>
 
                                         {{-- 小计 --}}
                                         <td class="px-4 py-2 text-right font-semibold text-gray-900">
-                                            RM
-                                            {{ number_format(($item->subtotal_cents ?? ($item->price_cents ?? 0) * ($item->quantity ?? 1)) / 100, 2) }}
+                                            RM {{ number_format($item->subtotal, 2) }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -156,14 +155,14 @@
                     <div class="flex items-center justify-between">
                         <div class="text-gray-500">Subtotal</div>
                         <div class="font-medium text-gray-900">
-                            RM {{ number_format(($order->subtotal_cents ?? 0) / 100, 2) }}
+                            RM {{ number_format($order->subtotal ?? 0, 2) }}
                         </div>
                     </div>
 
                     <div class="flex items-center justify-between">
                         <div class="text-gray-500">Shipping</div>
                         <div class="font-medium text-gray-900">
-                            RM {{ number_format(($order->shipping_cents ?? 0) / 100, 2) }}
+                            RM {{ number_format($order->shipping_fee ?? 0, 2) }}
                         </div>
                     </div>
 
@@ -172,7 +171,7 @@
                     <div class="flex items-center justify-between">
                         <div class="text-gray-900 font-semibold">Total</div>
                         <div class="text-gray-900 font-semibold text-lg">
-                            RM {{ number_format(($order->total_cents ?? 0) / 100, 2) }}
+                            RM {{ number_format($order->total ?? 0, 2) }}
                         </div>
                     </div>
                 </div>

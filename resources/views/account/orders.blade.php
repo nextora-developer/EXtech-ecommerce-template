@@ -109,7 +109,7 @@
                                 </div>
                                 <div class="text-right">
                                     <div class="font-semibold text-[#0A0A0C]">
-                                        RM {{ number_format($order->total_cents, 2) }}
+                                        RM {{ number_format($order->total, 2) }}
                                     </div>
                                     <div class="text-xs text-[#D4AF37]">
                                         {{ $order->status }}

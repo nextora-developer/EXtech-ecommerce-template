@@ -16,7 +16,7 @@
             <span
                 class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-white border border-[#D4AF37]/20 text-gray-700">
                 Today Revenue: <span class="ml-1 font-semibold text-gray-900">RM
-                    {{ number_format($todayRevenueCents / 100, 2) }}</span>
+                    {{ number_format($todayRevenue / 100, 2) }}</span>
             </span>
         </div>
 
@@ -71,7 +71,7 @@
                 <div class="h-2 w-2 rounded-full bg-[#D4AF37]/60"></div>
             </div>
             <div class="mt-2 text-3xl font-semibold text-gray-900">
-                RM {{ number_format($revenueCents / 100, 2) }}
+                RM {{ number_format($revenue / 100, 2) }}
             </div>
             <div class="{{ $hint }}">Paid + Processing + Shipped + Completed</div>
         </div>
@@ -121,7 +121,7 @@
                                 </span>
 
                             </td>
-                            <td class="px-5 py-3">RM {{ number_format($o->total_cents / 100, 2) }}</td>
+                            <td class="px-5 py-3">RM {{ number_format($o->total / 100, 2) }}</td>
                             <td class="px-5 py-3 text-gray-500">{{ $o->created_at->format('Y-m-d H:i') }}</td>
                             <td class="px-5 py-3 text-right">
                                 <a class="text-[#8f6a10] hover:underline" href="{{ route('admin.orders.show', $o) }}">

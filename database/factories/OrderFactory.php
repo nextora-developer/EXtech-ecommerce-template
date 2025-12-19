@@ -32,9 +32,9 @@ class OrderFactory extends Factory
             'state'         => $this->faker->state(),
             'postcode'      => $this->faker->postcode(),
 
-            'subtotal_cents' => $subtotal,
-            'shipping_cents' => $shipping,
-            'total_cents'    => $subtotal + $shipping,
+            'subtotal' => $subtotal,
+            'shipping_fee' => $shipping,
+            'total'    => $subtotal + $shipping,
 
             'status' => $this->faker->randomElement($statuses),
 

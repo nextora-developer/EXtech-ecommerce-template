@@ -10,7 +10,7 @@
                 <a href="{{ route('shop.show', $p->slug) }}" class="border rounded p-3 bg-white">
                     <div class="font-semibold">{{ $p->name }}</div>
                     <div class="text-sm text-gray-600">
-                        RM {{ number_format($p->price_cents / 100, 2) }}
+                        RM {{ number_format($p->price, 2) }}
                     </div>
                 </a>
             @empty

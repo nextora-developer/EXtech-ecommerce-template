@@ -4,7 +4,7 @@
 
         <h1 class="text-2xl font-bold mt-3">{{ $product->name }}</h1>
         <div class="text-gray-600 mt-1">
-            RM {{ number_format($product->price_cents / 100, 2) }}
+            RM {{ number_format($product->price, 2) }}
         </div>
 
         <div class="mt-4 text-gray-700">

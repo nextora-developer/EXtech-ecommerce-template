@@ -24,7 +24,7 @@ class CartController extends Controller
     {
         $cart = $this->getCart($request)->load('items.product');
 
-        $subtotal = $cart->items->sum(fn($i) => $i->qty * $i->unit_price_cents);
+        $subtotal = $cart->items->sum(fn($i) => $i->qty * $i->unit_price);
 
         return view('cart.index', compact('cart', 'subtotal'));
     }
@@ -37,11 +37,11 @@ class CartController extends Controller
 
         $item = $cart->items()->firstOrCreate(
             ['product_id' => $product->id],
-            ['qty' => 0, 'unit_price_cents' => $product->price_cents]
+            ['qty' => 0, 'unit_price' => $product->price]
         );
 
         $item->qty += 1;
-        $item->unit_price_cents = $product->price_cents; // keep updated on add
+        $item->unit_price = $product->price; // keep updated on add
         $item->save();
 
         return redirect()->route('cart.index')->with('success', 'Added to cart');
