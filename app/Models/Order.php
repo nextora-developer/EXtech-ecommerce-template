@@ -21,9 +21,9 @@ class Order extends Model
         'city',
         'state',
         'postcode',
-        'subtotal_cents',
-        'shipping_cents',
-        'total_cents',
+        'subtotal',
+        'shipping_fee',
+        'total',
         'status'
     ];
 
