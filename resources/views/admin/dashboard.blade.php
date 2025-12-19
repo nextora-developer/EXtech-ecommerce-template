@@ -104,11 +104,22 @@
                         <tr class="border-t border-gray-100 hover:bg-[#D4AF37]/10 transition">
                             <td class="px-5 py-3 font-medium">{{ $o->order_no }}</td>
                             <td class="px-5 py-3">
+                                @php
+                                    $statusColors = [
+                                        'PENDING' => 'border-yellow-500 bg-yellow-50 text-yellow-700',
+                                        'PAID' => 'border-green-500 bg-green-50 text-green-700',
+                                        'PROCESSING' => 'border-indigo-500 bg-indigo-50 text-indigo-700',
+                                        'SHIPPED' => 'border-blue-500 bg-blue-50 text-blue-700',
+                                        'COMPLETED' => 'border-emerald-500 bg-emerald-50 text-emerald-700',
+                                        'CANCELLED' => 'border-red-500 bg-red-50 text-red-700',
+                                    ];
+                                @endphp
                                 <span
-                                    class="inline-flex items-center px-2 py-1 rounded-md text-xs
-                                    border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#8f6a10]">
+                                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium
+                                    {{ $statusColors[strtoupper($o->status)] ?? 'border-gray-300 bg-gray-50 text-gray-600' }}">
                                     {{ strtoupper($o->status) }}
                                 </span>
+
                             </td>
                             <td class="px-5 py-3">RM {{ number_format($o->total_cents / 100, 2) }}</td>
                             <td class="px-5 py-3 text-gray-500">{{ $o->created_at->format('Y-m-d H:i') }}</td>

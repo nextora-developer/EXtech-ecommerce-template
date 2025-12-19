@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminAddressController;
+use App\Http\Controllers\Admin\AdminReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -97,6 +98,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     Route::post('addresses/{address}/make-default', [AdminAddressController::class, 'makeDefault'])
         ->name('addresses.make-default');
+
+    // Reports
+    Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/sales', [AdminReportController::class, 'sales'])->name('reports.sales');
+    Route::get('/reports/products', [AdminReportController::class, 'products'])->name('reports.products');
+    Route::get('/reports/orders', [AdminReportController::class, 'orders'])->name('reports.orders');
+    Route::get('/reports/customers', [AdminReportController::class, 'customers'])->name('reports.customers');
 });
 
 require __DIR__ . '/auth.php';
