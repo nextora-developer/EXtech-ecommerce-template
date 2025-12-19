@@ -70,7 +70,7 @@
                             class="mt-4 flex items-center gap-3">
                             <input type="hidden" name="status" value="{{ $status }}">
 
-                            <input type="text" name="order_number" value="{{ request('order_number') }}"
+                            <input type="text" name="order_no" value="{{ request('order_no') }}"
                                 placeholder="Order number"
                                 class="flex-1 rounded-full border border-gray-200 px-5 py-2.5 text-sm text-gray-800 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
 
@@ -91,36 +91,54 @@
                     {{-- Card 2: Orders List --}}
                     <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                         <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-semibold text-[#0A0A0C]">
+                            <h2 class="text-base font-semibold text-[#0A0A0C]">
                                 My Orders
                             </h2>
                         </div>
 
                         @forelse ($orders as $order)
-                            <div
-                                class="rounded-xl border border-gray-200 px-4 py-3 mb-3 bg-gray-50 flex justify-between">
+                            <a href="{{ route('account.orders') }}"
+                                class="rounded-xl border border-gray-200 px-4 py-3 mb-3 bg-gray-50 flex justify-between text-sm mb-2 hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50 transition cursor-pointer">
                                 <div>
-                                    <div class="font-medium text-[#8f6a10]">
+                                    <span class="font-medium text-[#8f6a10] hover:text-[#D4AF37]">
                                         {{ $order->order_no }}
-                                    </div>
-                                    <div class="text-xs text-gray-500">
+                                    </span>
+
+                                    <div class="text-xs text-gray-500 mt-1">
                                         {{ $order->created_at->format('d M Y, H:i') }}
                                     </div>
                                 </div>
+
                                 <div class="text-right">
                                     <div class="font-semibold text-[#0A0A0C]">
                                         RM {{ number_format($order->total, 2) }}
                                     </div>
-                                    <div class="text-xs text-[#D4AF37]">
-                                        {{ $order->status }}
-                                    </div>
+
+                                    @php
+                                        $colors = [
+                                            'pending' => 'bg-amber-100 text-[#8f6a10]',
+                                            'paid' => 'bg-green-100 text-green-700',
+                                            'processing' => 'bg-blue-100 text-blue-700',
+                                            'shipped' => 'bg-indigo-100 text-indigo-700',
+                                            'completed' => 'bg-emerald-100 text-emerald-700',
+                                            'cancelled' => 'bg-red-100 text-red-600',
+                                        ];
+                                    @endphp
+                                    <span
+                                        class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
                                 </div>
-                            </div>
+                            </a>
                         @empty
                             <p class="text-sm text-gray-500">No orders yet.</p>
                         @endforelse
-                    </section>
 
+                        <div class="mt-4">
+                            {{ $orders->links() }}
+                        </div>
+
+                    </section>
                 </main>
             </div>
         </div>

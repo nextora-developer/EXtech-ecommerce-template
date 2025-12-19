@@ -115,7 +115,7 @@
                             </td>
 
                             <td class="px-5 py-3">
-                                RM {{ number_format(($o->total ?? 0) / 100, 2) }}
+                                RM {{ number_format($o->total ?? 0, 2) }}
                             </td>
 
                             <td class="px-5 py-3 text-gray-500">

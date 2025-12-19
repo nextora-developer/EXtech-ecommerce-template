@@ -60,43 +60,57 @@
                     <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-base font-semibold text-[#0A0A0C]">
-                                Orders
+                                Latest Orders
                             </h2>
 
-                            <a href="#" class="text-xs font-medium text-[#8f6a10] hover:text-[#D4AF37]">
+                            <a href="{{ route('account.orders') }}"
+                                class="text-xs font-medium text-[#8f6a10] hover:text-[#D4AF37]">
                                 View all →
                             </a>
                         </div>
 
-                        @if ($latestOrder)
-                            <div
-                                class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-center justify-between text-sm">
-                                <div>
-                                    <a href="{{ $latestOrder['url'] }}"
-                                        class="font-medium text-[#8f6a10] hover:text-[#D4AF37] hover:underline">
-                                        {{ $latestOrder['number'] }}
-                                    </a>
-                                    <div class="text-xs text-gray-500 mt-1">
-                                        {{ $latestOrder['date'] }}
-                                    </div>
-                                </div>
+                        @if ($latestOrders->count())
+                            @foreach ($latestOrders as $order)
+                                <a href="{{ route('account.orders') }}"
+                                    class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-center justify-between text-sm mb-2 hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50 transition cursor-pointer">
 
-                                <div class="text-right">
-                                    <div class="font-semibold text-[#0A0A0C]">
-                                        {{ $latestOrder['total'] }}
+                                    <div>
+                                        <span class="font-medium text-[#8f6a10] hover:text-[#D4AF37]">
+                                            {{ $order->order_no }}
+                                        </span>
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            {{ $order->created_at->format('d M Y, H:i') }}
+                                        </div>
                                     </div>
-                                    <div class="text-xs text-[#D4AF37] mt-1">
-                                        {{ $latestOrder['status'] }}
+
+                                    <div class="text-right">
+                                        <div class="font-semibold text-[#0A0A0C]">
+                                            RM {{ number_format($order->total, 2) }}
+                                        </div>
+
+                                        @php
+                                            $colors = [
+                                                'pending' => 'bg-amber-100 text-[#8f6a10]',
+                                                'paid' => 'bg-green-100 text-green-700',
+                                                'processing' => 'bg-blue-100 text-blue-700',
+                                                'shipped' => 'bg-indigo-100 text-indigo-700',
+                                                'completed' => 'bg-emerald-100 text-emerald-700',
+                                                'cancelled' => 'bg-red-100 text-red-600',
+                                            ];
+                                        @endphp
+
+                                        <span
+                                            class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
+                                            {{ ucfirst($order->status) }}
+                                        </span>
                                     </div>
-                                </div>
-                            </div>
+                                </a>
+                            @endforeach
                         @else
                             <p class="text-sm text-gray-500">
                                 You don’t have any orders yet.
                             </p>
                         @endif
-                    </section>
-
                 </main>
             </div>
         </div>

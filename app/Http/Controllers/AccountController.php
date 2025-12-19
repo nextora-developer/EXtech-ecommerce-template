@@ -3,29 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
     public function index(Request $request)
     {
-        $user = $request->user();
+        
+        $user = auth()->user();
 
         // 这些先用假数据占位，之后你可以换成真实统计
+        // $stats = [
+        //     'orders' => 1,
+        //     'favorites' => 0,
+        //     'addresses' => 0,
+        // ];
+
+        // 真实统计
         $stats = [
-            'orders' => 1,
+            'orders'    => $user->orders()->count() ?? 0,
             'favorites' => 0,
-            'addresses' => 0,
+            'addresses' => $user->addresses()->count() ?? 0,
         ];
 
-        $latestOrder = [
-            'number' => '#ORD-5UT9LWHJ',
-            'date'   => '05 Dec 2025, 14:02',
-            'total'  => 'RM 22.00',
-            'status' => 'Pending',
-            'url'    => '#', // 将来可以改成 route('orders.show', $id)
-        ];
+        $latestOrders = $user->orders()
+            ->latest()
+            ->take(5)
+            ->get();
 
-        return view('account.index', compact('user', 'stats', 'latestOrder'));
+        return view('account.index', compact('user', 'stats', 'latestOrders'));
     }
 
     public function orders(Request $request)
@@ -34,7 +40,7 @@ class AccountController extends Controller
         $status = $request->get('status', 'all');
         $orderNo = $request->get('order_no');
 
-        // 全部订单
+        // 全部订单（collection，用来算 badge 数量）
         $allOrders = $user->orders()->latest()->get();
 
         // 当前过滤订单
@@ -45,17 +51,20 @@ class AccountController extends Controller
             $query->where('status', $status);
         }
 
-        // 按订单号搜索
-        if ($request->orderNo) {
-            $query->where('order_no', 'like', '%' . $request->orderNo . '%');
+        // Filter by order number
+        if (!empty($orderNo)) {
+            $query->where('order_no', 'like', "%{$orderNo}%");
         }
 
-        $orders = $query->get();
+        // Pagination — recommended
+        $orders = $query->paginate(5)->withQueryString();
+
 
         return view('account.orders', compact(
             'orders',
             'allOrders',
-            'status'
+            'status',
+            'orderNo'
         ));
     }
 }

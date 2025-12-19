@@ -15,8 +15,8 @@ class OrderFactory extends Factory
     {
         $statuses = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'];
 
-        $subtotal = $this->faker->numberBetween(2000, 50000);
-        $shipping = $this->faker->numberBetween(0, 2000);
+        $subtotal = $this->faker->randomFloat(2, 10, 200);   // RM 10 - RM 200
+        $shipping = $this->faker->randomFloat(2, 0, 15);     // RM 0 - RM 15
 
         return [
             'user_id' => User::inRandomOrder()->value('id'),
