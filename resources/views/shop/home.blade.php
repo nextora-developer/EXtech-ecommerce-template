@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-6xl mx-auto p-6">
+    <div class="max-w-7xl mx-auto p-6">
         <h1 class="text-2xl font-bold mb-4">BRIF Shop</h1>
 
         <a class="underline" href="{{ route('shop.index') }}">Go to Shop</a>

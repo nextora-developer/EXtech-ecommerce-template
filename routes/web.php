@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminAddressController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\AccountController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +41,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/my/orders', [CheckoutController::class, 'myOrders'])->name('orders.mine');
     Route::get('/my/orders/{order}', [CheckoutController::class, 'myOrderShow'])->name('orders.mine.show');
+
+    Route::middleware(['auth'])->prefix('account')->name('account.')->group(function () {
+
+        Route::get('/', [AccountController::class, 'index'])
+            ->name('index');
+
+        Route::get('/orders', [AccountController::class, 'orders'])
+            ->name('orders');
+    });
 });
 
 /*

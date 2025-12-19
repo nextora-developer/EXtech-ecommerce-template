@@ -1,5 +1,4 @@
-<nav x-data="{ open: false }"
-    class="bg-white/95 border-b border-[#D4AF37]/25 backdrop-blur shadow-sm">
+<nav x-data="{ open: false }" class="bg-white/95 border-b border-[#D4AF37]/25 backdrop-blur shadow-sm">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -47,7 +46,8 @@
                         <x-slot name="trigger">
                             <button
                                 class="inline-flex items-center px-3 py-2 border border-[#D4AF37]/40 text-sm leading-4 font-medium rounded-xl text-[#0A0A0C] bg-white hover:bg-[#FFF9E6] hover:border-[#D4AF37]/70 transition">
-                                <div class="me-2 h-7 w-7 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#8f6a10] flex items-center justify-center text-[11px] font-semibold text-white">
+                                <div
+                                    class="me-2 h-7 w-7 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#8f6a10] flex items-center justify-center text-[11px] font-semibold text-white">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </div>
                                 <div class="max-w-[120px] truncate text-left">
@@ -70,6 +70,11 @@
                                     {{ Auth::user()->email }}
                                 </div>
                             </div>
+
+                            {{-- My Account --}}
+                            <x-dropdown-link :href="route('account.index')">
+                                My Account
+                            </x-dropdown-link>
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -110,8 +115,7 @@
     </div>
 
     <!-- Mobile Navigation -->
-    <div :class="{ 'block': open, 'hidden': !open }"
-        class="hidden sm:hidden border-t border-[#D4AF37]/20 bg-white">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden border-t border-[#D4AF37]/20 bg-white">
         <div class="pt-2 pb-3 space-y-1">
             <a href="{{ route('home') }}"
                 class="block px-4 py-2 text-sm font-medium {{ request()->routeIs('home') ? 'text-[#8f6a10] bg-[#FFF9E6]' : 'text-gray-700 hover:bg-[#FFF9E6]' }}">
@@ -135,6 +139,11 @@
                     </div>
                 @endauth
             </div>
+
+            <a href="{{ route('account.index') }}"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF9E6] rounded-lg">
+                My Account
+            </a>
 
             <div class="space-y-1 px-2">
                 @auth
