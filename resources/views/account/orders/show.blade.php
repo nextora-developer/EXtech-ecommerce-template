@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- 面包屑 --}}
-            <div class="text-xs text-gray-500 mb-4">
+            <div class="text-sm text-gray-500 mb-4">
                 <a href="{{ route('account.index') }}" class="hover:text-[#8f6a10]">Home</a>
                 <span class="mx-1">/</span>
                 <a href="{{ route('account.orders.index') }}" class="hover:text-[#8f6a10]">Orders</a>
@@ -24,10 +24,10 @@
                         <div class="flex items-start justify-between">
 
                             <div>
-                                <h1 class="text-xl font-semibold text-[#0A0A0C] flex items-center gap-2">
+                                <h1 class="text-2xl font-semibold text-[#0A0A0C] flex items-center gap-2">
                                     Order <span class="text-[#8f6a10]">#{{ $order->order_no }}</span>
                                 </h1>
-                                <p class="text-xs text-gray-500 mt-1">
+                                <p class="text-sm text-gray-500 mt-1">
                                     Placed on {{ $order->created_at->format('d M Y, H:i') }}
                                 </p>
                             </div>
@@ -44,44 +44,44 @@
                             @endphp
 
                             <span
-                                class="px-3 py-1 rounded-full text-xs font-medium shadow-sm {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
+                                class="px-3 py-1 rounded-full text-sm font-medium shadow-sm {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
                                 {{ ucfirst($order->status) }}
                             </span>
                         </div>
 
-                
-
                         {{-- Info blocks --}}
-                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="grid md:grid-cols-2 gap-6 mt-8">
 
                             {{-- Customer / Address --}}
-                            <div class="space-y-3 text-sm">
-                                <h2 class="font-semibold text-[#0A0A0C] text-sm">Customer</h2>
+                            <div class="space-y-4 text-base">
+                                <h2 class="font-semibold text-[#0A0A0C] text-base">Customer</h2>
 
-                                <p class="text-gray-700">
+                                <p class="text-gray-700 leading-6">
                                     {{ $order->customer_name }}<br>
-                                    <span class="text-gray-500 text-xs">{{ $order->customer_phone }}</span>
+                                    <span class="text-gray-500 text-sm">{{ $order->customer_phone }}</span>
                                 </p>
 
-                                <h2 class="font-semibold text-[#0A0A0C] text-sm mt-4">Shipping Address</h2>
-                                <p class="text-gray-700 text-sm leading-5">
+                                <h2 class="font-semibold text-[#0A0A0C] text-base mt-4">Shipping Address</h2>
+                                <p class="text-gray-700 text-base leading-6">
                                     {{ $order->address_line1 }}<br>
-                                    @if($order->address_line2) {{ $order->address_line2 }}<br> @endif
+                                    @if ($order->address_line2)
+                                        {{ $order->address_line2 }}<br>
+                                    @endif
                                     {{ $order->postcode }} {{ $order->city }}<br>
                                     {{ $order->state }}
                                 </p>
                             </div>
 
                             {{-- Summary --}}
-                            <div class="bg-[#FFF9E6] border border-[#D4AF37]/30 rounded-2xl p-4 text-sm shadow-sm">
-                                <h2 class="font-semibold text-[#0A0A0C] text-sm mb-3">Order Summary</h2>
+                            <div class="bg-[#FFF9E6] border border-[#D4AF37]/30 rounded-2xl p-5 text-base shadow-sm">
+                                <h2 class="font-semibold text-[#0A0A0C] text-base mb-4">Order Summary</h2>
 
-                                <div class="flex justify-between mb-1.5 text-gray-600">
+                                <div class="flex justify-between mb-2 text-gray-600">
                                     <span>Subtotal</span>
                                     <span>RM {{ number_format($order->subtotal, 2) }}</span>
                                 </div>
 
-                                <div class="flex justify-between mb-1.5 text-gray-600">
+                                <div class="flex justify-between mb-2 text-gray-600">
                                     <span>Shipping Fee</span>
                                     <span>RM {{ number_format($order->shipping_fee, 2) }}</span>
                                 </div>
@@ -90,50 +90,50 @@
 
                                 <div class="flex justify-between text-[#0A0A0C] font-semibold">
                                     <span>Total</span>
-                                    <span class="text-lg">RM {{ number_format($order->total, 2) }}</span>
+                                    <span class="text-2xl">RM {{ number_format($order->total, 2) }}</span>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Items --}}
-                        <h2 class="font-semibold text-[#0A0A0C] text-sm mt-6 mb-3">Items</h2>
+                        <h2 class="font-semibold text-[#0A0A0C] text-base mt-8 mb-4">Items</h2>
 
                         <div class="border rounded-2xl overflow-hidden">
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-50 text-xs text-gray-500">
+                            <table class="w-full text-base">
+                                <thead class="bg-gray-50 text-sm text-gray-500">
                                     <tr>
-                                        <th class="text-left px-4 py-2">Product</th>
-                                        <th class="text-right px-4 py-2">Qty</th>
-                                        <th class="text-right px-4 py-2">Unit Price</th>
-                                        <th class="text-right px-4 py-2">Subtotal</th>
+                                        <th class="text-left px-4 py-3">Product</th>
+                                        <th class="text-right px-4 py-3">Qty</th>
+                                        <th class="text-right px-4 py-3">Unit Price</th>
+                                        <th class="text-right px-4 py-3">Subtotal</th>
                                     </tr>
                                 </thead>
 
-                                <tbody class="divide-y divide-gray-100">
+                                <tbody class="divide-y divide-gray-100 text-base">
                                     @foreach ($order->items as $item)
                                         <tr>
-                                            <td class="px-4 py-2 text-gray-900 flex items-center gap-2">
-                                                @if($item->product?->image)
-                                                    <img src="{{ asset('storage/'.$item->product->image) }}"
-                                                         class="w-10 h-10 rounded object-cover">
+                                            <td class="px-4 py-3 text-gray-900 flex items-center gap-3">
+                                                @if ($item->product?->image)
+                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                        class="w-12 h-12 rounded object-cover">
                                                 @endif
                                                 <div>
                                                     {{ $item->product_name }}
-                                                    @if($item->variant)
-                                                        <div class="text-xs text-gray-500">{{ $item->variant }}</div>
+                                                    @if ($item->variant)
+                                                        <div class="text-sm text-gray-500">{{ $item->variant }}</div>
                                                     @endif
                                                 </div>
                                             </td>
 
-                                            <td class="px-4 py-2 text-right text-gray-700">
+                                            <td class="px-4 py-3 text-right text-gray-700">
                                                 {{ $item->qty }}
                                             </td>
 
-                                            <td class="px-4 py-2 text-right text-gray-700">
+                                            <td class="px-4 py-3 text-right text-gray-700">
                                                 RM {{ number_format($item->unit_price, 2) }}
                                             </td>
 
-                                            <td class="px-4 py-2 text-right font-medium text-gray-900">
+                                            <td class="px-4 py-3 text-right font-semibold text-gray-900">
                                                 RM {{ number_format($item->unit_price * $item->qty, 2) }}
                                             </td>
                                         </tr>
@@ -142,19 +142,8 @@
                             </table>
                         </div>
 
-                        {{-- Action buttons --}}
-                        {{-- <div class="flex flex-wrap gap-3 mt-6">
-                            <a href="{{ route('account.orders.index') }}"
-                               class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">
-                                Back to Orders
-                            </a>
-
-                            <button class="px-4 py-2 text-sm rounded-lg bg-[#D4AF37] text-white hover:bg-[#c09c2f]">
-                                Download Invoice
-                            </button>
-                        </div> --}}
-
                     </section>
+
                 </main>
             </div>
         </div>

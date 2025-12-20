@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <nav class="text-xs text-gray-500 mb-4">
+            <nav class="text-sm text-gray-500 mb-4">
                 <a href="{{ route('home') }}" class="hover:text-[#8f6a10]">Home</a>
                 <span class="mx-1">/</span>
                 <span class="text-gray-400">Orders</span>
@@ -27,7 +27,7 @@
                         @endphp
 
                         {{-- Tabs --}}
-                        <div class="flex items-center gap-6 border-b border-gray-200 pb-2 text-sm">
+                        <div class="flex items-center gap-6 border-b border-gray-200 pb-2 text-base">
                             @php
                                 $status = request('status', 'all');
                                 $tabs = [
@@ -68,20 +68,21 @@
                         {{-- Search --}}
                         <form method="GET" action="{{ route('account.orders.index') }}"
                             class="mt-4 flex items-center gap-3">
+
                             <input type="hidden" name="status" value="{{ $status }}">
 
                             <input type="text" name="order_no" value="{{ request('order_no') }}"
                                 placeholder="Order number"
-                                class="flex-1 rounded-full border border-gray-200 px-5 py-2.5 text-sm text-gray-800 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+                                class="flex-1 rounded-full border border-gray-200 px-5 py-3 text-base text-gray-800 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
 
                             <button type="submit"
-                                class="px-6 py-2.5 rounded-full bg-[#D4AF37] text-white text-sm font-semibold shadow hover:brightness-110 transition">
+                                class="px-6 py-3 rounded-full bg-[#D4AF37] text-white text-base font-semibold shadow hover:brightness-110 transition">
                                 Search
                             </button>
 
                             {{-- Reset --}}
                             <a href="{{ route('account.orders.index', ['status' => $status]) }}"
-                                class="px-6 py-2.5 rounded-full bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300 transition">
+                                class="px-6 py-3 rounded-full bg-gray-200 text-gray-700 text-base font-medium hover:bg-gray-300 transition">
                                 Reset
                             </a>
                         </form>
@@ -91,26 +92,27 @@
                     {{-- Card 2: Orders List --}}
                     <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                         <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-base font-semibold text-[#0A0A0C]">
+                            <h2 class="text-lg font-semibold text-[#0A0A0C]">
                                 My Orders
                             </h2>
                         </div>
 
                         @forelse ($orders as $order)
                             <a href="{{ route('account.orders.show', $order) }}"
-                                class="rounded-xl border border-gray-200 px-4 py-3 mb-3 bg-gray-50 flex justify-between text-sm mb-2 hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50 transition cursor-pointer">
+                                class="rounded-xl border border-gray-200 px-5 py-4 mb-3 bg-gray-50 flex justify-between text-base hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50 transition cursor-pointer">
+
                                 <div>
                                     <span class="font-medium text-[#8f6a10] hover:text-[#D4AF37]">
                                         {{ $order->order_no }}
                                     </span>
 
-                                    <div class="text-xs text-gray-500 mt-1">
+                                    <div class="text-sm text-gray-500 mt-1">
                                         {{ $order->created_at->format('d M Y, H:i') }}
                                     </div>
                                 </div>
 
                                 <div class="flex items-center gap-5 font-medium text-[#0A0A0C]">
-                                    {{-- Status Badge --}}
+
                                     @php
                                         $colors = [
                                             'pending' => 'bg-amber-100 text-[#8f6a10]',
@@ -123,18 +125,17 @@
                                     @endphp
 
                                     <span
-                                        class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
+                                        class="px-2 py-1 rounded-full text-sm font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
                                         {{ ucfirst($order->status) }}
                                     </span>
 
-                                    {{-- Total --}}
-                                    <span>
+                                    <span class="text-base">
                                         RM {{ number_format($order->total, 2) }}
                                     </span>
                                 </div>
                             </a>
                         @empty
-                            <p class="text-sm text-gray-500">No orders yet.</p>
+                            <p class="text-base text-gray-500">No orders yet.</p>
                         @endforelse
 
                         <div class="mt-4">
@@ -143,6 +144,7 @@
 
                     </section>
                 </main>
+
             </div>
         </div>
     </div>

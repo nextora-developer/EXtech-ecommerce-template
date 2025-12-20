@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <nav class="text-xs text-gray-500 mb-4">
+            <nav class="text-sm text-gray-500 mb-4">
                 <a href="{{ route('home') }}" class="hover:text-[#8f6a10]">Home</a>
                 <span class="mx-1">/</span>
                 <span class="text-gray-400">Profile</span>
@@ -20,10 +20,10 @@
                 <main class="lg:col-span-3 space-y-5">
 
                     <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-                        <h2 class="text-base font-semibold text-[#0A0A0C]">
+                        <h2 class="text-lg font-semibold text-[#0A0A0C]">
                             Profile
                         </h2>
-                        <p class="text-xs text-gray-500 mt-1">
+                        <p class="text-sm text-gray-500 mt-1">
                             Update your account information and password.
                         </p>
                     </section>
