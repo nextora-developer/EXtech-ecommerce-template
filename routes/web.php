@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
 use App\Http\Controllers\AccountAddressController;
+use App\Http\Controllers\AccountProfileController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +66,14 @@ Route::middleware('auth')->group(function () {
             ->name('address.destroy');
         Route::put('/addresses/{address}/default', [AccountAddressController::class, 'setDefault'])
             ->name('address.set-default');
+
+        //Profile
+        Route::get('/profile', [AccountProfileController::class, 'edit'])
+            ->name('profile.edit');
+        Route::patch('/profile', [AccountProfileController::class, 'update'])
+            ->name('profile.update');
+        Route::delete('/profile', [AccountProfileController::class, 'destroy'])
+            ->name('profile.destroy');
     });
 });
 
