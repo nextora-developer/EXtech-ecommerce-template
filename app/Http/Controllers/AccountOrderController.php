@@ -30,7 +30,7 @@ class AccountOrderController extends Controller
         }
 
         // Pagination — recommended
-        $orders = $query->paginate(5)->withQueryString();
+        $orders = $query->paginate(3)->withQueryString();
 
 
         return view('account.orders.index', compact(

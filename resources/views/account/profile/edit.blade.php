@@ -19,14 +19,14 @@
                 {{-- 右侧 Profile 内容 --}}
                 <main class="lg:col-span-3 space-y-5">
 
-                    <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                    {{-- <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                         <h2 class="text-lg font-semibold text-[#0A0A0C]">
                             Profile
                         </h2>
                         <p class="text-sm text-gray-500 mt-1">
                             Update your account information and password.
                         </p>
-                    </section>
+                    </section> --}}
 
                     <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
                         <div class="space-y-6">

@@ -62,7 +62,7 @@
 
         {{-- Addresses --}}
         <a href="{{ route('account.address.index') }}"
-            class="{{ $itemBase }} text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]">
+            class="{{ $itemBase }} {{ request()->routeIs('account.address.*') ? 'bg-[#FFF9E6] text-[#8f6a10]' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -73,7 +73,7 @@
 
         {{-- Edit Profile --}}
         <a href="{{ route('account.profile.edit') }}"
-            class="{{ $itemBase }} text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]">
+            class="{{ $itemBase }} {{ request()->routeIs('account.profile.edit') ? 'bg-[#FFF9E6] text-[#8f6a10]' : 'text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round"

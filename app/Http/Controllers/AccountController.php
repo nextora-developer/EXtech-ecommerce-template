@@ -21,7 +21,7 @@ class AccountController extends Controller
 
         $latestOrders = $user->orders()
             ->latest()
-            ->take(4)
+            ->take(3)
             ->get();
 
         return view('account.index', compact('user', 'stats', 'latestOrders'));
