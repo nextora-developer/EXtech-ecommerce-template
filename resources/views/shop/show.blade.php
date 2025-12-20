@@ -111,7 +111,7 @@
 
                         {{-- 价格 --}}
                         <div class="mt-2 flex items-center gap-3">
-                            <div class="text-2xl font-semibold text-[#8f6a10]">
+                            <div class="text-2xl font-semibold text-[#8f6a10]" data-product-price>
                                 RM {{ number_format($product->price, 2) }}
                             </div>
                             {{-- 可以以后加上划线原价 --}}
@@ -140,24 +140,51 @@
                         </div>
 
                         {{-- Variant 选择区块 --}}
-                        @if (isset($product->variants) && $product->variants->count())
-                            <div class="mt-5">
-                                <label class="block text-[11px] uppercase tracking-wide text-gray-400 mb-2">
-                                    Select Variant
-                                </label>
+                        {{-- Variant 选择（如果有） --}}
+                        @if ($product->has_variants && $product->options->count())
+                            @php
+                                // 准备 variant map 给 JS 用
+                                $variantMap = $product->variants
+                                    ->map(function ($variant) {
+                                        return [
+                                            'id' => $variant->id,
+                                            'price' => $variant->price,
+                                            'stock' => $variant->stock,
+                                            'image' => $variant->image ? asset('storage/' . $variant->image) : null,
+                                            'options' => $variant->options ?? [], // 例如 ["Color" => "Red", "Size" => "M"]
+                                        ];
+                                    })
+                                    ->values();
+                            @endphp
 
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach ($product->variants as $variant)
-                                        <button type="button"
-                                            class="variant-btn px-4 py-1.5 rounded-full border border-gray-300 text-sm text-gray-800
-                           hover:border-[#D4AF37] hover:text-[#8f6a10] transition"
-                                            data-variant-id="{{ $variant->id }}">
-                                            {{ $variant->name }}
-                                        </button>
-                                    @endforeach
-                                </div>
+                            <div class="mt-5 space-y-4" id="product-variants"
+                                data-variants='@json($variantMap)'>
+                                @foreach ($product->options as $option)
+                                    <div>
+                                        <p class="text-[11px] uppercase tracking-wide text-gray-400 mb-1">
+                                            {{ $option->label ?? $option->name }}
+                                        </p>
+                                        <div class="flex flex-wrap gap-2" data-option-group="{{ $option->name }}">
+                                            @foreach ($option->values as $value)
+                                                <button type="button"
+                                                    class="variant-pill px-4 py-1.5 rounded-full border border-gray-300 text-sm text-gray-800
+                                   hover:border-[#D4AF37] hover:text-[#8f6a10] transition"
+                                                    data-option-name="{{ $option->name }}"
+                                                    data-option-label="{{ $option->label ?? $option->name }}"
+                                                    data-option-value="{{ $value->value }}">
+                                                    {{ $value->value }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
 
-                                {{-- 用隐藏 input 存 selected variant --}}
+                                {{-- 选中组合结果状态提示 --}}
+                                <p class="text-xs text-gray-500" id="variant-status">
+                                    Please select all options.
+                                </p>
+
+                                {{-- 隐藏字段，Add to Cart 用 --}}
                                 <input type="hidden" name="variant_id" id="variant_id">
                             </div>
                         @endif
@@ -225,8 +252,129 @@
 
         </div>
     </div>
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+        });
+    </script> --}}
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            // ===== Variant logic =====
+            const variantRoot = document.getElementById('product-variants');
+            const addToCartBtn = document.querySelector('form[action*="cart.add"] button[type="submit"]');
+            const variantIdInput = document.getElementById('variant_id');
+            const variantStatus = document.getElementById('variant-status');
+            const priceDisplay = document.querySelector('[data-product-price]'); // 我下面教你加这个 attribute
+
+            if (variantRoot) {
+                const variants = JSON.parse(variantRoot.dataset.variants || '[]');
+                const pills = Array.from(variantRoot.querySelectorAll('.variant-pill'));
+                const selections = {}; // { Color: "Red", Size: "M" }
+
+                // 一开始禁止下单
+                if (addToCartBtn) {
+                    addToCartBtn.disabled = true;
+                    addToCartBtn.classList.add('opacity-60', 'cursor-not-allowed');
+                }
+
+                const refreshSelectedStyle = () => {
+                    pills.forEach(btn => {
+                        const name = btn.dataset.optionName;
+                        const value = btn.dataset.optionValue;
+                        const selected = selections[name] === value;
+
+                        if (selected) {
+                            btn.classList.add('border-[#D4AF37]', 'text-[#8f6a10]', 'bg-[#F9F4E5]');
+                            btn.classList.remove('border-gray-300', 'text-gray-800', 'bg-white');
+                        } else {
+                            btn.classList.remove('border-[#D4AF37]', 'text-[#8f6a10]', 'bg-[#F9F4E5]');
+                            btn.classList.add('border-gray-300', 'text-gray-800');
+                        }
+                    });
+                };
+
+                const findVariant = () => {
+                    if (!variants.length) return null;
+
+                    // 检查是否所有 option 都已选择
+                    const optionGroups = Array.from(variantRoot.querySelectorAll('[data-option-group]'))
+                        .map(g => g.getAttribute('data-option-group'));
+                    for (const name of optionGroups) {
+                        if (!selections[name]) {
+                            return null;
+                        }
+                    }
+
+                    // 找到匹配的 variant
+                    return variants.find(v => {
+                        if (!v.options) return false;
+                        for (const [key, val] of Object.entries(v.options)) {
+                            if (selections[key] !== val) return false;
+                        }
+                        return true;
+                    }) || null;
+                };
+
+                const updateVariantState = () => {
+                    refreshSelectedStyle();
+                    const variant = findVariant();
+
+                    if (!variant) {
+                        variantIdInput.value = '';
+                        if (variantStatus) {
+                            variantStatus.textContent = 'This combination is not available.';
+                            variantStatus.classList.remove('text-gray-500');
+                            variantStatus.classList.add('text-red-500');
+                        }
+                        if (addToCartBtn) {
+                            addToCartBtn.disabled = true;
+                            addToCartBtn.classList.add('opacity-60', 'cursor-not-allowed');
+                        }
+                        return;
+                    }
+
+                    variantIdInput.value = variant.id;
+
+                    if (variantStatus) {
+                        variantStatus.textContent = variant.stock > 0 ?
+                            `Selected: In stock (${variant.stock})` :
+                            'Selected combination is out of stock.';
+                        variantStatus.classList.remove('text-red-500');
+                        variantStatus.classList.add('text-gray-500');
+                    }
+
+                    // 更新价格显示（如果 variant 有自己的 price）
+                    if (priceDisplay && variant.price) {
+                        priceDisplay.textContent = `RM ${Number(variant.price).toFixed(2)}`;
+                    }
+
+                    if (addToCartBtn) {
+                        const disabled = variant.stock <= 0;
+                        addToCartBtn.disabled = disabled;
+                        addToCartBtn.classList.toggle('opacity-60', disabled);
+                        addToCartBtn.classList.toggle('cursor-not-allowed', disabled);
+                    }
+                };
+
+                pills.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const name = btn.dataset.optionName;
+                        const value = btn.dataset.optionValue;
+
+                        if (selections[name] === value) {
+                            // 再点一次取消选择（可选）
+                            delete selections[name];
+                        } else {
+                            selections[name] = value;
+                        }
+
+                        updateVariantState();
+                    });
+                });
+            }
+
+            // 这里保留你之前的 gallery / 数量 JS...
             const gallery = document.querySelector("[data-gallery]");
             if (!gallery) return;
 
@@ -267,26 +415,6 @@
         });
     </script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const btns = document.querySelectorAll(".variant-btn");
-            const input = document.querySelector("#variant_id");
-
-            btns.forEach(btn => {
-                btn.addEventListener("click", () => {
-                    btns.forEach(b => {
-                        b.classList.remove("border-[#D4AF37]", "text-[#8f6a10]");
-                        b.classList.add("border-gray-300", "text-gray-800");
-                    });
-
-                    btn.classList.add("border-[#D4AF37]", "text-[#8f6a10]");
-                    btn.classList.remove("border-gray-300", "text-gray-800");
-
-                    input.value = btn.dataset.variantId;
-                });
-            });
-        });
-    </script>
 
 
 </x-app-layout>

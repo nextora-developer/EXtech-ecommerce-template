@@ -3,68 +3,107 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    private function getCart(Request $request): Cart
-    {
-        $user = $request->user();
-
-        if ($user) {
-            return Cart::firstOrCreate(['user_id' => $user->id]);
-        }
-
-        $sid = $request->session()->getId();
-        return Cart::firstOrCreate(['session_id' => $sid]);
-    }
-
     public function index(Request $request)
     {
-        $cart = $this->getCart($request)->load('items.product');
+        // 根据 user 或 session 拿 cart（简单示范，你可以自己优化）
+        $cart = Cart::query()
+            ->when(auth()->check(), fn($q) => $q->where('user_id', auth()->id()))
+            ->when(!auth()->check(), fn($q) => $q->where('session_id', $request->session()->getId()))
+            ->with('items.product')
+            ->first();
 
-        $subtotal = $cart->items->sum(fn($i) => $i->qty * $i->unit_price);
+        $items = $cart?->items ?? collect();
 
-        return view('cart.index', compact('cart', 'subtotal'));
+        $subtotal = $items->sum(fn($item) => $item->unit_price * $item->qty);
+
+        return view('cart.index', [
+            'items'    => $items,
+            'subtotal' => $subtotal,
+        ]);
     }
 
     public function add(Request $request, Product $product)
     {
-        if (!$product->is_active) abort(404);
+        // find or create cart
+        $cart = Cart::firstOrCreate([
+            'user_id'    => auth()->id(),
+            'session_id' => $request->session()->getId(),
+        ]);
 
-        $cart = $this->getCart($request);
+        $qty = max(1, (int) $request->input('quantity', 1));
 
-        $item = $cart->items()->firstOrCreate(
-            ['product_id' => $product->id],
-            ['qty' => 0, 'unit_price' => $product->price]
-        );
+        // 核心：判断 variant
+        if ($product->has_variants) {
 
-        $item->qty += 1;
-        $item->unit_price = $product->price; // keep updated on add
-        $item->save();
+            // 暂时我们这样获取 variant：
+            $variant = $product->variants()->first(); // 先拿一个 variant
 
-        return redirect()->route('cart.index')->with('success', 'Added to cart');
+            if (!$variant) {
+                return back()->with('error', 'Variant not found.');
+            }
+
+            $unitPrice = $variant->price;
+        } else {
+            $unitPrice = $product->price;
+        }
+
+        if (is_null($unitPrice)) {
+            return back()->with('error', 'Please set a price or variant price.');
+        }
+
+        // store
+        $item = $cart->items()->where('product_id', $product->id)->first();
+
+        if ($item) {
+            $item->qty += $qty;
+            $item->save();
+        } else {
+            $cart->items()->create([
+                'product_id' => $product->id,
+                'qty'        => $qty,
+                'unit_price' => $unitPrice,
+            ]);
+        }
+
+        return redirect()->route('cart.index');
     }
 
-    public function update(Request $request, Product $product)
+
+
+    public function update(Request $request, CartItem $item)
     {
-        $request->validate(['qty' => 'required|integer|min:1|max:99']);
+        $action = $request->input('action');
 
-        $cart = $this->getCart($request);
-        $item = $cart->items()->where('product_id', $product->id)->firstOrFail();
+        if ($action === 'increase') {
+            $item->qty++;
+        } elseif ($action === 'decrease') {
+            if ($item->qty > 1) {
+                $item->qty--;
+            }
+            // 如果你想 qty 到 0 就删掉，也可以在这里判断：
+            // else {
+            //     $item->delete();
+            //     return redirect()->route('cart.index');
+            // }
+        }
 
-        $item->qty = (int) $request->qty;
         $item->save();
 
         return redirect()->route('cart.index');
     }
 
-    public function remove(Request $request, Product $product)
-    {
-        $cart = $this->getCart($request);
-        $cart->items()->where('product_id', $product->id)->delete();
 
-        return redirect()->route('cart.index');
+    public function remove(CartItem $item)
+    {
+        $item->delete();
+
+        return redirect()->route('cart.index')
+            ->with('success', 'Item removed.');
     }
 }
