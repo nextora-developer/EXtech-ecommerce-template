@@ -205,6 +205,30 @@
                         Reports
                     </span>
                 </a>
+
+                {{-- Banner --}}
+                <a href="{{ route('admin.banners.index') }}"
+                    class="{{ $linkBase }} {{ request()->routeIs('admin.banners.*') ? $active : $idle }}">
+
+                    <span class="absolute left-0 top-2 bottom-2 w-[3px] rounded-r"
+                        style="background: {{ request()->routeIs('admin.banners.*') ? '#D4AF37' : 'transparent' }};"></span>
+
+                    {{-- Icon: Photo --}}
+                    <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.banners.*') ? 'text-[#8f6a10]' : 'text-gray-500 group-hover:text-[#8f6a10]' }}"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.827 6.223c.184-.133.392-.223.623-.223h9a1.5 1.5 0 0 1 1.5 1.5V9m-1.5-2.5H7.45c-.231 0-.439.09-.623.223M4.5 7.5v8.25A2.25 2.25 0 0 0 6.75 18h10.5A2.25 2.25 0 0 0 19.5 15.75V9m-1.5 6.75l-3.75-3.75L9 16.5l-2.25-2.25-2.25 2.25" />
+                    </svg>
+
+                    <span class="font-medium" x-show="!collapsed" x-cloak>Banner</span>
+
+                    <span x-show="collapsed" x-cloak
+                        class="absolute left-full ml-3 px-2 py-1 rounded-lg text-xs bg-white border border-gray-200 shadow opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap">
+                        Banner
+                    </span>
+                </a>
+
             </nav>
 
             {{-- Logout --}}

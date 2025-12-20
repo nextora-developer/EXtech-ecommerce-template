@@ -14,3 +14,11 @@
                focus:ring-[#D4AF37]/30;
     }
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

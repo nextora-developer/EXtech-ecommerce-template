@@ -1,36 +1,145 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="font-sans antialiased">
+    <div class="min-h-screen bg-gray-100">
+        @include('layouts.navigation')
+
+        <!-- Page Heading -->
+        @isset($header)
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    {{ $header }}
+                </div>
+            </header>
+        @endisset
+
+        <!-- Page Content -->
+        <main>
+            {{ $slot }}
+        </main>
+    </div>
+
+    {{-- Global Footer --}}
+    <footer class="bg-[#F9F4E5] border-t border-[#E5D9B6]">
+        <div class="max-w-7xl5 mx-auto px-6 lg:px-12 py-14">
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-10">
+
+                {{-- Brand --}}
+                <div>
+                    <h3 class="text-[#8f6a10] font-semibold text-xl mb-4">BRIF Shop</h3>
+                    <p class="text-sm text-gray-700 leading-relaxed mb-4">
+                        Curated essentials, trusted quality and a smooth shopping experience.
+                    </p>
+
+                    <div class="flex space-x-4 mt-4">
+
+                        {{-- Instagram --}}
+                        <a href="#" class="text-gray-700 hover:text-[#D4AF37] transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M7.75 2a5.75 5.75 0 00-5.75 5.75v8.5A5.75 5.75 0 007.75 22h8.5A5.75 5.75 0 0022 16.25v-8.5A5.75 5.75 0 0016.25 2h-8.5zm8.5 2a3.75 3.75 0 013.75 3.75v8.5a3.75 3.75 0 01-3.75 3.75h-8.5a3.75 3.75 0 01-3.75-3.75v-8.5A3.75 3.75 0 017.75 4h8.5zm-4.25 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm5.25-.5a1 1 0 110 2 1 1 0 010-2z" />
+                            </svg>
+                        </a>
+
+                        {{-- Facebook --}}
+                        <a href="#" class="text-gray-700 hover:text-[#D4AF37] transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M13.5 9H16V6h-2.5c-2.6 0-4.5 1.8-4.5 4.4V13H7v3h2v6h3v-6h2.3l.7-3H12V10c0-.9.3-1 1.5-1z" />
+                            </svg>
+                        </a>
+
+                        {{-- TikTok --}}
+                        <a href="#" class="text-gray-700 hover:text-[#D4AF37] transition">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M20 8.54a6.44 6.44 0 01-3.53-1.08A6.48 6.48 0 0115.36 4h-3.88v11.94a2.58 2.58 0 11-1.78-2.46V9.33A6.45 6.45 0 106.45 20 6.48 6.48 0 0012 15.21V7.92a9.06 9.06 0 006.89 2.92z" />
+                            </svg>
+                        </a>
+
                     </div>
-                </header>
-            @endisset
+                </div>
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                {{-- Quick Links --}}
+                <div>
+                    <h4 class="text-gray-900 font-semibold text-base mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li><a class="hover:text-[#D4AF37]">Shop</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Categories</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Featured</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Contact</a></li>
+                    </ul>
+                </div>
+
+                {{-- Policy --}}
+                <div>
+                    <h4 class="text-gray-900 font-semibold text-base mb-4">Policy</h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li><a class="hover:text-[#D4AF37]">Privacy Policy</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Corporate Policy</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Return Policy</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Shipping & Delivery</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Returns & Refunds</a></li>
+                    </ul>
+                </div>
+
+                {{-- My Account --}}
+                <div>
+                    <h4 class="text-gray-900 font-semibold text-base mb-4">My Account</h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li><a class="hover:text-[#D4AF37]">Account</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Orders</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Favorite</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Address</a></li>
+                        <li><a class="hover:text-[#D4AF37]">Profile</a></li>
+                    </ul>
+                </div>
+
+
+                {{-- Newsletter --}}
+                <div>
+                    <h4 class="text-gray-900 font-semibold text-base mb-4">Newsletter</h4>
+                    <p class="text-sm text-gray-700 mb-4">Get updates and new arrivals.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email"
+                            class="flex-1 px-3 py-2 border border-[#D4AF37]/50 rounded-l-lg text-sm focus:outline-none focus:border-[#D4AF37]">
+                        <button class="px-4 bg-[#D4AF37] text-white rounded-r-lg text-sm hover:bg-[#b8942f]">
+                            Join
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="border-t border-[#E5D9B6] mt-10 pt-5 text-center">
+                <p class="text-xs text-gray-700">
+                    © {{ date('Y') }} BRIF Shop. All rights reserved.
+                </p>
+            </div>
         </div>
-    </body>
+    </footer>
+
+
+
+
+    @stack('scripts')
+</body>
+
 </html>

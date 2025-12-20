@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="bg-[#f7f7f9] py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl5 mx-auto sm:px-6 lg:px-8">
 
             {{-- 面包屑 --}}
             <div class="text-sm text-gray-500 mb-4">

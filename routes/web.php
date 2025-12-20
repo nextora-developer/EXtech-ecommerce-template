@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminAddressController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminBannerController;
+
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
@@ -140,6 +142,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/reports/products', [AdminReportController::class, 'products'])->name('reports.products');
     Route::get('/reports/orders', [AdminReportController::class, 'orders'])->name('reports.orders');
     Route::get('/reports/customers', [AdminReportController::class, 'customers'])->name('reports.customers');
+
+    // Banner
+    Route::resource('banners', AdminBannerController::class);
 });
 
 require __DIR__ . '/auth.php';

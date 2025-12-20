@@ -3,28 +3,66 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\Banner;
+use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
     // Homepage
     public function home()
     {
-        $featured = Product::where('is_active', true)
-            ->latest()
-            ->limit(8)
+        $banners = Banner::where('is_active', true)
+            ->orderBy('sort_order')
             ->get();
 
-        return view('shop.home', compact('featured'));
+        $featured = Product::where('is_active', true)
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $categories = Category::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('shop.home', compact('featured', 'categories', 'banners'));
     }
 
-    // Shop listing
-    public function index()
+    // Shop listing + Search
+    public function index(Request $request)
     {
-        $products = Product::where('is_active', true)
-            ->latest()
-            ->paginate(12);
+        $query = Product::where('is_active', true);
 
-        return view('shop.index', compact('products'));
+        if ($search = $request->q) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($categorySlug = $request->category) {
+            $query->whereHas('category', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
+        }
+
+        switch ($request->sort) {
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'latest':
+                $query->latest();
+                break;
+            default:
+                $query->latest();
+        }
+
+        $products = $query->paginate(15);
+        $categories = Category::where('is_active', true)->orderBy('sort_order')->get();
+
+        return view('shop.index', compact('products', 'categories'));
     }
 
     // Product detail (route model binding by slug already in your routes)
