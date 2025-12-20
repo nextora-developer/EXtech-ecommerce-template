@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminReportController;
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
+use App\Http\Controllers\AccountAddressController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -45,11 +46,25 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AccountController::class, 'index'])
             ->name('index');
 
-        // Orders Listing
+        // Orders 
         Route::get('/orders', [AccountOrderController::class, 'index'])->name('orders.index');
-
-        // Order Detail
         Route::get('/orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
+
+        // Address
+        Route::get('/addresses', [AccountAddressController::class, 'index'])
+            ->name('address.index');
+        Route::get('/addresses/create', [AccountAddressController::class, 'create'])
+            ->name('address.create');
+        Route::post('/addresses', [AccountAddressController::class, 'store'])
+            ->name('address.store');
+        Route::get('/addresses/{address}/edit', [AccountAddressController::class, 'edit'])
+            ->name('address.edit');
+        Route::put('/addresses/{address}', [AccountAddressController::class, 'update'])
+            ->name('address.update');
+        Route::delete('/addresses/{address}', [AccountAddressController::class, 'destroy'])
+            ->name('address.destroy');
+        Route::put('/addresses/{address}/default', [AccountAddressController::class, 'setDefault'])
+            ->name('address.set-default');
     });
 });
 

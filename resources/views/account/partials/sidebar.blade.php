@@ -59,12 +59,15 @@
         </a>
 
         {{-- Addresses --}}
-        <a href="#" class="{{ $itemBase }} text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]">
+        <a href="{{ route('account.address.index') }}"
+            class="{{ $itemBase }} text-gray-700 hover:bg-gray-50 hover:text-[#0A0A0C]">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 11a4 4 0 100-8 4 4 0 000 8zm0 0c-5.333 0-8 3.333-8 6 0 3 3.333 6 8 6s8-3 8-6c0-2.667-2.667-6-8-6z" />
+                    d="M3 9.75L12 3l9 6.75M5.25 10.5v9A1.5 1.5 0 006.75 21h10.5a1.5 1.5 0 001.5-1.5v-9" />
             </svg>
+
+
             <span>Addresses</span>
         </a>
 
