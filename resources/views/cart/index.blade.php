@@ -77,13 +77,13 @@
                                             <p class="text-xs uppercase tracking-[0.16em] text-gray-400 mb-1">
                                                 {{ $p->category->name ?? 'Product' }}
                                             </p>
-                                            <h2 class="text-sm font-semibold text-gray-900 line-clamp-2">
+                                            <h2 class="text-base font-semibold text-gray-900 line-clamp-2">
                                                 {{ $p->name }}
                                             </h2>
 
                                             {{-- 🔹 在这里显示 variant --}}
                                             @if ($item->variant_label)
-                                                <p class="text-[11px] text-gray-500 mt-1">
+                                                <p class="text-sm text-gray-500 mt-1">
                                                     {{ $item->variant_label }}
                                                 </p>
                                             @endif
@@ -93,8 +93,8 @@
                                             <p class="text-sm font-semibold text-[#8f6a10]">
                                                 RM {{ number_format($item->unit_price, 2) }}
                                             </p>
-                                            <p class="text-xs text-gray-400">
-                                                Line total:
+                                            <p class="text-base text-gray-400">
+                                                Total:
                                                 <span class="font-medium text-gray-700">
                                                     RM {{ number_format($item->unit_price * $item->qty, 2) }}
                                                 </span>
@@ -111,7 +111,7 @@
                                             @method('PATCH')
 
                                             <div
-                                                class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3 py-1.5 shadow-sm gap-3">
+                                                class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3 py-1 shadow-sm gap-3">
 
                                                 {{-- - --}}
                                                 <button type="submit" name="action" value="decrease"
@@ -157,7 +157,7 @@
 
                     {{-- 右：Summary --}}
                     <aside class="bg-[#F9F4E5] rounded-2xl border border-[#E5D9B6] p-5 h-max">
-                        <h2 class="text-sm font-semibold text-[#0A0A0C] mb-4">
+                        <h2 class="text-base font-semibold text-[#0A0A0C] mb-4">
                             Order Summary
                         </h2>
 
@@ -169,10 +169,10 @@
                                 </dd>
                             </div>
                             {{-- 将来可以加 shipping / discount --}}
-                            {{-- <div class="flex justify-between">
+                            <div class="flex justify-between">
                                 <dt class="text-gray-500">Shipping</dt>
                                 <dd class="text-gray-700">Calculated at checkout</dd>
-                            </div> --}}
+                            </div>
                         </dl>
 
                         <div class="border-t border-[#E5D9B6] my-4"></div>
@@ -184,12 +184,23 @@
                             </span>
                         </div>
 
-                        <a href="{{ route('cart.index') }}"
-                            class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full bg-[#D4AF37] text-white text-sm font-semibold shadow hover:brightness-110 transition">
-                            Proceed to Checkout
-                        </a>
+                        <div class="flex flex-col gap-3">
 
-                        <p class="mt-3 text-[11px] text-gray-500">
+                            {{-- Continue Shopping --}}
+                            <a href="{{ route('shop.index') }}"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full border border-[#D4AF37] text-[#D4AF37] text-sm font-semibold hover:bg-[#D4AF37]/10 transition">
+                                Continue Shopping
+                            </a>
+
+                            {{-- Proceed to Checkout --}}
+                            <a href="{{ route('cart.index') }}"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full bg-[#D4AF37] text-white text-sm font-semibold shadow hover:brightness-110 transition">
+                                Proceed to Checkout
+                            </a>
+
+                        </div>
+
+                        <p class="mt-3 text-xs text-gray-500">
                             Secure checkout · All prices in RM
                         </p>
                     </aside>
