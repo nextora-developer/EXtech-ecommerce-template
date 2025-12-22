@@ -15,7 +15,7 @@ class AccountController extends Controller
         // 真实统计
         $stats = [
             'orders'    => $user->orders()->count() ?? 0,
-            'favorites' => 0,
+            'favorites' => $user->favorites()->count() ?? 0,
             'addresses' => $user->addresses()->count() ?? 0,
         ];
 

@@ -18,6 +18,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
 use App\Http\Controllers\AccountAddressController;
 use App\Http\Controllers\AccountProfileController;
+use App\Http\Controllers\AccountFavoriteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,6 +80,15 @@ Route::middleware('auth')->group(function () {
             ->name('profile.update');
         Route::delete('/profile', [AccountProfileController::class, 'destroy'])
             ->name('profile.destroy');
+
+        // Favorites
+        Route::get('/favorites', [AccountFavoriteController::class, 'index'])->name('favorites.index');
+        Route::post('/favorites/{product}', [AccountFavoriteController::class, 'store'])
+            ->middleware('auth')
+            ->name('favorites.store');
+        Route::delete('/favorites/{product}', [AccountFavoriteController::class, 'destroy'])
+            ->middleware('auth')
+            ->name('favorites.destroy');
     });
 });
 

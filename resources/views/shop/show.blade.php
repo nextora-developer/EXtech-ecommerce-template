@@ -15,7 +15,52 @@
 
             {{-- Main card --}}
             <div
-                class="bg-white rounded-2xl border border-[#D4AF37]/18 shadow-[0_18px_40px_rgba(0,0,0,0.06)] p-4 sm:p-6 lg:p-7">
+                class="relative bg-white rounded-2xl border border-[#D4AF37]/18 shadow-[0_18px_40px_rgba(0,0,0,0.06)] p-4 sm:p-6 lg:p-7">
+
+
+                {{-- ❤️ Favorite button --}}
+                @auth
+                    @php
+                        $isFavorited = auth()->user()->favorites->contains('product_id', $product->id);
+                    @endphp
+
+                    <form
+                        action="{{ $isFavorited ? route('account.favorites.destroy', $product) : route('account.favorites.store', $product) }}"
+                        method="POST" class="absolute top-3 right-3 z-30">
+                        @csrf
+                        @if ($isFavorited)
+                            @method('DELETE')
+                        @endif
+
+                        <button type="submit"
+                            class="w-9 h-9 flex items-center justify-center rounded-full bg-white/90 backdrop-blur hover:bg-white shadow-sm border border-gray-200 transition">
+
+                            @if ($isFavorited)
+                                {{-- 填充 ♥ --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37" viewBox="0 0 24 24" class="h-5 w-5">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36
+                                 2 12.28 2 8.5 2 5.42 4.42
+                                 3 7.5 3c1.74 0 3.41.81 4.5
+                                 2.09C13.09 3.81 14.76 3 16.5
+                                 3 19.58 3 22 5.42 22 8.5c0
+                                 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                </svg>
+                            @else
+                                {{-- 空心 ♥ --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10" stroke-width="1.8"
+                                    viewBox="0 0 24 24" class="h-5 w-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
+                               0-3.6 1-4.5 2.5C10.6 4.5
+                               8.9 3.5 7 3.5 4.2 3.5 2
+                               5.7 2 8.5c0 5.2 5.5 8.9
+                               9.8 12.7.1.1.3.1.4
+                               0C15.5 17.4 21 13.7 21 8.5z" />
+                                </svg>
+                            @endif
+                        </button>
+                    </form>
+                @endauth
+
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
 
@@ -274,7 +319,8 @@
             </div>
 
             {{-- Tabs Section --}}
-            <div class="mt-8 bg-white rounded-2xl border border-[#D4AF37]/18 shadow-[0_18px_40px_rgba(0,0,0,0.06)] p-6">
+            <div
+                class="mt-8 bg-white rounded-2xl border border-[#D4AF37]/18 shadow-[0_18px_40px_rgba(0,0,0,0.06)] p-6">
 
                 {{-- Tab Headers --}}
                 <div class="flex border-b border-gray-200 mb-4">
@@ -282,7 +328,8 @@
                         data-tab="desc">
                         Long Description
                     </button>
-                    <button class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-[#8f6a10]" data-tab="info">
+                    <button class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-[#8f6a10]"
+                        data-tab="info">
                         Additional Info
                     </button>
                 </div>
@@ -335,6 +382,55 @@
                                         </div>
                                     @endif
 
+                                    {{-- ❤️ Favorite --}}
+                                    @auth
+                                        @php
+                                            $isFavorited = auth()
+                                                ->user()
+                                                ->favorites->contains('product_id', $product->id);
+                                        @endphp
+
+                                        <form
+                                            action="{{ $isFavorited ? route('account.favorites.destroy', $product) : route('account.favorites.store', $product) }}"
+                                            method="POST" class="absolute top-2 right-2 z-20">
+                                            @csrf
+                                            @if ($isFavorited)
+                                                @method('DELETE')
+                                            @endif
+
+                                            <button type="submit"
+                                                class="w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur
+                   hover:bg-white shadow-sm">
+
+                                                @if ($isFavorited)
+                                                    {{-- 已收藏：金色 ♥ --}}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
+                                                        viewBox="0 0 24 24" class="h-5 w-5">
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36
+                                     2 12.28 2 8.5 2 5.42 4.42
+                                     3 7.5 3c1.74 0 3.41.81 4.5
+                                     2.09C13.09 3.81 14.76 3 16.5
+                                     3 19.58 3 22 5.42 22 8.5c0
+                                     3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                    </svg>
+                                                @else
+                                                    {{-- 未收藏：空心 ♥ --}}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        stroke="#8f6a10" stroke-width="1.8" viewBox="0 0 24 24"
+                                                        class="h-5 w-5">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
+                                   0-3.6 1-4.5 2.5C10.6 4.5
+                                   8.9 3.5 7 3.5 4.2 3.5 2
+                                   5.7 2 8.5c0 5.2 5.5 8.9
+                                   9.8 12.7.1.1.3.1.4 0C15.5
+                                   17.4 21 13.7 21 8.5z" />
+                                                    </svg>
+                                                @endif
+                                            </button>
+                                        </form>
+                                    @endauth
+
+
                                     <div
                                         class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition">
                                     </div>
@@ -345,6 +441,7 @@
                                     <p class="text-xs uppercase tracking-[0.18em] text-gray-400 mb-1">
                                         {{ $item->category->name ?? 'Product' }}
                                     </p>
+
                                     <h3 class="text-sm font-semibold text-gray-900 line-clamp-2">
                                         {{ $item->name }}
                                     </h3>
@@ -365,9 +462,6 @@
                     </div>
                 </div>
             @endif
-
-
-
         </div>
     </div>
 
