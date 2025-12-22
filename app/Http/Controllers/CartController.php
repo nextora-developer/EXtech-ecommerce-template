@@ -30,7 +30,7 @@ class CartController extends Controller
 
     public function add(Request $request, Product $product)
     {
-        // find or create cart
+        // 找 / 建 cart
         $cart = Cart::firstOrCreate([
             'user_id'    => auth()->id(),
             'session_id' => $request->session()->getId(),
@@ -38,42 +38,57 @@ class CartController extends Controller
 
         $qty = max(1, (int) $request->input('quantity', 1));
 
-        // 核心：判断 variant
+        $variantId    = null;
+        $variantLabel = null;
+        $unitPrice    = $product->price;
+
         if ($product->has_variants) {
+            $variantId = $request->input('variant_id');
 
-            // 暂时我们这样获取 variant：
-            $variant = $product->variants()->first(); // 先拿一个 variant
-
-            if (!$variant) {
-                return back()->with('error', 'Variant not found.');
+            if (!$variantId) {
+                return back()->with('error', 'Please select a variant before adding to cart.');
             }
 
+            $variant = $product->variants()->where('id', $variantId)->firstOrFail();
+
             $unitPrice = $variant->price;
-        } else {
-            $unitPrice = $product->price;
+
+            // 这边如果你喜欢可以继续用 label/value 组合的文字
+            $variantLabel = $variant->options
+                ? ('label: ' . ($variant->options['label'] ?? '') . ' • value: ' . ($variant->options['value'] ?? ''))
+                : null;
         }
 
         if (is_null($unitPrice)) {
-            return back()->with('error', 'Please set a price or variant price.');
+            return back()->with('error', 'This product or variant does not have a price set.');
         }
 
-        // store
-        $item = $cart->items()->where('product_id', $product->id)->first();
+        // ✅ 同一个 product + 同一个 variant 合并数量
+        $query = $cart->items()->where('product_id', $product->id);
+
+        if ($variantId) {
+            $query->where('product_variant_id', $variantId);
+        } else {
+            $query->whereNull('product_variant_id');
+        }
+
+        $item = $query->first();
 
         if ($item) {
             $item->qty += $qty;
             $item->save();
         } else {
             $cart->items()->create([
-                'product_id' => $product->id,
-                'qty'        => $qty,
-                'unit_price' => $unitPrice,
+                'product_id'         => $product->id,
+                'product_variant_id' => $variantId,
+                'qty'                => $qty,
+                'unit_price'         => $unitPrice,
+                'variant_label'      => $variantLabel,
             ]);
         }
 
         return redirect()->route('cart.index');
     }
-
 
 
     public function update(Request $request, CartItem $item)
@@ -101,7 +116,16 @@ class CartController extends Controller
 
     public function remove(CartItem $item)
     {
+        // 先记住它属于哪一个 cart
+        $cart = $item->cart;   // 确保 CartItem 有 cart() 关系
+
+        // 删掉这条 item
         $item->delete();
+
+        // 如果这个 cart 已经没有任何 item 了，就把 cart 也删掉
+        if ($cart && !$cart->items()->exists()) {
+            $cart->delete();
+        }
 
         return redirect()->route('cart.index')
             ->with('success', 'Item removed.');

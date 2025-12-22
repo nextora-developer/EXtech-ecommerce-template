@@ -81,10 +81,10 @@
                                                 {{ $p->name }}
                                             </h2>
 
-                                            {{-- 如果将来有 variant 可以在这里显示 --}}
-                                            @if (!empty($item->variant_name))
-                                                <p class="text-xs text-gray-500 mt-1">
-                                                    {{ $item->variant_name }}
+                                            {{-- 🔹 在这里显示 variant --}}
+                                            @if ($item->variant_label)
+                                                <p class="text-[11px] text-gray-500 mt-1">
+                                                    {{ $item->variant_label }}
                                                 </p>
                                             @endif
                                         </div>
