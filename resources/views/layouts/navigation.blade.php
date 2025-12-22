@@ -106,7 +106,7 @@
 
                     <span
                         class="absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1 rounded-full bg-[#D4AF37] text-[11px] font-semibold text-white flex items-center justify-center">
-                        {{ auth()->user()->cart?->items->count() ?? 0}}
+                        {{ auth()->user()?->cart?->items?->count() ?? 0 }}
                     </span>
 
                 </a>

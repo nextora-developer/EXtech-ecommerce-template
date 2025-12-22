@@ -57,6 +57,7 @@ class AdminProductController extends Controller
             'category_id' => ['nullable', 'exists:categories,id'],
             'name'        => ['required', 'string', 'max:255'],
             'slug'        => ['nullable', 'string', 'max:255', 'unique:products,slug'],
+            'short_description' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
 
             'has_variants' => ['nullable', 'boolean'],
@@ -258,6 +259,7 @@ class AdminProductController extends Controller
             'category_id' => ['nullable', 'exists:categories,id'],
             'name'        => ['required', 'string', 'max:255'],
             'slug'        => ['nullable', 'string', 'max:255', Rule::unique('products', 'slug')->ignore($product->id)],
+            'short_description' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
 
             'has_variants' => ['nullable', 'boolean'],

@@ -43,13 +43,32 @@
 
         {{-- ROW 2 --}}
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-2">
-                <label class="form-label">Description</label>
-                <textarea name="description" rows="6" class="form-input" placeholder="Short product description">{{ old('description', $product->description) }}</textarea>
+
+            {{-- Short Description --}}
+            <div class="lg:col-span-4">
+                <label class="form-label">Short Description</label>
+                <textarea name="short_description" rows="4" class="form-input"
+                    placeholder="Short product description (max 255 chars)">{{ old('short_description', $product->short_description) }}</textarea>
             </div>
 
+        </div>
+
+        {{-- ROW 3 --}}
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+            {{-- Long Description --}}
+            <div class="lg:col-span-4">
+                <label class="form-label">Description</label>
+                <textarea name="description" rows="6" class="form-input" placeholder="Full product details">{{ old('description', $product->description) }}</textarea>
+            </div>
+
+        </div>
+
+
+        {{-- ROW 4 --}}
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {{-- product image upload card --}}
-            <div class="border rounded-xl p-4 lg:col-span-2">
+            <div class="border rounded-xl p-4 lg:col-span-4">
                 <label class="form-label mb-2">Product Images</label>
 
                 <div class="flex flex-col gap-3">
@@ -103,7 +122,7 @@
         </div>
 
 
-        {{-- ROW 3 --}}
+        {{-- ROW 5 --}}
         <div class="border rounded-xl p-5 space-y-6">
             <div class="flex justify-between items-center">
                 <p class="font-medium text-gray-900">Pricing & Stock</p>

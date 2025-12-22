@@ -196,8 +196,8 @@
 
                         {{-- 描述 --}}
                         <div class="text-sm text-gray-700 leading-relaxed space-y-2 break-words">
-                            @if ($product->description)
-                                <p>{{ $product->description }}</p>
+                            @if ($product->short_description)
+                                <p>{{ $product->short_description }}</p>
                             @else
                                 <p class="text-gray-500 text-sm">
                                     No description for this product yet.

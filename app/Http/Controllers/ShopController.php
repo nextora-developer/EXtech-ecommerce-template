@@ -35,7 +35,8 @@ class ShopController extends Controller
 
         if ($search = $request->q) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('short_description', 'like', "%{$search}%");
             });
         }
 
