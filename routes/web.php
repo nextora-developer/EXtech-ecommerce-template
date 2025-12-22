@@ -14,17 +14,15 @@ use App\Http\Controllers\Admin\AdminAddressController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminBannerController;
 
-
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
 use App\Http\Controllers\AccountAddressController;
 use App\Http\Controllers\AccountProfileController;
-
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Public Shop
+| Public Shop (不需要登录)
 |--------------------------------------------------------------------------
 */
 
@@ -32,22 +30,24 @@ Route::get('/', [ShopController::class, 'home'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/product/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
 
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-Route::patch('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
-Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
-
-Route::get('/checkout', [CheckoutController::class, 'index'])
-    ->name('checkout.index');
-
 /*
 |--------------------------------------------------------------------------
-| Customer (Auth)
+| Customer (需要登录的功能：Cart + Checkout + Account
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
-    Route::middleware(['auth'])->prefix('account')->name('account.')->group(function () {
+    // Cart 全部要登录
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
+
+    // Checkout 也要登录
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+
+    // Account 相关
+    Route::prefix('account')->name('account.')->group(function () {
 
         Route::get('/', [AccountController::class, 'index'])
             ->name('index');
@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/addresses/{address}/default', [AccountAddressController::class, 'setDefault'])
             ->name('address.set-default');
 
-        //Profile
+        // Profile
         Route::get('/profile', [AccountProfileController::class, 'edit'])
             ->name('profile.edit');
         Route::patch('/profile', [AccountProfileController::class, 'update'])
@@ -113,14 +113,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::patch('products/{product}/toggle', [AdminProductController::class, 'toggle'])
         ->name('products.toggle');
 
-
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::post('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
 
     Route::resource('users', AdminUserController::class)
         ->only(['index', 'show', 'edit', 'update']);
-
 
     // 地址：新增依附 user，其他用 address id
     Route::get('users/{user}/addresses/create', [AdminAddressController::class, 'create'])

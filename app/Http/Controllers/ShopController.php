@@ -76,6 +76,11 @@ class ShopController extends Controller
             'variants' => fn($q) => $q->where('is_active', true),
         ]);
 
-        return view('shop.show', compact('product'));
+        $related = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->limit(4)
+            ->get();
+
+        return view('shop.show', compact('product', 'related'));
     }
 }

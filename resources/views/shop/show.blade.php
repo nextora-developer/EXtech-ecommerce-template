@@ -112,7 +112,28 @@
                         {{-- 价格 --}}
                         <div class="mt-2 flex items-center gap-3">
                             <div class="text-2xl font-semibold text-[#8f6a10]" data-product-price>
-                                RM {{ number_format($product->price, 2) }}
+                                @if ($product->has_variants && $product->variants->count())
+                                    @php
+                                        // 拿有填 price 的 variants
+                                        $variantPrices = $product->variants->whereNotNull('price');
+                                        $min = $variantPrices->min('price');
+                                        $max = $variantPrices->max('price');
+                                    @endphp
+
+                                    @if ($min === null)
+                                        {{-- 有 variants 但是都没有填价钱 --}}
+                                        RM 0.00
+                                    @elseif ($min == $max)
+                                        {{-- 所有 variants 同一个价钱 --}}
+                                        RM {{ number_format($min, 2) }}
+                                    @else
+                                        {{-- 显示价钱范围 --}}
+                                        RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
+                                    @endif
+                                @else
+                                    {{-- 没有 variants，用 product 本身的 price --}}
+                                    RM {{ number_format($product->price ?? 0, 2) }}
+                                @endif
                             </div>
                             {{-- 可以以后加上划线原价 --}}
                             {{-- <div class="text-sm text-gray-400 line-through">RM 129.90</div> --}}
@@ -129,7 +150,7 @@
                         <div class="mt-4 mb-4 border-t border-gray-100"></div>
 
                         {{-- 描述 --}}
-                        <div class="text-sm text-gray-700 leading-relaxed space-y-2">
+                        <div class="text-sm text-gray-700 leading-relaxed space-y-2 break-words">
                             @if ($product->description)
                                 <p>{{ $product->description }}</p>
                             @else
@@ -143,7 +164,7 @@
 
 
                         {{-- 再一条细分割线 --}}
-                        <div class="mt-5 mb-4 border-t border-gray-100"></div>
+                        <div class="mt-5 border-t border-gray-100"></div>
 
                         {{-- Add to cart 区块 --}}
                         <form method="POST" action="{{ route('cart.add', $product) }}" class="mt-auto">
@@ -201,7 +222,7 @@
 
 
 
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-5">
                                 {{-- 数量 --}}
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wide text-gray-400 mb-1">
@@ -252,8 +273,100 @@
                 </div>
             </div>
 
+            {{-- Tabs Section --}}
+            <div class="mt-8 bg-white rounded-2xl border border-[#D4AF37]/18 shadow-[0_18px_40px_rgba(0,0,0,0.06)] p-6">
+
+                {{-- Tab Headers --}}
+                <div class="flex border-b border-gray-200 mb-4">
+                    <button class="px-4 py-2 text-sm font-semibold text-gray-700 border-b-2 border-[#D4AF37]"
+                        data-tab="desc">
+                        Long Description
+                    </button>
+                    <button class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-[#8f6a10]" data-tab="info">
+                        Additional Info
+                    </button>
+                </div>
+
+                {{-- Content: Description --}}
+                <div id="tab-desc" class="text-sm text-gray-700 leading-relaxed space-y-2 break-words">
+                    @if ($product->description)
+                        <p>{{ $product->description }}</p>
+                    @else
+                        <p class="text-gray-500 text-sm">No description for this product yet.</p>
+                    @endif
+                </div>
+
+                {{-- Content: Additional Info --}}
+                <div id="tab-info" class="hidden text-sm text-gray-700 leading-relaxed space-y-2">
+
+                    {{-- Example info，可自行改 --}}
+                    <ul class="list-disc pl-5 space-y-1 text-gray-600">
+                        <li>Material: Cotton</li>
+                        <li>Weight: 200g</li>
+                        <li>Dimensions: 30cm × 20cm</li>
+                        <li>SKU: {{ $product->sku ?? 'N/A' }}</li>
+                    </ul>
+
+                </div>
+            </div>
+
+
             {{-- 以后可以在这里加 related products --}}
-            {{-- @include('shop.partials.related', [...]) --}}
+            {{-- Related Products --}}
+            @if ($related->count())
+                <div class="mt-10">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                        Related Products
+                    </h2>
+
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6">
+                        @foreach ($related as $item)
+                            <a href="{{ route('shop.show', $item->slug) }}"
+                                class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#D4AF37]/60 transition overflow-hidden flex flex-col">
+                                {{-- Product image --}}
+                                <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                                    @if ($item->image ?? false)
+                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    @else
+                                        <div
+                                            class="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                                            Image coming soon
+                                        </div>
+                                    @endif
+
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition">
+                                    </div>
+                                </div>
+
+                                {{-- Content --}}
+                                <div class="flex-1 flex flex-col px-3.5 py-3">
+                                    <p class="text-xs uppercase tracking-[0.18em] text-gray-400 mb-1">
+                                        {{ $item->category->name ?? 'Product' }}
+                                    </p>
+                                    <h3 class="text-sm font-semibold text-gray-900 line-clamp-2">
+                                        {{ $item->name }}
+                                    </h3>
+
+                                    <div class="mt-2 flex items-center justify-between">
+                                        <p class="text-sm font-semibold text-[#8f6a10]">
+                                            RM {{ number_format($item->price, 2) }}
+                                        </p>
+
+                                        <button type="button"
+                                            class="inline-flex items-center rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-700 group-hover:border-[#D4AF37]/70 group-hover:text-[#8f6a10]">
+                                            View details
+                                        </button>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+
 
         </div>
     </div>
@@ -471,6 +584,33 @@
                 const dx = e.changedTouches[0].clientX - sx;
                 if (dx > 50) go(index - 1);
                 if (dx < -50) go(index + 1);
+            });
+
+            //Long description and additional tab
+            const buttons = document.querySelectorAll('[data-tab]');
+            const tabDesc = document.getElementById('tab-desc');
+            const tabInfo = document.getElementById('tab-info');
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const active = btn.dataset.tab;
+
+                    buttons.forEach(b => {
+                        b.classList.remove('text-gray-700', 'border-[#D4AF37]');
+                        b.classList.add('text-gray-500');
+                    });
+
+                    btn.classList.add('text-gray-700', 'border-[#D4AF37]');
+                    btn.classList.remove('text-gray-500');
+
+                    if (active === 'desc') {
+                        tabDesc.classList.remove('hidden');
+                        tabInfo.classList.add('hidden');
+                    } else {
+                        tabInfo.classList.remove('hidden');
+                        tabDesc.classList.add('hidden');
+                    }
+                });
             });
         });
     </script>

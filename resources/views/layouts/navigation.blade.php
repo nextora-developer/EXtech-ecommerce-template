@@ -1,5 +1,4 @@
-<nav x-data="{ open: false }"
-     class="border-b border-[#F2E8D0] bg-white/95 backdrop-blur sticky top-0 z-30">    
+<nav x-data="{ open: false }" class="border-b border-[#F2E8D0] bg-white/95 backdrop-blur sticky top-0 z-30">
 
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
@@ -107,8 +106,9 @@
 
                     <span
                         class="absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1 rounded-full bg-[#D4AF37] text-[11px] font-semibold text-white flex items-center justify-center">
-                        0
+                        {{ auth()->user()->cart?->items->count() ?? 0}}
                     </span>
+
                 </a>
 
                 @auth
