@@ -128,7 +128,28 @@
 
                                 <div class="mt-2 flex items-center justify-between">
                                     <p class="text-sm font-semibold text-[#8f6a10]">
-                                        RM {{ number_format($product->price, 2) }}
+                                        @if ($product->has_variants && $product->variants->count())
+                                            @php
+                                                // 拿有填 price 的 variants
+                                                $variantPrices = $product->variants->whereNotNull('price');
+                                                $min = $variantPrices->min('price');
+                                                $max = $variantPrices->max('price');
+                                            @endphp
+
+                                            @if ($min === null)
+                                                {{-- 有 variants 但是都没有填价钱 --}}
+                                                RM 0.00
+                                            @elseif ($min == $max)
+                                                {{-- 所有 variants 同一个价钱 --}}
+                                                RM {{ number_format($min, 2) }}
+                                            @else
+                                                {{-- 显示价钱范围 --}}
+                                                RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
+                                            @endif
+                                        @else
+                                            {{-- 没有 variants，用 product 本身的 price --}}
+                                            RM {{ number_format($product->price ?? 0, 2) }}
+                                        @endif
                                     </p>
 
                                     <button type="button"

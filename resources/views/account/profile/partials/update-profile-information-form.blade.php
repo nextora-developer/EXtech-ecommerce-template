@@ -17,7 +17,7 @@
     @csrf
     @method('patch')
 
-    {{-- Name + Email 同一行 --}}
+    {{-- Name + Email --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         {{-- Name --}}
         <div>
@@ -31,6 +31,39 @@
                         focus:border-[#D4AF37] focus:ring-[#D4AF37]/30" />
 
             @error('name')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label for="ic_number" class="block text-sm text-gray-500 mb-1">
+                {{ __('IC Number') }}
+            </label>
+
+            <input id="ic_number" name="ic_number" type="text" value="{{ old('ic_number', $user->ic_number) }}"
+                class="w-full rounded-xl border-gray-200 text-base px-3 py-3
+                        focus:border-[#D4AF37] focus:ring-[#D4AF37]/30" />
+
+            @error('ic_number')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+    </div>
+
+    {{-- Phone + IC --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {{-- Phone --}}
+        <div>
+            <label for="phone" class="block text-sm text-gray-500 mb-1">
+                {{ __('Phone Number') }}
+            </label>
+
+            <input id="phone" name="phone" type="text" value="{{ old('phone', $user->phone) }}"
+                class="w-full rounded-xl border-gray-200 text-base px-3 py-3
+                        focus:border-[#D4AF37] focus:ring-[#D4AF37]/30" />
+
+            @error('phone')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>

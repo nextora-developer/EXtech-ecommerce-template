@@ -4,8 +4,7 @@
         @if (isset($banners) && $banners->count())
             <section class="w-full h-[260px] sm:h-[360px] lg:h-[420px] relative z-0 bg-white" data-banner-slider>
                 <div class="max-w-7xl5 mx-auto h-full px-4 sm:px-6 lg:px-8 pt-5">
-                    <div
-                        class="relative h-full rounded-3xl overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.25)]">
+                    <div class="relative h-full rounded-3xl overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.25)]">
                         {{-- 轨道 --}}
                         <div class="flex h-full transition-transform duration-700 ease-out" data-banner-track>
                             @foreach ($banners as $banner)
@@ -155,8 +154,7 @@
                                 {{-- Product image --}}
                                 <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden">
                                     @if ($product->image ?? false)
-                                        <img src="{{ asset('storage/' . $product->image) }}"
-                                            alt="{{ $product->name }}"
+                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                     @else
                                         <div
@@ -173,7 +171,7 @@
                                 {{-- Content --}}
                                 <div class="flex-1 flex flex-col px-3.5 py-3">
                                     <p class="text-xs uppercase tracking-[0.18em] text-gray-400 mb-1">
-                                        {{ $product->category->name ?? 'Product'  }}
+                                        {{ $product->category->name ?? 'Product' }}
                                     </p>
                                     <h3 class="text-sm font-semibold text-gray-900 line-clamp-2">
                                         {{ $product->name }}
@@ -181,7 +179,28 @@
 
                                     <div class="mt-2 flex items-center justify-between">
                                         <p class="text-sm font-semibold text-[#8f6a10]">
-                                            RM {{ number_format($product->price, 2) }}
+                                            @if ($product->has_variants && $product->variants->count())
+                                                @php
+                                                    // 拿有填 price 的 variants
+                                                    $variantPrices = $product->variants->whereNotNull('price');
+                                                    $min = $variantPrices->min('price');
+                                                    $max = $variantPrices->max('price');
+                                                @endphp
+
+                                                @if ($min === null)
+                                                    {{-- 有 variants 但是都没有填价钱 --}}
+                                                    RM 0.00
+                                                @elseif ($min == $max)
+                                                    {{-- 所有 variants 同一个价钱 --}}
+                                                    RM {{ number_format($min, 2) }}
+                                                @else
+                                                    {{-- 显示价钱范围 --}}
+                                                    RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
+                                                @endif
+                                            @else
+                                                {{-- 没有 variants，用 product 本身的 price --}}
+                                                RM {{ number_format($product->price ?? 0, 2) }}
+                                            @endif
                                         </p>
 
                                         <button type="button"

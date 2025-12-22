@@ -42,13 +42,30 @@
             </div>
 
             {{-- Row 1: Basic Info --}}
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="text-xs text-gray-500">Name</label>
                     <input type="text" name="name" value="{{ old('name', $user->name) }}"
                         class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
                 </div>
 
+                <div>
+                    <label class="text-xs text-gray-500">IC Number</label>
+                    <input type="text" name="ic_number" value="{{ old('ic_number', $user->ic_number) }}"
+                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
+                        placeholder="Optional">
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-500">Password (optional)</label>
+                    <input type="password" name="password"
+                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
+                        placeholder="Leave blank">
+                </div>
+            </div>
+
+            {{-- Row 2: IC Number --}}
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="text-xs text-gray-500">Email</label>
                     <input type="email" name="email" value="{{ old('email', $user->email) }}"
@@ -59,13 +76,6 @@
                     <label class="text-xs text-gray-500">Phone</label>
                     <input type="text" name="phone" value="{{ old('phone', $user->phone) }}"
                         class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-                </div>
-
-                <div>
-                    <label class="text-xs text-gray-500">Password (optional)</label>
-                    <input type="password" name="password"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
-                        placeholder="Leave blank">
                 </div>
             </div>
 
