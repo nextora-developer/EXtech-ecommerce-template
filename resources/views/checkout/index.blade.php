@@ -375,10 +375,10 @@
                                                 <div class="pt-2 border-t border-gray-100">
                                                     <label class="text-sm font-semibold text-gray-800">
                                                         Upload Payment Receipt
-                                                        <span class="text-gray-500 ml-1">(optional)</span>
+                                                        <span class="text-gray-500 ml-1">(Required)</span>
                                                     </label>
 
-                                                    <input type="file" name="payment_receipt"
+                                                    <input type="file" name="payment_receipt" required
                                                         class="mt-2 block w-full sm:w-72 text-sm
                                 border border-gray-300 rounded-xl
                                 file:mr-3 file:px-4 file:py-2
@@ -401,8 +401,7 @@
 
                     <div class="lg:col-span-2 space-y-4">
                         {{-- 右：Order Summary card --}}
-                        <aside
-                            class="bg-[#F9F4E5] rounded-2xl border border-[#E5D9B6] p-5 h-max lg:sticky lg:top-28">
+                        <aside class="bg-[#F9F4E5] rounded-2xl border border-[#E5D9B6] p-5 h-max lg:sticky lg:top-28">
                             <h2 class="text-lg font-semibold text-[#0A0A0C] mb-4">
                                 Order Summary
                             </h2>
@@ -631,6 +630,22 @@
         });
     </script>
 
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const method = document.querySelector('.payment-radio:checked')?.value;
+            const file = document.querySelector('input[name="payment_receipt"]');
+
+            if (method === 'online_transfer' && !file.value) {
+                e.preventDefault();
+                alert('Please upload your payment receipt before placing order.');
+                file.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                file.focus();
+            }
+        });
+    </script>
 
 
 </x-app-layout>
