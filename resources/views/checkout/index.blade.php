@@ -379,12 +379,7 @@
                                                     </label>
 
                                                     <input type="file" name="payment_receipt" required
-                                                        class="mt-2 block w-full sm:w-72 text-sm
-                                border border-gray-300 rounded-xl
-                                file:mr-3 file:px-4 file:py-2
-                                file:rounded-xl file:border-0
-                                file:bg-[#FDF3D7] file:text-[#8f6a10]
-                                hover:file:bg-[#F9E6AE]">
+                                                        class="mt-2 block w-full sm:w-72 text-sm border border-gray-300 rounded-xl file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-[#FDF3D7] file:text-[#8f6a10] hover:file:bg-[#F9E6AE] file:focus:bg-[#FDF3D7] file:active:bg-[#F9E6AE]">
                                                 </div>
                                             </div>
                                         @endif
