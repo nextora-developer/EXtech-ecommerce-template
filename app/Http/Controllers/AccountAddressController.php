@@ -34,6 +34,7 @@ class AccountAddressController extends Controller
         $data = $request->validate([
             'recipient_name' => ['required', 'string', 'max:255'],
             'phone'          => ['required', 'string', 'max:30'],
+            'email'          => ['required', 'string', 'email', 'max:255'],
             'address_line1'  => ['required', 'string', 'max:255'],
             'address_line2'  => ['nullable', 'string', 'max:255'],
             'city'           => ['required', 'string', 'max:100'],
@@ -88,6 +89,7 @@ class AccountAddressController extends Controller
         $data = $request->validate([
             'recipient_name' => ['required', 'string', 'max:255'],
             'phone'          => ['required', 'string', 'max:30'],
+            'email'          => ['required', 'string', 'email', 'max:255'],
             'address_line1'  => ['required', 'string', 'max:255'],
             'address_line2'  => ['nullable', 'string', 'max:255'],
             'city'           => ['required', 'string', 'max:100'],

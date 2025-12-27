@@ -51,7 +51,7 @@
                             @csrf
 
                             {{-- Row 1: Recipient + Phone --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                                 <div>
                                     <label class="block text-sm text-gray-500 mb-1">
                                         Recipient Name
@@ -72,6 +72,17 @@
                                               focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
                                         placeholder="e.g. 012-3456789">
                                 </div>
+
+                                <div>
+                                    <label class="block text-sm text-gray-500 mb-1">
+                                        Email Address
+                                    </label>
+                                    <input type="email" name="email" value="{{ old('email') }}"
+                                        class="w-full rounded-xl border-gray-200 text-base px-3 py-3
+                                                focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
+                                        placeholder="e.g. name@example.com">
+                                </div>
+
                             </div>
 
                             {{-- Row 2: Address lines --}}

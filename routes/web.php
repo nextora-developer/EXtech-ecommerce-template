@@ -45,7 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
 
     // Checkout 也要登录
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::get('/checkout', [CheckoutController::class, 'index'])
+        ->name('checkout.index');
+    Route::post('/checkout/place-order', [CheckoutController::class, 'store'])
+        ->name('checkout.store');
 
     // Account 相关
     Route::prefix('account')->name('account.')->group(function () {

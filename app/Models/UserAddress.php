@@ -10,6 +10,7 @@ class UserAddress extends Model
         'user_id',
         'recipient_name',
         'phone',
+        'email',
         'address_line1',
         'address_line2',
         'city',

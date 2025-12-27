@@ -157,11 +157,11 @@
 
                     {{-- 右：Summary --}}
                     <aside class="bg-[#F9F4E5] rounded-2xl border border-[#E5D9B6] p-5 h-max">
-                        <h2 class="text-base font-semibold text-[#0A0A0C] mb-4">
+                        <h2 class="text-lg font-semibold text-[#0A0A0C] mb-4">
                             Order Summary
                         </h2>
 
-                        <dl class="space-y-2 text-sm">
+                        <dl class="space-y-2 text-base">
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Subtotal</dt>
                                 <dd class="font-semibold text-gray-900">
@@ -177,7 +177,7 @@
 
                         <div class="border-t border-[#E5D9B6] my-4"></div>
 
-                        <div class="flex justify-between items-center mb-4 text-sm">
+                        <div class="flex justify-between items-center mb-4 text-base">
                             <span class="font-semibold text-gray-900">Total</span>
                             <span class="text-lg font-semibold text-[#8f6a10]">
                                 RM {{ number_format($subtotal, 2) }}
@@ -188,19 +188,19 @@
 
                             {{-- Continue Shopping --}}
                             <a href="{{ route('shop.index') }}"
-                                class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full border border-[#D4AF37] text-[#D4AF37] text-sm font-semibold hover:bg-[#D4AF37]/10 transition">
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full border border-[#D4AF37] text-[#D4AF37] text-base font-semibold hover:bg-[#D4AF37]/10 transition">
                                 Continue Shopping
                             </a>
 
                             {{-- Proceed to Checkout --}}
-                            <a href="{{ route('cart.index') }}"
-                                class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full bg-[#D4AF37] text-white text-sm font-semibold shadow hover:brightness-110 transition">
+                            <a href="{{ route('checkout.index') }}"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full bg-[#D4AF37] text-white text-base font-semibold shadow hover:brightness-110 transition">
                                 Proceed to Checkout
                             </a>
 
                         </div>
 
-                        <p class="mt-3 text-xs text-gray-500">
+                        <p class="mt-3 text-sm text-gray-500">
                             Secure checkout · All prices in RM
                         </p>
                     </aside>

@@ -1,8 +1,461 @@
 <x-app-layout>
     <div class="bg-[#f7f7f9] py-10">
         <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-2xl font-semibold mb-4">Checkout (Coming Soon)</h1>
-            <p class="text-sm text-gray-600">You can design this page later.</p>
+
+            {{-- Breadcrumb --}}
+            <nav class="text-sm text-gray-500 mb-4">
+                <a href="{{ route('home') }}" class="hover:text-[#8f6a10]">Home</a>
+                <span class="mx-1">/</span>
+                <a href="{{ route('cart.index') }}" class="hover:text-[#8f6a10]">Cart</a>
+                <span class="mx-1">/</span>
+                <span class="text-gray-400">Checkout</span>
+            </nav>
+
+            {{-- 整个 checkout 表单 --}}
+            <form method="POST" action="{{ route('checkout.store') }}">
+                @csrf
+
+                <section class="bg-transparent p-0 flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:gap-8">
+
+                    <div class="lg:col-span-2 space-y-4">
+
+                        {{-- 左：信息 card --}}
+                        <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8 lg:col-span-2">
+
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold text-[#0A0A0C] mb-1">
+                                    Checkout
+                                </h1>
+                                <p class="text-sm text-gray-500">
+                                    Please fill in your details to complete the order
+                                </p>
+                            </div>
+
+                            {{-- 🔹 Saved Addresses：地址切换 --}}
+                            @if (isset($addresses) && $addresses->count())
+                                <div class="mb-6">
+                                    {{-- <p class="text-xs font-medium text-gray-500 mb-2 uppercase tracking-[0.16em]">
+                                    Saved Addresses
+                                </p> --}}
+
+                                    <div class="flex gap-3 overflow-x-auto pb-1 no-scrollbar" data-address-scroller>
+                                        @foreach ($addresses as $addr)
+                                            @php
+                                                $isDefault =
+                                                    isset($defaultAddress) && $defaultAddress->id === $addr->id;
+                                                $fullAddress = trim(
+                                                    implode(
+                                                        ', ',
+                                                        array_filter([
+                                                            $addr->address_line1 ?? null,
+                                                            $addr->address_line2 ?? null,
+                                                            ($addr->postcode ?? null) . ' ' . ($addr->city ?? null),
+                                                            $addr->state ?? null,
+                                                            $addr->country ?? null,
+                                                        ]),
+                                                    ),
+                                                );
+                                            @endphp
+
+                                            <button type="button" data-address-choice
+                                                data-name="{{ $addr->recipient_name ?? '' }}"
+                                                data-phone="{{ $addr->phone ?? '' }}"
+                                                data-email="{{ $addr->email ?? '' }}"
+                                                data-address_line1="{{ $addr->address_line1 ?? '' }}"
+                                                data-address_line2="{{ $addr->address_line2 ?? '' }}"
+                                                data-postcode="{{ $addr->postcode ?? '' }}"
+                                                data-city="{{ $addr->city ?? '' }}"
+                                                data-state="{{ $addr->state ?? '' }}"
+                                                data-country="{{ $addr->country ?? '' }}"
+                                                class="min-w-[230px] text-left rounded-2xl border px-4 py-3 text-xs
+                            {{ $isDefault ? 'border-[#D4AF37] bg-[#FDF7E7]' : 'border-gray-200 bg-gray-50' }}
+                            hover:border-[#D4AF37] hover:bg-[#FDF3D7] transition">
+
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <span class="font-semibold text-gray-900 truncate">
+                                                        {{ $addr->recipient_name ?? 'Recipient' }}
+                                                    </span>
+                                                    @if ($isDefault)
+                                                        <span
+                                                            class="ml-2 px-2 py-0.5 rounded-full bg-[#D4AF37] text-[10px] font-semibold text-white">
+                                                            Default
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                <p class="text-gray-500 line-clamp-2">
+                                                    {{ $fullAddress }}
+                                                </p>
+
+                                                @if (!empty($addr->phone))
+                                                    <p class="text-gray-400 mt-1">
+                                                        📞 {{ $addr->phone }}
+                                                    </p>
+                                                @endif
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- 验证错误 --}}
+                            @if ($errors->any())
+                                <div class="mb-4 border border-red-200 bg-red-50 text-red-700 text-sm rounded-xl p-3">
+                                    <ul class="list-disc ml-5 space-y-1">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <div class="space-y-6">
+
+                                {{-- 联系人 + 电话 + Email --}}
+                                <div class="grid sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-2">
+                                            Full Name
+                                        </label>
+                                        <input type="text" name="name"
+                                            value="{{ old('name', $defaultAddress->recipient_name ?? (auth()->user()->name ?? '')) }}"
+                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                            required>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-2">
+                                            Phone Number
+                                        </label>
+                                        <input type="text" name="phone"
+                                            value="{{ old('phone', $defaultAddress->phone ?? '') }}"
+                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                            required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-2">
+                                            Email Address
+                                        </label>
+                                        <input type="email" name="email"
+                                            value="{{ old('email', $defaultAddress->email ?? '') }}"
+                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                            placeholder="name@example.com" required>
+                                    </div>
+                                </div>
+
+                                {{-- 地址 --}}
+                                <div>
+                                    {{-- Row 1: Address Line 1 + Address Line 2 --}}
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-2">
+                                                Address Line 1
+                                            </label>
+                                            <input type="text" name="address_line1"
+                                                value="{{ old('address_line1', $defaultAddress->address_line1 ?? '') }}"
+                                                class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                                placeholder="Street, building, unit" required>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-2">
+                                                Address Line 2 (optional)
+                                            </label>
+                                            <input type="text" name="address_line2"
+                                                value="{{ old('address_line2', $defaultAddress->address_line2 ?? '') }}"
+                                                class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                                placeholder="Floor, unit, etc.">
+                                        </div>
+                                    </div>
+
+                                    {{-- Row 2: Postcode, City, State, Country --}}
+                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-2">
+                                                Postcode
+                                            </label>
+                                            <input type="text" name="postcode"
+                                                value="{{ old('postcode', $defaultAddress->postcode ?? '') }}"
+                                                class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                                required>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-2">
+                                                City
+                                            </label>
+                                            <input type="text" name="city"
+                                                value="{{ old('city', $defaultAddress->city ?? '') }}"
+                                                class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                                required>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-2">
+                                                State
+                                            </label>
+                                            <input type="text" name="state"
+                                                value="{{ old('state', $defaultAddress->state ?? '') }}"
+                                                class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                                required>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-500 mb-2">
+                                                Country
+                                            </label>
+                                            <input type="text" name="country"
+                                                value="{{ old('country', $defaultAddress->country ?? 'Malaysia') }}"
+                                                class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+                        </section>
+
+                        {{-- Card 2：Payment Method --}}
+                        <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+                            <h2 class="text-base font-semibold text-[#0A0A0C] mb-4">
+                                Payment Method
+                            </h2>
+
+                            {{-- 这里先做成单一选项，之后要加 FPX / Toyyibpay 可以改成 radio 列表 --}}
+                            <div class="space-y-3">
+                                <label
+                                    class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start gap-3 text-sm cursor-pointer hover:border-[#D4AF37] hover:bg-[#FDF7E7] transition">
+                                    <div class="mt-1">
+                                        <input type="radio" name="payment_method" value="manual_transfer" checked
+                                            class="h-4 w-4 text-[#D4AF37] border-gray-300 focus:ring-[#D4AF37]">
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 text-base">Cash / Bank Transfer (Manual)
+                                        </p>
+                                        <p class="text-gray-500 text-sm mt-1">
+                                            After placing your order, our team will contact you to confirm your order
+                                            and provide payment
+                                            details.
+                                        </p>
+                                    </div>
+                                </label>
+
+                                {{-- 未来要加入 Online Payment，可以在下面加更多选项 --}}
+                                {{--
+                                    <label class="...">
+                                    <input type="radio" name="payment_method" value="online_fpx">
+                                        ...
+                                    </label>
+                                --}}
+                            </div>
+
+                        </section>
+
+                    </div>
+                    {{-- 右：Order Summary card --}}
+                    <aside class="bg-[#F9F4E5] rounded-2xl border border-[#E5D9B6] p-5 h-max">
+                        <h2 class="text-lg font-semibold text-[#0A0A0C] mb-4">
+                            Order Summary
+                        </h2>
+
+                        {{-- 商品列表（迷你版 cart card） --}}
+                        <div class="space-y-3 mb-4 max-h-72 overflow-y-auto pr-1">
+                            @foreach ($items as $item)
+                                @php
+                                    $p = $item->product;
+                                @endphp
+
+                                <div
+                                    class="flex gap-3 border border-[#E5D9B6]/70 bg-white/60 rounded-2xl px-3 py-3 items-start">
+                                    {{-- 小图 --}}
+                                    <div
+                                        class="w-16 h-16 sm:w-18 sm:h-18 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+                                        @if ($p?->image)
+                                            <img src="{{ asset('storage/' . $p->image) }}" alt="{{ $p->name }}"
+                                                class="w-full h-full object-cover">
+                                        @else
+                                            <div
+                                                class="w-full h-full flex items-center justify-center text-[10px] text-gray-400">
+                                                No image
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    {{-- 名称 + variant + qty + 小计 --}}
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between gap-2">
+                                            <div class="min-w-0">
+                                                <p
+                                                    class="text-[11px] uppercase tracking-[0.16em] text-gray-400 mb-0.5">
+                                                    {{ $p->category->name ?? 'Product' }}
+                                                </p>
+                                                <h3 class="text-sm font-semibold text-gray-900 line-clamp-2">
+                                                    {{ $p->name }}
+                                                </h3>
+
+                                                @if ($item->variant_label)
+                                                    <p class="text-xs text-gray-500 mt-0.5">
+                                                        {{ $item->variant_label }}
+                                                    </p>
+                                                @endif
+
+                                                <p class="text-xs text-gray-400 mt-0.5">
+                                                    Qty: {{ $item->qty }}
+                                                </p>
+                                            </div>
+
+                                            <div class="text-right">
+                                                <p class="text-sm font-semibold text-[#8f6a10]">
+                                                    RM {{ number_format($item->unit_price * $item->qty, 2) }}
+                                                </p>
+                                                <p class="text-[11px] text-gray-400">
+                                                    RM {{ number_format($item->unit_price, 2) }} / pc
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- 小计 / 运费 / 总额 --}}
+                        <dl class="space-y-2 text-base">
+                            <div class="flex justify-between">
+                                <dt class="text-gray-500">Subtotal</dt>
+                                <dd class="font-semibold text-gray-900">
+                                    RM {{ number_format($subtotal, 2) }}
+                                </dd>
+                            </div>
+                            <div class="flex justify-between">
+                                <dt class="text-gray-500">Shipping</dt>
+                                <dd class="text-gray-700">To be confirmed</dd>
+                            </div>
+                        </dl>
+
+                        <div class="border-t border-[#E5D9B6] my-4"></div>
+
+                        <div class="flex justify-between items-center mb-4 text-base">
+                            <span class="font-semibold text-gray-900">Total</span>
+                            <span class="text-lg font-semibold text-[#8f6a10]">
+                                RM {{ number_format($subtotal, 2) }}
+                            </span>
+                        </div>
+
+                        {{-- Desktop：按钮放在右边 card 里 --}}
+                        <button type="submit"
+                            class="lg:inline-flex w-full items-center justify-center px-4 py-2.5 rounded-full bg-[#D4AF37] text-white text-base font-semibold shadow hover:brightness-110 transition">
+                            Place Order
+                        </button>
+
+                        {{-- 手机版：按钮放 Payment card 底部 --}}
+                        {{-- <div class="pt-4 lg:hidden">
+                            <button type="submit"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full bg-[#D4AF37] text-white text-sm font-semibold shadow hover:brightness-110 transition">
+                                Place Order
+                            </button>
+                        </div> --}}
+
+                        <p class="mt-3 text-sm text-gray-500">
+                            Secure checkout · All prices in RM
+                        </p>
+
+                    </aside>
+
+                </section>
+            </form>
         </div>
     </div>
+
+    <style>
+        .no-scrollbar {
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE/Edge */
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+            /* Chrome / Safari */
+        }
+
+        [data-address-scroller] {
+            cursor: grab;
+        }
+
+        .cursor-grabbing {
+            cursor: grabbing !important;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ------- 1) 点击地址卡 -> 填表单 -------
+            const buttons = document.querySelectorAll('[data-address-choice]');
+
+            const nameInput = document.querySelector('input[name="name"]');
+            const phoneInput = document.querySelector('input[name="phone"]');
+            const emailInput = document.querySelector('input[name="email"]');
+            const line1Input = document.querySelector('input[name="address_line1"]');
+            const line2Input = document.querySelector('input[name="address_line2"]');
+            const postcodeInput = document.querySelector('input[name="postcode"]');
+            const cityInput = document.querySelector('input[name="city"]');
+            const stateInput = document.querySelector('input[name="state"]');
+            const countryInput = document.querySelector('input[name="country"]');
+
+            if (buttons.length) {
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (nameInput) nameInput.value = btn.dataset.name || '';
+                        if (phoneInput) phoneInput.value = btn.dataset.phone || '';
+                        if (emailInput) emailInput.value = btn.dataset.email || '';
+                        if (line1Input) line1Input.value = btn.dataset.address_line1 || '';
+                        if (line2Input) line2Input.value = btn.dataset.address_line2 || '';
+                        if (postcodeInput) postcodeInput.value = btn.dataset.postcode || '';
+                        if (cityInput) cityInput.value = btn.dataset.city || '';
+                        if (stateInput) stateInput.value = btn.dataset.state || '';
+                        if (countryInput) countryInput.value = btn.dataset.country || '';
+
+                        // 高亮当前选中
+                        buttons.forEach(b => {
+                            b.classList.remove('border-[#D4AF37]', 'bg-[#FDF7E7]');
+                            b.classList.add('border-gray-200', 'bg-gray-50');
+                        });
+                        btn.classList.remove('border-gray-200', 'bg-gray-50');
+                        btn.classList.add('border-[#D4AF37]', 'bg-[#FDF7E7]');
+                    });
+                });
+            }
+
+            // ------- 2) 水平滚动 (拖动 / 触屏 ONLY) -------
+            const scroller = document.querySelector('[data-address-scroller]');
+            if (!scroller) return;
+
+            // Pointer 拖动（支持鼠标 + 触屏）⚠️ 不拦截 click
+            let isDown = false;
+            let startX;
+            let startScrollLeft;
+
+            scroller.addEventListener('pointerdown', function(e) {
+                isDown = true;
+                scroller.classList.add('cursor-grabbing');
+                startX = e.clientX;
+                startScrollLeft = scroller.scrollLeft;
+            });
+
+            scroller.addEventListener('pointermove', function(e) {
+                if (!isDown) return;
+                const dx = e.clientX - startX;
+                scroller.scrollLeft = startScrollLeft - dx;
+            });
+
+            function stopDrag() {
+                isDown = false;
+                scroller.classList.remove('cursor-grabbing');
+            }
+
+            scroller.addEventListener('pointerup', stopDrag);
+            scroller.addEventListener('pointercancel', stopDrag);
+            scroller.addEventListener('pointerleave', stopDrag);
+        });
+    </script>
+
 </x-app-layout>
