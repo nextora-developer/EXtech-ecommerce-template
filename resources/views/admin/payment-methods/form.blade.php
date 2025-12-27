@@ -51,7 +51,26 @@
                         <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+
             </div>
+
+            {{-- Row 2 — Short Description --}}
+            <div class="mt-3">
+                <label class="text-xs text-gray-500">Short Description</label>
+
+                <input name="short_description" value="{{ old('short_description', $paymentMethod->short_description) }}"
+                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
+                    placeholder="e.g. Transfer to company bank account & upload receipt">
+
+                <p class="text-[11px] text-gray-400 mt-1">
+                    This will appear under the payment title in checkout.
+                </p>
+
+                @error('short_description')
+                    <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
 
             {{-- Status + Default --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
@@ -131,12 +150,12 @@
 
                 <div>
                     <label class="text-xs text-gray-500">Instructions (shown to customer)</label>
+
                     <textarea name="instructions" rows="3"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm"
-                        placeholder="e.g. Please transfer within 24 hours and upload your receipt.">
-                        {{ old('instructions', $paymentMethod->instructions) }}
-                    </textarea>
+                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm text-left"
+                        placeholder="e.g. Please transfer within 24 hours and upload your receipt.">{{ old('instructions', $paymentMethod->instructions) }}</textarea>
                 </div>
+
             </div>
 
             {{-- DuitNow QR Upload （参考 Banner 上传块） --}}
@@ -171,25 +190,23 @@
                         </div>
 
                         <div class="mt-3 flex flex-wrap items-center gap-3">
+
+                            {{-- Upload / Replace --}}
                             <label
-                                class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 bg-white
-                                       hover:bg-gray-50 cursor-pointer text-sm">
-                                Choose file
+                                class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 cursor-pointer text-sm">
+
+                                {{ $paymentMethod->duitnow_qr_path ? 'Replace QR' : 'Choose file' }}
+
                                 <input id="qrInput" type="file" name="duitnow_qr" class="hidden" accept="image/*">
                             </label>
 
+                            {{-- Clear = 只清除这次选的文件，不影响现有 QR --}}
                             <button type="button" id="qrClearBtn"
                                 class="px-3 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-sm">
                                 Clear
                             </button>
-
-                            @if ($paymentMethod->duitnow_qr_path)
-                                <label class="inline-flex items-center gap-2 text-xs text-red-600">
-                                    <input type="checkbox" name="remove_qr" value="1">
-                                    <span>Remove current QR</span>
-                                </label>
-                            @endif
                         </div>
+
 
                         @error('duitnow_qr')
                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>

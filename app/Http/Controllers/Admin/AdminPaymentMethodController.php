@@ -23,7 +23,7 @@ class AdminPaymentMethodController extends Controller
             ->when($request->status === 'inactive', fn($q) => $q->where('is_active', false))
             ->orderByDesc('is_default')
             ->orderBy('name')
-            ->paginate(12);
+            ->paginate(10);
 
         return view('admin.payment-methods.index', compact('paymentMethods'));
     }
@@ -43,6 +43,7 @@ class AdminPaymentMethodController extends Controller
         $data = $request->validate([
             'name'                => 'required|string|max:255',
             'code'                => 'required|string|max:100|unique:payment_methods,code',
+            'short_description'  => 'nullable|string|max:255',
             'is_active'           => 'nullable|boolean',
             'is_default'          => 'nullable|boolean',
             'bank_name'           => 'nullable|string|max:255',
@@ -84,6 +85,7 @@ class AdminPaymentMethodController extends Controller
         $data = $request->validate([
             'name'                => 'required|string|max:255',
             'code'                => 'required|string|max:100|unique:payment_methods,code,' . $paymentMethod->id,
+            'short_description'  => 'nullable|string|max:255',
             'is_active'           => 'nullable|boolean',
             'is_default'          => 'nullable|boolean',
             'bank_name'           => 'nullable|string|max:255',
