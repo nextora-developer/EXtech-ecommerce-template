@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminAddressController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminPaymentMethodController;
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
@@ -159,6 +160,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     // Banner
     Route::resource('banners', AdminBannerController::class);
+
+    // Payment Method
+    Route::resource('payment-methods', AdminPaymentMethodController::class);
+
 });
 
 require __DIR__ . '/auth.php';

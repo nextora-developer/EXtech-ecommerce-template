@@ -12,7 +12,7 @@
             </nav>
 
             {{-- 整个 checkout 表单 --}}
-            <form method="POST" action="{{ route('checkout.store') }}">
+            <form method="POST" action="{{ route('checkout.store') }}" enctype="multipart/form-data">
                 @csrf
 
                 <section class="bg-transparent p-0 flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:gap-8">
@@ -219,35 +219,98 @@
                                 Payment Method
                             </h2>
 
-                            {{-- 这里先做成单一选项，之后要加 FPX / Toyyibpay 可以改成 radio 列表 --}}
-                            <div class="space-y-3">
-                                <label
-                                    class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start gap-3 text-sm cursor-pointer hover:border-[#D4AF37] hover:bg-[#FDF7E7] transition">
-                                    <div class="mt-1">
-                                        <input type="radio" name="payment_method" value="manual_transfer" checked
-                                            class="h-4 w-4 text-[#D4AF37] border-gray-300 focus:ring-[#D4AF37]">
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 text-base">Cash / Bank Transfer (Manual)
-                                        </p>
-                                        <p class="text-gray-500 text-sm mt-1">
-                                            After placing your order, our team will contact you to confirm your order
-                                            and provide payment
-                                            details.
-                                        </p>
-                                    </div>
-                                </label>
+                            @php
+                                $defaultCode = old(
+                                    'payment_method',
+                                    optional($paymentMethods->firstWhere('is_default', true))->code ??
+                                        optional($paymentMethods->first())->code,
+                                );
+                            @endphp
 
-                                {{-- 未来要加入 Online Payment，可以在下面加更多选项 --}}
-                                {{--
-                                    <label class="...">
-                                    <input type="radio" name="payment_method" value="online_fpx">
-                                        ...
+                            <div class="space-y-3" id="payment-methods-container" data-default="{{ $defaultCode }}">
+                                @foreach ($paymentMethods as $method)
+                                    @php
+                                        $isOnlineTransfer = $method->code === 'online_transfer';
+                                    @endphp
+
+                                    <label
+                                        class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start gap-3 text-sm cursor-pointer hover:border-[#D4AF37] hover:bg-[#FDF7E7] transition">
+
+                                        {{-- radio --}}
+                                        <div class="mt-1">
+                                            <input type="radio" name="payment_method"
+                                                class="payment-radio h-4 w-4 text-[#D4AF37] border-gray-300 focus:ring-[#D4AF37]"
+                                                value="{{ $method->code }}" @checked($defaultCode === $method->code)>
+                                        </div>
+
+                                        <div class="w-full">
+                                            <p class="font-semibold text-gray-900 text-base">
+                                                {{ $method->name }}
+                                            </p>
+
+                                            @if ($method->instructions)
+                                                <p class="text-gray-500 text-sm mt-1">
+                                                    {{ $method->instructions }}
+                                                </p>
+                                            @endif
+
+                                            {{-- 🔹 详情区域：默认 hidden，选中才展示 --}}
+                                            <div class="payment-detail mt-3 hidden" data-code="{{ $method->code }}">
+
+                                                @if ($isOnlineTransfer)
+                                                    <div class="space-y-1 text-sm text-gray-700">
+                                                        @if ($method->bank_account_name)
+                                                            <p><span class="font-medium">Account Name:</span>
+                                                                {{ $method->bank_account_name }}</p>
+                                                        @endif
+                                                        @if ($method->bank_account_number)
+                                                            <p><span class="font-medium">Account No:</span>
+                                                                {{ $method->bank_account_number }}</p>
+                                                        @endif
+                                                        @if ($method->bank_name)
+                                                            <p><span class="font-medium">Bank:</span>
+                                                                {{ $method->bank_name }}</p>
+                                                        @endif
+                                                    </div>
+
+                                                    @if ($method->duitnow_qr_path)
+                                                        <div class="mt-3">
+                                                            <p class="text-xs text-gray-500 mb-1">Scan DuitNow QR</p>
+                                                            <div
+                                                                class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white p-2">
+                                                                <img src="{{ asset('storage/' . $method->duitnow_qr_path) }}"
+                                                                    alt="DuitNow QR" class="w-28 h-28 object-contain">
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
+                                                    <div class="mt-4">
+                                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                            Upload Payment Receipt (optional)
+                                                        </label>
+                                                        <input type="file" name="payment_receipt" accept="image/*"
+                                                            class="block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-full file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-[#FDF3D7] file:text-[#8f6a10]
+                                        hover:file:bg-[#F9E6AE]">
+                                                    </div>
+                                                @endif
+
+                                                {{-- 将来如果有别的 payment gateway，也可以在这里按 code 判断显示不同说明 --}}
+                                            </div>
+                                        </div>
                                     </label>
-                                --}}
+                                @endforeach
                             </div>
 
+                            @error('payment_method')
+                                <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                            @enderror
                         </section>
+
+
 
                     </div>
                     {{-- 右：Order Summary card --}}
@@ -457,5 +520,37 @@
             scroller.addEventListener('pointerleave', stopDrag);
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('payment-methods-container');
+            if (!container) return;
+
+            const radios = container.querySelectorAll('.payment-radio');
+            const details = container.querySelectorAll('.payment-detail');
+
+            function refreshPaymentDetails() {
+                const checked = container.querySelector('.payment-radio:checked');
+                const activeCode = checked ? checked.value : null;
+
+                details.forEach(detail => {
+                    if (detail.dataset.code === activeCode) {
+                        detail.classList.remove('hidden');
+                    } else {
+                        detail.classList.add('hidden');
+                    }
+                });
+            }
+
+            radios.forEach(r => {
+                r.addEventListener('change', refreshPaymentDetails);
+            });
+
+            // 初始化：默认选中的那一个展开
+            refreshPaymentDetails();
+        });
+    </script>
+
+
 
 </x-app-layout>

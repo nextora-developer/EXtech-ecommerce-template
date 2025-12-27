@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -27,64 +28,85 @@ class CheckoutController extends Controller
         $defaultAddress  = $user?->defaultAddress;   // User::defaultAddress 关系
         $addresses      = $user?->addresses ?? collect(); // 所有地址
 
+        $paymentMethods = PaymentMethod::where('is_active', true)
+            ->orderByDesc('is_default')
+            ->get();
+
         return view('checkout.index', compact(
             'items',
             'subtotal',
             'defaultAddress',
-            'addresses'
+            'addresses',
+            'paymentMethods',
         ));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name'    => 'required',
-            'phone'   => 'required',
-            'address' => 'required',
+            'name'            => 'required',
+            'phone'           => 'required',
+            'email'           => 'required|email',
+            'address_line1'   => 'required',
+            'postcode'        => 'required',
+            'city'            => 'required',
+            'state'           => 'required',
+            'country'         => 'required',
+            'payment_method'  => 'required|exists:payment_methods,code',
+            'payment_receipt' => 'nullable|image|max:4096', // 4MB
         ]);
 
-        DB::transaction(function () use ($request) {
+        $paymentMethod = PaymentMethod::where('code', $request->payment_method)
+            ->where('is_active', true)
+            ->firstOrFail();
 
-            $cart = Cart::with('items.product')
-                ->where('user_id', auth()->id())
-                ->firstOrFail();
+        $cart = Cart::with('items.product')
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
 
-            $items = $cart->items;
+        $items    = $cart->items;
+        $subtotal = $items->sum(fn($i) => $i->unit_price * $i->qty);
 
-            if ($items->isEmpty()) {
-                abort(400, 'Cart is empty');
-            }
+        $receiptPath = null;
+        if ($request->hasFile('payment_receipt')) {
+            $receiptPath = $request->file('payment_receipt')
+                ->store('payment_receipts', 'public');
+        }
 
-            $subtotal = $items->sum(function ($item) {
-                return $item->unit_price * $item->qty;
-            });
-
+        DB::transaction(function () use ($request, $items, $subtotal, $paymentMethod, $receiptPath, $cart) {
             $order = Order::create([
-                'user_id'        => auth()->id(),
-                'customer_name'  => $request->name,
-                'customer_phone' => $request->phone,
-                'address_line1'  => $request->address,
-                'subtotal'       => $subtotal,
-                'total'          => $subtotal, // 之后可以 + shipping
-                'status'         => 'pending',
+                'user_id'              => auth()->id(),
+                'customer_name'        => $request->name,
+                'customer_phone'       => $request->phone,
+                'customer_email'       => $request->email,
+                'address_line1'        => $request->address_line1,
+                'address_line2'        => $request->address_line2,
+                'postcode'             => $request->postcode,
+                'city'                 => $request->city,
+                'state'                => $request->state,
+                'country'              => $request->country,
+                'subtotal'             => $subtotal,
+                'total'                => $subtotal,
+                'status'               => 'pending',
+                'payment_method_code'  => $paymentMethod->code,
+                'payment_method_name'  => $paymentMethod->name,
+                'payment_receipt_path' => $receiptPath,
             ]);
 
             foreach ($items as $item) {
                 $order->items()->create([
-                    'product_id'       => $item->product_id,
-                    'qty'              => $item->qty,
-                    'unit_price'       => $item->unit_price,
-                    'product_variant_id' => $item->product_variant_id ?? null,
-                    'variant_label'    => $item->variant_label ?? null,
+                    'product_id'         => $item->product_id,
+                    'qty'                => $item->qty,
+                    'unit_price'         => $item->unit_price,
+                    'product_variant_id' => $item->product_variant_id,
+                    'variant_label'      => $item->variant_label,
                 ]);
             }
 
-            // 清空购物车
             $cart->items()->delete();
-            // $cart->delete(); // 看你要不要顺便删掉整个 cart
         });
 
         return redirect()->route('account.orders.index')
-            ->with('success', 'Order placed successfully.');
+            ->with('success', 'Order placed successfully. We will contact you to verify your payment.');
     }
 }

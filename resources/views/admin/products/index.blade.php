@@ -21,7 +21,14 @@
                 <option value="active" @selected(request('status') === 'active')>Active</option>
                 <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
             </select>
-            <button class="px-4 rounded-xl border">Filter</button>
+            <button class="px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                Filter
+            </button>
+
+            <a href="{{ route('admin.products.index') }}"
+                class="px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+                Reset
+            </a>
         </div>
     </form>
 

@@ -230,6 +230,34 @@
                     </span>
                 </a>
 
+                {{-- Payment Methods --}}
+                <a href="{{ route('admin.payment-methods.index') }}"
+                    class="{{ $linkBase }} {{ request()->routeIs('admin.payment-methods.*') ? $active : $idle }}">
+
+                    <span class="absolute left-0 top-2 bottom-2 w-[3px] rounded-r"
+                        style="background: {{ request()->routeIs('admin.payment-methods.*') ? '#D4AF37' : 'transparent' }};">
+                    </span>
+
+                    {{-- Icon: Credit Card --}}
+                    <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('admin.payment-methods.*') ? 'text-[#8f6a10]' : 'text-gray-500 group-hover:text-[#8f6a10]' }}"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 9m18 0V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v3" />
+                    </svg>
+
+
+                    <span class="font-medium" x-show="!collapsed" x-cloak>
+                        Payment Method
+                    </span>
+
+                    <span x-show="collapsed" x-cloak
+                        class="absolute left-full ml-3 px-2 py-1 rounded-lg text-xs bg-white border border-gray-200 shadow opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap">
+                        Payment Method
+                    </span>
+                </a>
+
+
             </nav>
 
             {{-- Logout --}}
