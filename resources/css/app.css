@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== BRIF Admin Form Components ===== */
+/* ===== Admin Form Components ===== */
 @layer components {
     .form-label {
         @apply text-sm font-medium text-gray-700 mb-1 block;

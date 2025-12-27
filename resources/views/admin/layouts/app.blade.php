@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BRIF Admin</title>
+    <title>Admin</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -33,7 +33,7 @@
                     <div class="min-w-0" x-show="!collapsed" x-cloak>
                         <div
                             class="text-lg font-semibold tracking-wide whitespace-nowrap overflow-hidden text-ellipsis">
-                            <span class="text-[#D4AF37]">BRIF</span> Admin
+                            <span class="text-[#D4AF37]">CompanyName</span> Admin
                         </div>
                         <div class="text-xs text-gray-500 mt-1">Control Panel</div>
                     </div>

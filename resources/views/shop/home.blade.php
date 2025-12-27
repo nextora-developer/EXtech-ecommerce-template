@@ -23,7 +23,7 @@
 
                                     {{-- @if ($banner->title)
                                 <div class="absolute left-6 bottom-6 text-white">
-                                    <p class="text-xs uppercase tracking-[0.15em] text-white/70 mb-1">BRIF Shop
+                                    <p class="text-xs uppercase tracking-[0.15em] text-white/70 mb-1">Shop
                                     </p>
                                     <h2 class="text-lg sm:text-2xl font-semibold drop-shadow">
                                         {{ $banner->title }}
@@ -60,7 +60,7 @@
                     @else
                         {{-- 没有 banner 的时候显示一个占位背景（你要可以再改） --}}
                         <div class="w-full h-full bg-[#F5F5F7] flex items-center justify-center">
-                            <p class="text-gray-400 text-sm">BRIF Shop Banner coming soon</p>
+                            <p class="text-gray-400 text-sm">Shop Banner coming soon</p>
                         </div>
                     @endif
 
@@ -80,7 +80,7 @@
                             Shop by category
                         </h2>
                         <p class="mt-1 text-sm text-gray-500">
-                            Browse BRIF Shop by product category.
+                            Browse Shop by product category.
                         </p>
                     </div>
                 </div> --}}
@@ -139,7 +139,7 @@
                             Featured products
                         </h2>
                         <p class="mt-1 text-sm text-gray-500">
-                            A quick look at selected items from BRIF Shop.
+                            A quick look at selected items from Shop.
                         </p>
                     </div>
 
@@ -327,7 +327,7 @@
                                 Trusted Local Seller
                             </h4>
                             <p class="text-xs text-gray-500">
-                                BRIF Shop proudly serves Malaysia customers.
+                                Shop proudly serves Malaysia customers.
                             </p>
                         </div>
                     </div>
@@ -342,7 +342,7 @@
                 class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                     <p class="text-sm font-semibold text-gray-900">
-                        Ready to explore more from BRIF Shop?
+                        Ready to explore more from Shop?
                     </p>
                     <p class="text-xs sm:text-sm text-gray-500">
                         Browse categories, check details and complete your order in just a few steps.

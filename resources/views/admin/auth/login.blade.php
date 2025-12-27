@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BRIF Admin Login</title>
+    <title>Admin Login</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -32,7 +32,7 @@
             <!-- Header -->
             <div class="mb-8 text-center">
                 <div class="text-sm tracking-widest text-[#D4AF37]/80 mb-2">
-                    BRIF ADMIN PANEL
+                    ADMIN PANEL
                 </div>
 
                 <h1 class="text-3xl font-semibold text-[#D4AF37]">
@@ -40,7 +40,7 @@
                 </h1>
 
                 <p class="mt-2 text-sm text-white/50">
-                    Sign in to manage BRIF Shop
+                    Sign in to manage Shop
                 </p>
             </div>
 
@@ -69,7 +69,7 @@
                             text-white placeholder-white/30
                             focus:border-[#D4AF37]
                             focus:ring-0"
-                        placeholder="admin@brif.shop"
+                        placeholder="admin@admin.com"
                     >
                 </div>
 
@@ -118,7 +118,7 @@
 
             <!-- Footer -->
             <div class="mt-8 text-center text-xs text-white/30">
-                © {{ date('Y') }} BRIF · Internal Access Only
+                © {{ date('Y') }} CompanyName · Internal Access Only
             </div>
         </div>
     </div>

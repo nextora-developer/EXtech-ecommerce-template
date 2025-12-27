@@ -43,7 +43,7 @@
 
                 {{-- Brand --}}
                 <div>
-                    <h3 class="text-[#8f6a10] font-semibold text-xl mb-4">BRIF Shop</h3>
+                    <h3 class="text-[#8f6a10] font-semibold text-xl mb-4">Shop</h3>
                     <p class="text-sm text-gray-700 leading-relaxed mb-4">
                         Curated essentials, trusted quality and a smooth shopping experience.
                     </p>
@@ -130,7 +130,7 @@
 
             <div class="border-t border-[#E5D9B6] mt-10 pt-5 text-center">
                 <p class="text-xs text-gray-700">
-                    © {{ date('Y') }} BRIF Shop. All rights reserved.
+                    © {{ date('Y') }} CompanyName Shop. All rights reserved.
                 </p>
             </div>
         </div>

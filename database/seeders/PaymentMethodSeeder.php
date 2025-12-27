@@ -20,7 +20,7 @@ class PaymentMethodSeeder extends Seeder
                 'is_default'          => true,
 
                 'bank_name'           => 'Maybank',
-                'bank_account_name'   => 'BRIF Commerce Sdn Bhd',
+                'bank_account_name'   => 'E-Commerce Sdn Bhd',
                 'bank_account_number' => '1234567890',
 
                 'duitnow_qr_path'     => null, // 之后 admin 上传 QR 图片更新

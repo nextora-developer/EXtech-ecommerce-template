@@ -3,7 +3,7 @@
 @section('content')
     <div class="flex items-start justify-between gap-4 mb-6">
         <div>
-            {{-- <div class="text-xs tracking-[0.35em] text-[#8f6a10]/60 mb-2">BRIF ADMIN</div> --}}
+            {{-- <div class="text-xs tracking-[0.35em] text-[#8f6a10]/60 mb-2">ADMIN</div> --}}
             <h1 class="text-3xl font-semibold text-gray-900">Dashboard</h1>
             <p class="text-sm text-gray-500 mt-1">Orders & revenue overview</p>
         </div>

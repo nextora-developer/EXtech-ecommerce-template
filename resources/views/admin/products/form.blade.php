@@ -19,7 +19,7 @@
             <div>
                 <label class="form-label">Product name</label>
                 <input name="name" value="{{ old('name', $product->name) }}" class="form-input"
-                    placeholder="e.g. BRIF Gold Mug">
+                    placeholder="e.g. Gold Mug">
             </div>
 
             <div>

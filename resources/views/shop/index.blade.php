@@ -7,7 +7,7 @@
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">Shop</h1>
                     <p class="text-sm text-gray-500">
-                        Browse BRIF Shop products and find what you need.
+                        Browse Shop products and find what you need.
                     </p>
                 </div>
 

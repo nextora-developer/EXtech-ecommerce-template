@@ -16,7 +16,7 @@
                         </div>
                         <div class="leading-tight">
                             <div class="text-base font-semibold tracking-wide text-[#0A0A0C]">
-                                BRIF Shop
+                                Shop
                             </div>
                         </div>
                     </a>
@@ -56,7 +56,7 @@
                             <div class="py-2 text-sm">
                                 <a href="#"
                                     class="block px-4 py-2 text-gray-700 hover:bg-[#FFF9E6] hover:text-[#8f6a10]">
-                                    About BRIF Shop
+                                    About Shop
                                 </a>
 
                                 <a href="#"
