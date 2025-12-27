@@ -34,9 +34,9 @@ class AdminBannerController extends Controller
 
     public function create()
     {
-        $banners = new Banner(); // 空的，用来给 form 判断 exists 等
+        $banner = new Banner(); // 空的，用来给 form 判断 exists 等
 
-        return view('admin.banners.form', compact('banners'));
+        return view('admin.banners.form', compact('banner'));
     }
 
     public function store(Request $request)
@@ -63,7 +63,7 @@ class AdminBannerController extends Controller
 
     public function edit(Banner $banner)
     {
-        return view('admin.banners.form', compact('banners'));
+        return view('admin.banners.form', compact('banner'));
     }
 
     public function update(Request $request, Banner $banner)

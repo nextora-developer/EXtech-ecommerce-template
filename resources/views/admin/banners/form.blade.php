@@ -4,7 +4,7 @@
     <div class="flex items-start justify-between mb-4">
         <div>
             <h1 class="text-2xl font-semibold text-gray-900">
-                {{ $banners->exists ? 'Edit Banner' : 'New Banner' }}
+                {{ $banner->exists ? 'Edit Banner' : 'New Banner' }}
             </h1>
             <p class="text-sm text-gray-500">Add homepage banner (1920 × 600 recommended)</p>
         </div>
@@ -16,11 +16,11 @@
     </div>
 
     <form method="POST" enctype="multipart/form-data"
-        action="{{ $banners->exists ? route('admin.banners.update', $banner) : route('admin.banners.store') }}"
+        action="{{ $banner->exists ? route('admin.banners.update', $banner) : route('admin.banners.store') }}"
         class="bg-white rounded-2xl border border-[#D4AF37]/18 p-5 max-w-4xl shadow-[0_18px_40px_rgba(0,0,0,0.06)]">
 
         @csrf
-        @if ($banners->exists)
+        @if ($banner->exists)
             @method('PUT')
         @endif
 
@@ -30,7 +30,7 @@
                 {{-- Banner Title --}}
                 <div class="lg:col-span-1">
                     <label class="text-xs text-gray-500">Title (optional)</label>
-                    <input name="title" value="{{ old('title', $banners->title) }}"
+                    <input name="title" value="{{ old('title', $banner->title) }}"
                         class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
                         placeholder="e.g. Raya Sale, Clearance, etc">
                 </div>
@@ -38,7 +38,7 @@
                 {{-- Link URL --}}
                 <div class="lg:col-span-1">
                     <label class="text-xs text-gray-500">Link URL (optional)</label>
-                    <input name="link_url" value="{{ old('link_url', $banners->link_url) }}"
+                    <input name="link_url" value="{{ old('link_url', $banner->link_url) }}"
                         class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
                         placeholder="https:// or /shop/category/towels">
                 </div>
@@ -58,11 +58,11 @@
                                 class="h-24 w-48 rounded-lg bg-gray-100 border overflow-hidden flex items-center justify-center">
 
                                 <img id="bannerPreview"
-                                    src="{{ $banners->image_path ? asset('storage/' . $banners->image_path) : '' }}"
-                                    class="h-full w-full object-cover {{ $banners->image_path ? '' : 'hidden' }}"
+                                    src="{{ $banner->image_path ? asset('storage/' . $banner->image_path) : '' }}"
+                                    class="h-full w-full object-cover {{ $banner->image_path ? '' : 'hidden' }}"
                                     alt="Banner Preview">
 
-                                <div id="bannerPlaceholder" class="{{ $banners->image_path ? 'hidden' : '' }}">
+                                <div id="bannerPlaceholder" class="{{ $banner->image_path ? 'hidden' : '' }}">
                                     <svg class="h-10 w-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -74,11 +74,11 @@
                             <div class="flex-1">
 
                                 <div class="text-sm font-medium text-gray-900" id="bannerFileName">
-                                    {{ $banners->image_path ? 'Current banner uploaded' : 'No image selected' }}
+                                    {{ $banner->image_path ? 'Current banner uploaded' : 'No image selected' }}
                                 </div>
 
                                 <div class="text-xs text-gray-500 mt-1" id="bannerFileMeta">
-                                    {{ $banners->image_path ? 'You can replace it below' : 'PNG/JPG up to 3MB' }}
+                                    {{ $banner->image_path ? 'You can replace it below' : 'PNG/JPG up to 3MB' }}
                                 </div>
 
                                 <div class="mt-3 flex items-center gap-2">
@@ -105,7 +105,7 @@
 
                     <div>
                         <label class="text-xs text-gray-500 block">Sort Order</label>
-                        <input name="sort_order" value="{{ old('sort_order', $banners->sort_order ?? 0) }}"
+                        <input name="sort_order" value="{{ old('sort_order', $banner->sort_order ?? 0) }}"
                             class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
                             type="number" min="0">
                     </div>
@@ -118,7 +118,7 @@
 
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" name="is_active" value="1" class="sr-only peer"
-                                @checked(old('is_active', $banners->is_active ?? true))>
+                                @checked(old('is_active', $banner->is_active ?? true))>
                             <div
                                 class="w-11 h-6 bg-gray-200 rounded-full peer
                                         peer-checked:bg-[#D4AF37]

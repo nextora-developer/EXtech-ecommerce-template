@@ -1,10 +1,11 @@
 <x-app-layout>
     <div class="bg-white">
         {{-- Banner：可滑动轮播，图片来自数据库 --}}
-        @if (isset($banners) && $banners->count())
-            <section class="w-full h-[260px] sm:h-[360px] lg:h-[420px] relative z-0 bg-white" data-banner-slider>
-                <div class="max-w-7xl5 mx-auto h-full px-4 sm:px-6 lg:px-8 pt-5">
-                    <div class="relative h-full rounded-3xl overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.25)]">
+        <section class="w-full h-[260px] sm:h-[360px] lg:h-[420px] relative z-0 bg-white" data-banner-slider>
+            <div class="max-w-7xl5 mx-auto h-full px-4 sm:px-6 lg:px-8 pt-5">
+                <div class="relative h-full rounded-3xl overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.25)]">
+
+                    @if (isset($banners) && $banners->count())
                         {{-- 轨道 --}}
                         <div class="flex h-full transition-transform duration-700 ease-out" data-banner-track>
                             @foreach ($banners as $banner)
@@ -21,14 +22,14 @@
                                     <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
 
                                     {{-- @if ($banner->title)
-                                        <div class="absolute left-6 bottom-6 text-white">
-                                            <p class="text-xs uppercase tracking-[0.15em] text-white/70 mb-1">BRIF Shop
-                                            </p>
-                                            <h2 class="text-lg sm:text-2xl font-semibold drop-shadow">
-                                                {{ $banner->title }}
-                                            </h2>
-                                        </div>
-                                    @endif --}}
+                                <div class="absolute left-6 bottom-6 text-white">
+                                    <p class="text-xs uppercase tracking-[0.15em] text-white/70 mb-1">BRIF Shop
+                                    </p>
+                                    <h2 class="text-lg sm:text-2xl font-semibold drop-shadow">
+                                        {{ $banner->title }}
+                                    </h2>
+                                </div>
+                            @endif --}}
                                 </a>
                             @endforeach
                         </div>
@@ -56,11 +57,17 @@
                                 @endforeach
                             </div>
                         @endif
+                    @else
+                        {{-- 没有 banner 的时候显示一个占位背景（你要可以再改） --}}
+                        <div class="w-full h-full bg-[#F5F5F7] flex items-center justify-center">
+                            <p class="text-gray-400 text-sm">BRIF Shop Banner coming soon</p>
+                        </div>
+                    @endif
 
-                    </div>
                 </div>
-            </section>
-        @endif
+            </div>
+        </section>
+
 
 
 
@@ -188,20 +195,20 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42
-                                4.42 3 7.5 3c1.74 0 3.41.81 4.5
-                                2.09C13.09 3.81 14.76 3 16.5
-                                3 19.58 3 22 5.42 22 8.5c0
-                                3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                        4.42 3 7.5 3c1.74 0 3.41.81 4.5
+                                        2.09C13.09 3.81 14.76 3 16.5
+                                        3 19.58 3 22 5.42 22 8.5c0
+                                        3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
                                                     {{-- empty heart --}}
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10"
                                                         stroke-width="1.8" viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                0-3.6 1-4.5 2.5C10.6 4.5 8.9 3.5
-                                7 3.5 4.2 3.5 2 5.7 2 8.5c0 5.2
-                                5.5 8.9 9.8 12.7.1.1.3.1.4
-                                0C15.5 17.4 21 13.7 21 8.5z" />
+                                        0-3.6 1-4.5 2.5C10.6 4.5 8.9 3.5
+                                        7 3.5 4.2 3.5 2 5.7 2 8.5c0 5.2
+                                        5.5 8.9 9.8 12.7.1.1.3.1.4
+                                        0C15.5 17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
