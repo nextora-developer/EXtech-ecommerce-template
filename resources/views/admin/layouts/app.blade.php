@@ -12,6 +12,11 @@
             display: none !important;
         }
     </style>
+    
+    {{-- Trix CSS + JS（使用 1.3.1 经典版本） --}}
+    <link rel="stylesheet" href="https://unpkg.com/trix@1.3.1/dist/trix.css">
+    <script src="https://unpkg.com/trix@1.3.1/dist/trix.js"></script>
+
 </head>
 
 <body class="bg-[#f6f6f6] text-gray-900">

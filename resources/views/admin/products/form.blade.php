@@ -57,8 +57,12 @@
 
             {{-- Long Description --}}
             <div class="lg:col-span-4">
-                <label class="form-label">Description</label>
-                <textarea name="description" rows="6" class="form-input" placeholder="Full product details">{{ old('description', $product->description) }}</textarea>
+                <label class="form-label">Long Description</label>
+
+                <input id="description" type="hidden" name="description"
+                    value="{{ old('description', $product->description) }}">
+
+                <trix-editor input="description" class="trix-content border rounded-xl w-full"></trix-editor>
             </div>
 
         </div>

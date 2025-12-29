@@ -22,3 +22,37 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+.trix-content {
+    min-height: 220px;
+}
+
+.trix-button-group--file-tools {
+    display: none !important; 
+}
+
+.trix-button--icon-link {
+    display: none !important; 
+}
+
+/* 让 Trix 编辑器里的列表有点点 */
+trix-editor ul {
+    list-style-type: disc;
+    margin-left: 1.25rem;
+}
+
+trix-editor ol {
+    list-style-type: decimal;
+    margin-left: 1.25rem;
+}
+
+/* 前台详情页描述区的列表也恢复点点 */
+#tab-desc ul {
+    list-style-type: disc;
+    margin-left: 1.25rem;
+}
+
+#tab-desc ol {
+    list-style-type: decimal;
+    margin-left: 1.25rem;
+}
