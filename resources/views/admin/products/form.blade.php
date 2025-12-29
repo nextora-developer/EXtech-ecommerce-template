@@ -161,7 +161,8 @@
                         <label
                             class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 bg-white cursor-pointer">
                             Choose files
-                            <input id="imageInput" type="file" name="images[]" class="hidden" accept="image/*" multiple>
+                            <input id="imageInput" type="file" name="images[]" class="hidden" accept="image/*"
+                                multiple>
                         </label>
 
                         <button type="button" id="imageClearBtn"

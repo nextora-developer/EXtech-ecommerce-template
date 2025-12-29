@@ -91,9 +91,13 @@ class AdminBannerController extends Controller
 
     public function destroy(Banner $banner)
     {
-        Storage::disk('public')->delete($banner->image_path);
+        if ($banner->image_path && str_starts_with($banner->image_path, 'banners/')) {
+            Storage::disk('public')->delete($banner->image_path);
+        }
+
         $banner->delete();
 
-        return redirect()->route('admin.banners.index')->with('success', 'Banner deleted.');
+        return redirect()->route('admin.banners.index')
+            ->with('success', 'Banner deleted.');
     }
 }

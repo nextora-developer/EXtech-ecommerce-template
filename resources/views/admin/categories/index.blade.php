@@ -45,6 +45,7 @@
                     <th class="p-4 text-left">Slug</th>
                     <th class="p-4 text-left">Sort</th>
                     <th class="p-4 text-left">Status</th>
+                    <th class="p-4 text-left">Products</th>
                     <th class="p-4 text-right">Action</th>
                 </tr>
             </thead>
@@ -77,6 +78,19 @@
                                 {{ $c->is_active ? 'Active' : 'Inactive' }}
                             </span>
                         </td>
+                        <td class="p-4">
+                            @if ($c->products_count > 0)
+                                <a href="{{ route('admin.products.index', ['category' => $c->id]) }}"
+                                    class="px-2 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold">
+                                    {{ $c->products_count }} items
+                                </a>
+                            @else
+                                <span class="px-2 py-1 rounded-lg bg-gray-100 text-gray-500 text-xs">
+                                    0
+                                </span>
+                            @endif
+                        </td>
+
                         <td class="p-4 text-right">
                             <a href="{{ route('admin.categories.edit', $c) }}"
                                 class="text-[#8f6a10] font-semibold hover:underline mr-3">

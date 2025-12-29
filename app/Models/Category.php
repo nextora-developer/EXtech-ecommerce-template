@@ -16,4 +16,9 @@ class Category extends Model
         'is_active',
         'sort_order',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

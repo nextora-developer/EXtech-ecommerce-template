@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -23,7 +24,13 @@ class AdminCategoryController extends Controller
             $q->where('is_active', $request->status === 'active');
         }
 
-        $categories = $q->orderBy('sort_order')->orderBy('name')->paginate(10)->withQueryString();
+        // ⭐ 关键：带上 products_count
+        $q->withCount('products');
+
+        $categories = $q->orderBy('sort_order')
+            ->orderBy('name')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.categories.index', compact('categories'));
     }
@@ -85,7 +92,12 @@ class AdminCategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        if ($category->products()->exists()) {
+            return back()->withErrors('This category has products. Please move or delete them first.');
+        }
+
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted.');
+
+        return back()->with('success', 'Category deleted.');
     }
 }
