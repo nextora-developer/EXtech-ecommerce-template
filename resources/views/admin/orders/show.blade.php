@@ -110,19 +110,29 @@
                                             {{ $item->product_name ?? ($item->product->name ?? '—') }}
                                         </td>
 
-                                        {{-- Variant (可选) --}}
-                                        <td class="px-4 py-2 align-top text-gray-500">
+                                        {{-- Variant (badge style) --}}
+                                        <td class="px-4 py-2 align-top">
                                             @php
-                                                $variantLabel = $item->variant_label ?? null;
-                                                $variantValue = $item->variant_value ?? null;
+                                                $label = $item->variant_label ?? null;
+                                                $value = $item->variant_value ?? null;
                                             @endphp
 
-                                            @if ($variantLabel || $variantValue)
-                                                {{ $variantLabel }}{{ $variantLabel && $variantValue ? ': ' : '' }}{{ $variantValue }}
+                                            @if ($label || $value)
+                                                <div class="mt-0.5 flex flex-wrap gap-1">
+                                                    @foreach (explode('&', $label && $value ? $label . ' & ' . $value : $label ?? $value) as $part)
+                                                        <span
+                                                            class="inline-flex items-center px-2 py-0.5 rounded-lg
+                             bg-gray-100 text-gray-700 border border-gray-200
+                             text-xs font-medium">
+                                                            {{ trim($part) }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
                                             @else
-                                                —
+                                                <span class="text-gray-400">—</span>
                                             @endif
                                         </td>
+
 
                                         {{-- 数量 --}}
                                         <td class="px-4 py-2 text-center text-gray-900">

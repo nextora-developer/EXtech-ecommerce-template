@@ -101,7 +101,7 @@
                             class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#D4AF37]/60 transition overflow-hidden flex flex-col">
 
                             {{-- Product image：跟 home 一样 aspect-[4/3] --}}
-                            <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                            <div class="relative aspect-square bg-gray-100 overflow-hidden">
                                 @if ($product->image ?? false)
                                     <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">

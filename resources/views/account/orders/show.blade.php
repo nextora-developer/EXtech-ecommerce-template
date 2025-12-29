@@ -52,48 +52,105 @@
                         {{-- Info blocks --}}
                         <div class="grid md:grid-cols-2 gap-6 mt-8">
 
-                            {{-- Customer / Address --}}
-                            <div class="space-y-4 text-base">
-                                <h2 class="font-semibold text-[#0A0A0C] text-base">Customer</h2>
+                            {{-- 左侧：Customer + Shipping --}}
+                            <div class="space-y-4">
 
-                                <p class="text-gray-700 leading-6">
-                                    {{ $order->customer_name }}<br>
-                                    <span class="text-gray-500 text-sm">{{ $order->customer_phone }}</span>
-                                </p>
+                                {{-- Customer --}}
+                                <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
+                                    <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
+                                        Customer
+                                    </h2>
 
-                                <h2 class="font-semibold text-[#0A0A0C] text-base mt-4">Shipping Address</h2>
-                                <p class="text-gray-700 text-base leading-6">
-                                    {{ $order->address_line1 }}<br>
-                                    @if ($order->address_line2)
-                                        {{ $order->address_line2 }}<br>
-                                    @endif
-                                    {{ $order->postcode }} {{ $order->city }}<br>
-                                    {{ $order->state }}
-                                </p>
+                                    <div class="mt-3 space-y-1">
+                                        <p class="text-gray-900 font-medium">
+                                            {{ $order->customer_name }}
+                                        </p>
+
+                                        <p class="text-gray-600 text-sm">
+                                            {{ $order->customer_phone }}
+                                        </p>
+
+                                        <p class="text-gray-600 text-sm">
+                                            {{ $order->customer_email }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {{-- Shipping Address --}}
+                                <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
+                                    <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
+                                        Shipping Address
+                                    </h2>
+
+                                    <div class="mt-3 text-gray-900 leading-relaxed text-sm">
+                                        {{ $order->address_line1 }}<br>
+
+                                        @if ($order->address_line2)
+                                            {{ $order->address_line2 }}<br>
+                                        @endif
+
+                                        {{ $order->postcode }} {{ $order->city }}<br>
+                                        {{ $order->state }}
+                                    </div>
+                                </div>
+
                             </div>
 
-                            {{-- Summary --}}
+                            {{-- 右侧：Order Summary + Payment --}}
                             <div class="bg-[#FFF9E6] border border-[#D4AF37]/30 rounded-2xl p-5 text-base shadow-sm">
                                 <h2 class="font-semibold text-[#0A0A0C] text-base mb-4">Order Summary</h2>
 
-                                <div class="flex justify-between mb-2 text-gray-600">
-                                    <span>Subtotal</span>
-                                    <span>RM {{ number_format($order->subtotal, 2) }}</span>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>Subtotal</span>
+                                        <span>RM {{ number_format($order->subtotal, 2) }}</span>
+                                    </div>
+
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>Shipping Fee</span>
+                                        <span>RM {{ number_format($order->shipping_fee, 2) }}</span>
+                                    </div>
                                 </div>
 
-                                <div class="flex justify-between mb-2 text-gray-600">
-                                    <span>Shipping Fee</span>
-                                    <span>RM {{ number_format($order->shipping_fee, 2) }}</span>
+                                <div class="h-px bg-[#D4AF37]/20 my-4"></div>
+
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-sm font-semibold text-[#0A0A0C]">Total</span>
+                                    <span class="text-2xl font-semibold text-[#0A0A0C]">
+                                        RM {{ number_format($order->total, 2) }}
+                                    </span>
                                 </div>
 
-                                <div class="h-px bg-[#D4AF37]/20 my-3"></div>
+                                {{-- Payment info --}}
+                                <div class="mt-5 pt-4 border-t border-[#D4AF37]/20 space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Payment Method</span>
+                                        <span class="font-medium text-gray-900">
+                                            {{ $order->payment_method_name }}
+                                        </span>
+                                    </div>
 
-                                <div class="flex justify-between text-[#0A0A0C] font-semibold">
-                                    <span>Total</span>
-                                    <span class="text-2xl">RM {{ number_format($order->total, 2) }}</span>
+                                    @if ($order->payment_receipt_path)
+                                        <div class="flex items-center gap-2 pt-1">
+                                            {{-- 打开 modal --}}
+                                            <button type="button" onclick="openReceiptModal({{ $order->id }})"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-lg border border-gray-300
+                       bg-white/80 hover:bg-white text-xs font-medium text-gray-800">
+                                                View Receipt
+                                            </button>
+
+                                            {{-- 直接下载 --}}
+                                            <a href="{{ asset('storage/' . $order->payment_receipt_path) }}" download
+                                                class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium
+                       bg-[#D4AF37] text-white hover:bg-[#C49A2F]">
+                                                Download
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
+
 
                         {{-- Items --}}
                         <h2 class="font-semibold text-[#0A0A0C] text-base mt-8 mb-4">Items</h2>
@@ -119,9 +176,12 @@
                                                 @endif
                                                 <div>
                                                     {{ $item->product_name }}
-                                                    @if ($item->variant)
-                                                        <div class="text-sm text-gray-500">{{ $item->variant }}</div>
+                                                    @if ($item->variant_label)
+                                                        <div class="text-sm text-gray-500">
+                                                            {{ $item->variant_label }}
+                                                        </div>
                                                     @endif
+
                                                 </div>
                                             </td>
 
@@ -148,4 +208,49 @@
             </div>
         </div>
     </div>
+
+    @if ($order->payment_receipt_path)
+        <div id="receiptModal-{{ $order->id }}" class="fixed inset-0 z-50 hidden bg-black/50">
+            {{-- 点击背景关闭 --}}
+            <div class="flex items-center justify-center min-h-screen"
+                onclick="closeReceiptModal({{ $order->id }})">
+                {{-- 内容卡片，阻止冒泡 --}}
+                <div class="bg-white rounded-2xl shadow-xl max-w-xl w-[90%] overflow-hidden"
+                    onclick="event.stopPropagation()">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                        <h3 class="text-sm font-semibold text-gray-900">
+                            Payment Receipt
+                        </h3>
+                        <button type="button" class="text-gray-400 hover:text-gray-600"
+                            onclick="closeReceiptModal({{ $order->id }})">
+                            ✕
+                        </button>
+                    </div>
+
+                    <div class="p-4">
+                        <img src="{{ asset('storage/' . $order->payment_receipt_path) }}" alt="Payment receipt"
+                            class="max-h-[70vh] w-auto mx-auto rounded-lg shadow-sm">
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <script>
+        function openReceiptModal(orderId) {
+            const el = document.getElementById('receiptModal-' + orderId);
+            if (el) {
+                el.classList.remove('hidden');
+            }
+        }
+
+        function closeReceiptModal(orderId) {
+            const el = document.getElementById('receiptModal-' + orderId);
+            if (el) {
+                el.classList.add('hidden');
+            }
+        }
+    </script>
+
+
 </x-app-layout>

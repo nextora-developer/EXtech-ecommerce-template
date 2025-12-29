@@ -39,22 +39,22 @@
                                 {{-- 填充 ♥ --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37" viewBox="0 0 24 24" class="h-5 w-5">
                                     <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                 2 12.28 2 8.5 2 5.42 4.42
-                                                                 3 7.5 3c1.74 0 3.41.81 4.5
-                                                                 2.09C13.09 3.81 14.76 3 16.5
-                                                                 3 19.58 3 22 5.42 22 8.5c0
-                                                                 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                                         2 12.28 2 8.5 2 5.42 4.42
+                                                                         3 7.5 3c1.74 0 3.41.81 4.5
+                                                                         2.09C13.09 3.81 14.76 3 16.5
+                                                                         3 19.58 3 22 5.42 22 8.5c0
+                                                                         3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                 </svg>
                             @else
                                 {{-- 空心 ♥ --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10" stroke-width="1.8"
                                     viewBox="0 0 24 24" class="h-5 w-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                               0-3.6 1-4.5 2.5C10.6 4.5
-                                                               8.9 3.5 7 3.5 4.2 3.5 2
-                                                               5.7 2 8.5c0 5.2 5.5 8.9
-                                                               9.8 12.7.1.1.3.1.4
-                                                               0C15.5 17.4 21 13.7 21 8.5z" />
+                                                                       0-3.6 1-4.5 2.5C10.6 4.5
+                                                                       8.9 3.5 7 3.5 4.2 3.5 2
+                                                                       5.7 2 8.5c0 5.2 5.5 8.9
+                                                                       9.8 12.7.1.1.3.1.4
+                                                                       0C15.5 17.4 21 13.7 21 8.5z" />
                                 </svg>
                             @endif
                         </button>
@@ -88,7 +88,7 @@
                         <div data-gallery class="max-w-lg mx-auto">
 
                             {{-- 大图：跟首页更新一致 aspect-[4/3] --}}
-                            <div class="relative rounded-2xl overflow-hidden bg-gray-100 aspect-[4/3] mb-3">
+                            <div class="relative rounded-2xl overflow-hidden bg-black aspect-square mb-3">
 
                                 <div class="flex h-full transition-transform duration-500 ease-out" data-gallery-track>
                                     @foreach ($gallery as $url)
@@ -149,53 +149,64 @@
 
                     {{-- 右边：详情 --}}
                     <div class="flex flex-col h-full">
-                        {{-- 名称 --}}
-                        <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">
-                            {{ $product->name }}
-                        </h1>
 
-                        {{-- 价格 --}}
-                        <div class="mt-2 flex items-center gap-3">
-                            <div class="text-2xl font-semibold text-[#8f6a10]" data-product-price>
-                                @if ($product->has_variants && $product->variants->count())
-                                    @php
-                                        // 拿有填 price 的 variants
-                                        $variantPrices = $product->variants->whereNotNull('price');
-                                        $min = $variantPrices->min('price');
-                                        $max = $variantPrices->max('price');
-                                    @endphp
+                        {{-- 标题 + 价格 --}}
+                        <div>
+                            {{-- 名称 --}}
+                            <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">
+                                {{ $product->name }}
+                            </h1>
 
-                                    @if ($min === null)
-                                        {{-- 有 variants 但是都没有填价钱 --}}
-                                        RM 0.00
-                                    @elseif ($min == $max)
-                                        {{-- 所有 variants 同一个价钱 --}}
-                                        RM {{ number_format($min, 2) }}
+                            {{-- 价格 --}}
+                            <div class="mt-5 flex items-end gap-3">
+                                <div class="text-2xl font-semibold text-[#8f6a10]" data-product-price>
+                                    @if ($product->has_variants && $product->variants->count())
+                                        @php
+                                            $variantPrices = $product->variants->whereNotNull('price');
+                                            $min = $variantPrices->min('price');
+                                            $max = $variantPrices->max('price');
+                                        @endphp
+
+                                        @if ($min === null)
+                                            RM 0.00
+                                        @elseif ($min == $max)
+                                            RM {{ number_format($min, 2) }}
+                                        @else
+                                            RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
+                                        @endif
                                     @else
-                                        {{-- 显示价钱范围 --}}
-                                        RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
+                                        RM {{ number_format($product->price ?? 0, 2) }}
                                     @endif
-                                @else
-                                    {{-- 没有 variants，用 product 本身的 price --}}
-                                    RM {{ number_format($product->price ?? 0, 2) }}
-                                @endif
-                            </div>
-                            {{-- 可以以后加上划线原价 --}}
-                            {{-- <div class="text-sm text-gray-400 line-through">RM 129.90</div> --}}
-                        </div>
+                                </div>
 
-                        {{-- 小信息 --}}
-                        <div class="mt-2 text-xs text-gray-500">
-                            {{-- 以后可以放 SKU / Stock --}}
-                            {{-- SKU: {{ $product->sku ?? '—' }} --}}
-                            Ready stock · Ships in 1–3 working days
+                                {{-- 小状态 badge --}}
+                                <div
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
+                        bg-emerald-50 text-emerald-700 text-sm font-medium border border-emerald-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Ready stock
+                                </div>
+                            </div>
+
+                            {{-- 小信息条：发货 / 运费提示 --}}
+                            <div class="mt-5 inline-flex flex-wrap gap-2 text-sm text-gray-500">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gray-100">
+                                    Ships in 1–3 working days
+                                </span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gray-100">
+                                    Free shipping over RM 150
+                                </span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gray-100">
+                                    Easy returns within 7 days
+                                </span>
+                            </div>
                         </div>
 
                         {{-- 分割线 --}}
-                        <div class="mt-4 mb-4 border-t border-gray-100"></div>
+                        <div class="mt-5 mb-4 border-t border-gray-100"></div>
 
                         {{-- 描述 --}}
-                        <div class="text-sm text-gray-700 leading-relaxed space-y-2 break-words">
+                        <div class="text-sm text-gray-700 leading-relaxed space-y-2 break-words max-w-xl">
                             @if ($product->short_description)
                                 <p>{{ $product->short_description }}</p>
                             @else
@@ -205,14 +216,12 @@
                             @endif
                         </div>
 
-                        {{-- Variant 选择区块 --}}
-
-
-                        {{-- 再一条细分割线 --}}
+                        {{-- 再一条细分割线，把说明和变体区隔开 --}}
                         <div class="mt-5 border-t border-gray-100"></div>
 
-                        {{-- Add to cart 区块 --}}
-                        <form method="POST" action="{{ route('cart.add', $product) }}" class="mt-auto">
+                        {{-- Add to cart + Variant 表单 --}}
+                        <form method="POST" action="{{ route('cart.add', $product) }}"
+                            class="mt-5 flex flex-col gap-5">
                             @csrf
 
                             {{-- Variant 选择（分组：Color / Size 这种） --}}
@@ -230,10 +239,7 @@
                                         ->values();
                                 @endphp
 
-                                {{-- 外层有 data-variants --}}
-                                <div id="variant-picker" data-variants='@json($variantMap)'
-                                    class="mt-6 space-y-4">
-
+                                <div id="variant-picker" data-variants='@json($variantMap)' class="space-y-4">
                                     @foreach ($product->options as $option)
                                         <div>
                                             <p class="text-[11px] uppercase tracking-[0.16em] text-gray-500 mb-1">
@@ -244,8 +250,8 @@
                                                 @foreach ($option->values as $value)
                                                     <button type="button"
                                                         class="variant-pill px-3.5 py-1.5 rounded-full border border-gray-300
-                               text-xs sm:text-sm text-gray-800 bg-white
-                               hover:border-[#D4AF37] hover:text-[#8f6a10] hover:bg-[#F9F4E5] transition"
+                                           text-xs sm:text-sm text-gray-800 bg-white
+                                           hover:border-[#D4AF37] hover:text-[#8f6a10] hover:bg-[#F9F4E5] transition"
                                                         data-option-key="{{ $option->name }}"
                                                         data-option-value="{{ $value->value }}">
                                                         {{ $value->value }}
@@ -255,19 +261,17 @@
                                         </div>
                                     @endforeach
 
-                                    <p class="text-xs text-gray-500" id="variant-status">
+                                    <p class="text-xs text-[#B28A15]" id="variant-status">
                                         请先选择所有选项组合。
                                     </p>
 
                                     {{-- 这个 hidden 一定在 form 里面 --}}
                                     <input type="hidden" name="variant_id" id="variant_id">
                                 </div>
-
                             @endif
 
-
-
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-5">
+                            {{-- 数量 + 加入购物车 --}}
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                                 {{-- 数量 --}}
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wide text-gray-400 mb-1">
@@ -295,26 +299,22 @@
                                     </label>
                                     <button type="submit"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full
-                                                   bg-[#D4AF37] text-white text-sm font-semibold
-                                                   shadow-[0_10px_25px_rgba(0,0,0,0.18)]
-                                                   hover:bg-[#b8942f] transition">
+                           bg-[#D4AF37] text-white text-sm font-semibold
+                           shadow-[0_10px_25px_rgba(0,0,0,0.18)]
+                           hover:bg-[#b8942f] transition">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                             <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M2.25 3.75h2.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l2.25-7.5H6.106M7.5 14.25L5.706 6.022M7.5 14.25l-1.5 4.5m0 0h12.75m-12.75 0a1.5 1.5 0 1 0 3 0m9.75 0a1.5 1.5 0 1 0 3 0" />
+                                                d="M2.25 3.75h2.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l2.25-7.5H6.106M7.5 14.25L5.706 6.022M7.5 14.25l-1.5 4.5m0 0h12.75m-12.75 0a1.5 1.5 0 1 0 3 0m-9.75 0a1.5 1.5 0 1 0 3 0" />
                                         </svg>
                                         Add to Cart
                                     </button>
                                 </div>
-
                             </div>
                         </form>
 
-                        {{-- 下面可以以后放：shipping info / returns policy --}}
-                        <div class="mt-4 text-[11px] text-gray-500">
-                            Free shipping over RM 150 · Easy returns within 7 days
-                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -431,11 +431,11 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                     2 12.28 2 8.5 2 5.42 4.42
-                                                                     3 7.5 3c1.74 0 3.41.81 4.5
-                                                                     2.09C13.09 3.81 14.76 3 16.5
-                                                                     3 19.58 3 22 5.42 22 8.5c0
-                                                                     3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                                             2 12.28 2 8.5 2 5.42 4.42
+                                                                             3 7.5 3c1.74 0 3.41.81 4.5
+                                                                             2.09C13.09 3.81 14.76 3 16.5
+                                                                             3 19.58 3 22 5.42 22 8.5c0
+                                                                             3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
                                                     {{-- 未收藏：空心 ♥ --}}
@@ -443,11 +443,11 @@
                                                         stroke="#8f6a10" stroke-width="1.8" viewBox="0 0 24 24"
                                                         class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                                   0-3.6 1-4.5 2.5C10.6 4.5
-                                                                   8.9 3.5 7 3.5 4.2 3.5 2
-                                                                   5.7 2 8.5c0 5.2 5.5 8.9
-                                                                   9.8 12.7.1.1.3.1.4 0C15.5
-                                                                   17.4 21 13.7 21 8.5z" />
+                                                                           0-3.6 1-4.5 2.5C10.6 4.5
+                                                                           8.9 3.5 7 3.5 4.2 3.5 2
+                                                                           5.7 2 8.5c0 5.2 5.5 8.9
+                                                                           9.8 12.7.1.1.3.1.4 0C15.5
+                                                                           17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
