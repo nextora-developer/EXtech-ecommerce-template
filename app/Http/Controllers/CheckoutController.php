@@ -77,7 +77,7 @@ class CheckoutController extends Controller
             'shippingFee',
             'shippingRates',
             'hasPhysical',
-            'states', 
+            'states',
         ));
     }
 
@@ -147,7 +147,9 @@ class CheckoutController extends Controller
         } while (\App\Models\Order::where('order_no', $orderNo)->exists());
 
 
-        DB::transaction(function () use ($request, $items, $subtotal, $shippingFee, $paymentMethod, $receiptPath, $cart,  $orderNo) {
+        $total = $subtotal + $shippingFee;
+
+        DB::transaction(function () use ($request, $items, $subtotal, $shippingFee, $paymentMethod, $receiptPath, $cart,  $orderNo, $total) {
             $order = Order::create([
                 'order_no'            => $orderNo,
                 'user_id'              => auth()->id(),
@@ -161,8 +163,8 @@ class CheckoutController extends Controller
                 'state'                => $request->state,
                 'country'              => $request->country,
                 'subtotal'             => $subtotal,
-                'shipping_fee'         => $shippingFee,   // 🆕
-                'total'                => $subtotal,
+                'shipping_fee'         => $shippingFee,
+                'total'                => $total,
                 'status'               => 'pending',
                 'payment_method_code'  => $paymentMethod->code,
                 'payment_method_name'  => $paymentMethod->name,
@@ -172,10 +174,11 @@ class CheckoutController extends Controller
             foreach ($items as $item) {
                 $order->items()->create([
                     'product_id'         => $item->product_id,
+                    'product_name'       => $item->product->name ?? '',
                     'qty'                => $item->qty,
                     'unit_price'         => $item->unit_price,
-                    'product_variant_id' => $item->product_variant_id,
-                    'variant_label'      => $item->variant_label,
+                    'product_variant_id' => $item->product_variant_id ?? null,
+                    'variant_label'      => $item->variant_label ?? null,
                 ]);
             }
 

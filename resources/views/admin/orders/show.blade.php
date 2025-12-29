@@ -55,7 +55,7 @@
 
             </div>
 
-            <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                 <div>
                     <div class="text-gray-500 text-xs">Customer Name</div>
                     <div class="font-medium text-gray-900">{{ $order->customer_name ?? '-' }}</div>
@@ -67,8 +67,15 @@
                 </div>
 
                 <div>
-                    <div class="text-gray-500 text-xs">Order ID</div>
-                    <div class="font-medium text-gray-900">#{{ $order->id }}</div>
+                    <div class="text-gray-500 text-xs">Customer Email</div>
+                    <div class="font-medium text-gray-900">{{ $order->customer_email ?? '-' }}</div>
+                </div>
+
+                <div class="md:col-span-2">
+                    <div class="text-gray-500 text-xs">Shipping Address</div>
+                    <div class="font-medium text-gray-900">
+                        {{ $fullAddress ?: '-' }}
+                    </div>
                 </div>
 
                 <div>
@@ -76,12 +83,7 @@
                     <div class="font-medium text-gray-900">{{ optional($order->created_at)->format('Y-m-d H:i') }}</div>
                 </div>
 
-                <div class="md:col-span-2">
-                    <div class="text-gray-500 text-xs">Shipping Address</div>
-                    <div class="mt-1 font-medium text-gray-900 whitespace-pre-line">
-                        {{ $fullAddress ?: '-' }}
-                    </div>
-                </div>
+
             </div>
 
             {{-- Order items --}}
@@ -96,7 +98,7 @@
                                     <th class="px-4 py-2 text-left">Product</th>
                                     <th class="px-4 py-2 text-left">Variant</th>
                                     <th class="px-4 py-2 text-center">Qty</th>
-                                    <th class="px-4 py-2 text-right">Price</th>
+                                    <th class="px-4 py-2 text-center">Price</th>
                                     <th class="px-4 py-2 text-right">Subtotal</th>
                                 </tr>
                             </thead>
@@ -124,11 +126,11 @@
 
                                         {{-- 数量 --}}
                                         <td class="px-4 py-2 text-center text-gray-900">
-                                            {{ $item->quantity ?? 1 }}
+                                            {{ $item->qty ?? 1 }}
                                         </td>
 
                                         {{-- 单价 --}}
-                                        <td class="px-4 py-2 text-right text-gray-900">
+                                        <td class="px-4 py-2 text-center text-gray-900">
                                             RM {{ number_format($item->unit_price, 2) }}
                                         </td>
 
@@ -136,6 +138,7 @@
                                         <td class="px-4 py-2 text-right font-semibold text-gray-900">
                                             RM {{ number_format($item->subtotal, 2) }}
                                         </td>
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -160,7 +163,7 @@
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <div class="text-gray-500">Shipping</div>
+                        <div class="text-gray-500">Shipping Fee</div>
                         <div class="font-medium text-gray-900">
                             RM {{ number_format($order->shipping_fee ?? 0, 2) }}
                         </div>
@@ -207,21 +210,46 @@
 
             {{-- Quick info --}}
             <div class="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
-                <div class="text-xs text-gray-500">Order No</div>
+                <div class="text-xs text-gray-500">Order ID</div>
+                <div class="font-semibold text-gray-900">{{ $order->id }}</div>
+
+                <div class="mt-3 text-xs text-gray-500">Order No</div>
                 <div class="font-semibold text-gray-900">{{ $order->order_no }}</div>
 
-                <div class="mt-3 text-xs text-gray-500">Customer</div>
-                <div class="font-semibold text-gray-900">{{ $order->customer_name ?? '-' }}</div>
+                <div class="mt-3 text-xs text-gray-500">Payment Method</div>
+                <div class="font-semibold text-gray-900">{{ $order->payment_method_name }}</div>
 
-                <div class="mt-3 text-xs text-gray-500">Customer Phone</div>
-                <div class="font-semibold text-gray-900">{{ $order->customer_phone ?? '-' }}</div>
+                @if ($order->payment_receipt_path)
+                    <div class="mt-3 text-xs text-gray-500">Payment Receipt</div>
 
-                <div class="mt-3 text-xs text-gray-500">Shipping Address</div>
-                <div class="font-semibold text-gray-900">{{ $fullAddress ?: '-' }}</div>
+                    <button onclick="document.getElementById('receiptModal').showModal()"
+                        class="inline-flex items-center mt-1 px-3 py-1.5 rounded-lg border border-gray-300
+               bg-white hover:bg-gray-100 text-sm font-medium text-gray-700">
+                        View Receipt
+                    </button>
 
-                <div class="mt-3 text-xs text-gray-500">Created</div>
-                <div class="font-semibold text-gray-900">{{ optional($order->created_at)->format('Y-m-d H:i') }}</div>
+                    <a href="{{ asset('storage/' . $order->payment_receipt_path) }}" download
+                        class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium
+          bg-[#D4AF37] text-white hover:bg-[#C49A2F]">
+                        Download
+                    </a>
+                @endif
+
             </div>
         </div>
     </div>
+
+
+    @if ($order->payment_receipt_path)
+        <dialog id="receiptModal" class="rounded-xl p-0">
+            <div class="p-4 border-b flex justify-between items-center">
+                <div class="font-semibold">Payment Receipt</div>
+                <button onclick="document.getElementById('receiptModal').close()">✕</button>
+            </div>
+
+            <img src="{{ asset('storage/' . $order->payment_receipt_path) }}" class="max-h-[80vh] w-auto mx-auto p-4">
+        </dialog>
+    @endif
+
+
 @endsection

@@ -54,9 +54,21 @@ class CartController extends Controller
             $unitPrice = $variant->price;
 
             // 这边如果你喜欢可以继续用 label/value 组合的文字
-            $variantLabel = $variant->options
-                ? ('label: ' . ($variant->options['label'] ?? '') . ' • value: ' . ($variant->options['value'] ?? ''))
-                : null;
+            $label  = explode('/', $variant->options['label']  ?? '');
+            $value  = explode('/', $variant->options['value']  ?? '');
+
+            $parts = [];
+
+            foreach ($label as $i => $name) {
+                $name = trim($name);
+                $val  = trim($value[$i] ?? '');
+
+                if ($name !== '' && $val !== '') {
+                    $parts[] = "{$name}: {$val}";
+                }
+            }
+
+            $variantLabel = implode(' & ', $parts);
         }
 
         if (is_null($unitPrice)) {
