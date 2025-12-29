@@ -76,39 +76,70 @@
                         @if ($latestOrders->count())
                             @foreach ($latestOrders as $order)
                                 <a href="{{ route('account.orders.show', $order) }}"
-                                    class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-center justify-between text-base mb-2 hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50 transition cursor-pointer">
+                                    class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3
+              flex items-center gap-4 text-base mb-2
+              hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50
+              transition cursor-pointer">
 
-                                    <div>
-                                        <span class="font-medium text-[#8f6a10] hover:text-[#D4AF37]">
-                                            {{ $order->order_no }}
-                                        </span>
-                                        <div class="text-sm text-gray-500 mt-1">
-                                            {{ $order->created_at->format('d M Y, H:i') }}
-                                        </div>
+                                    {{-- 商品缩略图 --}}
+                                    @php
+                                        $firstItem = $order->items->first();
+                                        $thumb = null;
+
+                                        if ($firstItem && $firstItem->product && $firstItem->product->image) {
+                                            $thumb = asset('storage/' . $firstItem->product->image);
+                                        }
+                                    @endphp
+
+                                    <div
+                                        class="w-12 h-12 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex-shrink-0">
+                                        @if ($thumb)
+                                            <img src="{{ $thumb }}" class="w-full h-full object-cover"
+                                                alt="">
+                                        @else
+                                            <div
+                                                class="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                                                —</div>
+                                        @endif
                                     </div>
 
-                                    <div class="flex items-center gap-5 font-medium text-[#0A0A0C]">
+                                    {{-- 订单信息 + 状态 --}}
+                                    <div class="flex-1 flex justify-between items-center">
 
-                                        @php
-                                            $colors = [
-                                                'pending' => 'bg-amber-100 text-[#8f6a10]',
-                                                'paid' => 'bg-green-100 text-green-700',
-                                                'processing' => 'bg-blue-100 text-blue-700',
-                                                'shipped' => 'bg-indigo-100 text-indigo-700',
-                                                'completed' => 'bg-emerald-100 text-emerald-700',
-                                                'cancelled' => 'bg-red-100 text-red-600',
-                                            ];
-                                        @endphp
+                                        <div>
+                                            <span class="font-medium text-[#8f6a10] hover:text-[#D4AF37]">
+                                                {{ $order->order_no }}
+                                            </span>
 
-                                        <span
-                                            class="px-2 py-1 rounded-full text-sm font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
-                                            {{ ucfirst($order->status) }}
-                                        </span>
+                                            <div class="text-sm text-gray-500 mt-1">
+                                                {{ $order->created_at->format('d M Y, H:i') }}
+                                            </div>
+                                        </div>
 
-                                        <span>
-                                            RM {{ number_format($order->total, 2) }}
-                                        </span>
+                                        <div class="flex items-center gap-4 font-medium text-[#0A0A0C]">
 
+                                            @php
+                                                $colors = [
+                                                    'pending' => 'bg-amber-100 text-[#8f6a10]',
+                                                    'paid' => 'bg-green-100 text-green-700',
+                                                    'processing' => 'bg-blue-100 text-blue-700',
+                                                    'shipped' => 'bg-indigo-100 text-indigo-700',
+                                                    'completed' => 'bg-emerald-100 text-emerald-700',
+                                                    'cancelled' => 'bg-red-100 text-red-600',
+                                                ];
+                                            @endphp
+
+                                            <span
+                                                class="px-2 py-1 rounded-full text-sm font-medium
+                             {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
+                                                {{ ucfirst($order->status) }}
+                                            </span>
+
+                                            <span>
+                                                RM {{ number_format($order->total, 2) }}
+                                            </span>
+
+                                        </div>
                                     </div>
                                 </a>
                             @endforeach
