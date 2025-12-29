@@ -39,22 +39,22 @@
                                 {{-- 填充 ♥ --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37" viewBox="0 0 24 24" class="h-5 w-5">
                                     <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                             2 12.28 2 8.5 2 5.42 4.42
-                                                             3 7.5 3c1.74 0 3.41.81 4.5
-                                                             2.09C13.09 3.81 14.76 3 16.5
-                                                             3 19.58 3 22 5.42 22 8.5c0
-                                                             3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                                 2 12.28 2 8.5 2 5.42 4.42
+                                                                 3 7.5 3c1.74 0 3.41.81 4.5
+                                                                 2.09C13.09 3.81 14.76 3 16.5
+                                                                 3 19.58 3 22 5.42 22 8.5c0
+                                                                 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                 </svg>
                             @else
                                 {{-- 空心 ♥ --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10" stroke-width="1.8"
                                     viewBox="0 0 24 24" class="h-5 w-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                           0-3.6 1-4.5 2.5C10.6 4.5
-                                                           8.9 3.5 7 3.5 4.2 3.5 2
-                                                           5.7 2 8.5c0 5.2 5.5 8.9
-                                                           9.8 12.7.1.1.3.1.4
-                                                           0C15.5 17.4 21 13.7 21 8.5z" />
+                                                               0-3.6 1-4.5 2.5C10.6 4.5
+                                                               8.9 3.5 7 3.5 4.2 3.5 2
+                                                               5.7 2 8.5c0 5.2 5.5 8.9
+                                                               9.8 12.7.1.1.3.1.4
+                                                               0C15.5 17.4 21 13.7 21 8.5z" />
                                 </svg>
                             @endif
                         </button>
@@ -348,25 +348,36 @@
                 </div>
 
                 {{-- Content: Additional Info --}}
-                <div id="tab-info" class="hidden text-sm text-gray-700 leading-relaxed space-y-2">
+                <div id="tab-info" class="hidden text-sm leading-relaxed">
 
                     @if (!empty($product->specs))
-                        {{-- Shopee-style 两列规格 --}}
-                        <dl class="grid grid-cols-[auto,1fr] gap-x-6 gap-y-2 text-sm">
-                            @foreach ($product->specs as $row)
-                                <dt class="font-medium text-gray-600">
-                                    {{ $row['name'] ?? '-' }}
-                                </dt>
-                                <dd class="text-gray-800">
-                                    {{ $row['value'] ?? '-' }}
-                                </dd>
-                            @endforeach
-                        </dl>
+                        <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+                            <div class="px-4 py-3 border-b bg-gray-50 rounded-t-2xl">
+                                <h4 class="font-semibold text-gray-700">Product Specifications</h4>
+                            </div>
+
+                            <dl class="divide-y">
+                                @foreach ($product->specs as $row)
+                                    <div
+                                        class="grid grid-cols-[160px,1fr] gap-6 px-4 py-2 hover:bg-gray-50 transition">
+                                        <dt class="font-medium text-gray-500">
+                                            {{ $row['name'] ?? '-' }}
+                                        </dt>
+                                        <dd class="text-gray-800">
+                                            {{ $row['value'] ?? '-' }}
+                                        </dd>
+                                    </div>
+                                @endforeach
+                            </dl>
+
+                        </div>
                     @else
                         <p class="text-gray-500 text-sm">No additional info yet.</p>
                     @endif
 
                 </div>
+
 
             </div>
 
@@ -420,11 +431,11 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                 2 12.28 2 8.5 2 5.42 4.42
-                                                                 3 7.5 3c1.74 0 3.41.81 4.5
-                                                                 2.09C13.09 3.81 14.76 3 16.5
-                                                                 3 19.58 3 22 5.42 22 8.5c0
-                                                                 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                                     2 12.28 2 8.5 2 5.42 4.42
+                                                                     3 7.5 3c1.74 0 3.41.81 4.5
+                                                                     2.09C13.09 3.81 14.76 3 16.5
+                                                                     3 19.58 3 22 5.42 22 8.5c0
+                                                                     3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
                                                     {{-- 未收藏：空心 ♥ --}}
@@ -432,11 +443,11 @@
                                                         stroke="#8f6a10" stroke-width="1.8" viewBox="0 0 24 24"
                                                         class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                               0-3.6 1-4.5 2.5C10.6 4.5
-                                                               8.9 3.5 7 3.5 4.2 3.5 2
-                                                               5.7 2 8.5c0 5.2 5.5 8.9
-                                                               9.8 12.7.1.1.3.1.4 0C15.5
-                                                               17.4 21 13.7 21 8.5z" />
+                                                                   0-3.6 1-4.5 2.5C10.6 4.5
+                                                                   8.9 3.5 7 3.5 4.2 3.5 2
+                                                                   5.7 2 8.5c0 5.2 5.5 8.9
+                                                                   9.8 12.7.1.1.3.1.4 0C15.5
+                                                                   17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
