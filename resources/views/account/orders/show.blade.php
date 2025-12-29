@@ -43,10 +43,31 @@
                                 ];
                             @endphp
 
-                            <span
-                                class="px-3 py-1 rounded-full text-sm font-medium shadow-sm {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
-                                {{ ucfirst($order->status) }}
-                            </span>
+                            <div class="flex items-center gap-3">
+
+                                {{-- Status Badge --}}
+                                <span
+                                    class="px-3 py-1 rounded-full text-sm font-medium shadow-sm
+               {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
+                                    {{ ucfirst($order->status) }}
+                                </span>
+
+                                {{-- Order Received Button --}}
+                                @if ($order->status === 'shipped')
+                                    <form method="POST" action="{{ route('account.orders.complete', $order) }}">
+                                        @csrf
+                                        <button
+                                            class="inline-flex items-center px-4 py-2 rounded-xl
+                       bg-emerald-600 text-white text-sm font-semibold
+                       hover:bg-emerald-700 transition">
+                                            ✓ Order Received
+                                        </button>
+                                    </form>
+                                @endif
+
+                            </div>
+
+
                         </div>
 
                         {{-- Info blocks --}}

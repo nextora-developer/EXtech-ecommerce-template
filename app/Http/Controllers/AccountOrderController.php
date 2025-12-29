@@ -53,4 +53,23 @@ class AccountOrderController extends Controller
 
         return view('account.orders.show', compact('order'));
     }
+
+    public function markCompleted(Order $order)
+    {
+        // 只允许订单本人
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // 只有 shipped 才允许完成
+        if ($order->status !== 'shipped') {
+            return back()->with('error', 'Order is not shipped yet.');
+        }
+
+        $order->update([
+            'status' => 'completed',
+        ]);
+
+        return back()->with('success', 'Order marked as received. Thank you!');
+    }
 }

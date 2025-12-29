@@ -27,7 +27,7 @@
                 <label class="text-xs text-gray-500">Name</label>
                 <input name="name" value="{{ old('name', $category->name) }}"
                     class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
-                    placeholder="e.g. Accessories">
+                    placeholder="e.g. Accessories" required>
             </div>
 
             <div>

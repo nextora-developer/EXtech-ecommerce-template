@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
         // Orders 
         Route::get('/orders', [AccountOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AccountOrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/complete', [AccountOrderController::class, 'markCompleted'])->name('orders.complete');
 
         // Address
         Route::get('/addresses', [AccountAddressController::class, 'index'])

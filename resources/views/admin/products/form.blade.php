@@ -18,7 +18,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
                 <label class="form-label">Product name</label>
-                <input name="name" value="{{ old('name', $product->name) }}" class="form-input" placeholder="e.g. Gold Mug">
+                <input name="name" value="{{ old('name', $product->name) }}" class="form-input" placeholder="e.g. Gold Mug" required>
             </div>
 
             <div>
@@ -29,7 +29,7 @@
 
             <div>
                 <label class="form-label">Category</label>
-                <select name="category_id" class="form-input">
+                <select name="category_id" class="form-input" required>
                     <option value="">— None —</option>
                     @foreach ($categories as $c)
                         <option value="{{ $c->id }}" @selected(old('category_id', $product->category_id) == $c->id)>
