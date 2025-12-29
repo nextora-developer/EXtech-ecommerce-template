@@ -24,8 +24,29 @@ class AccountAddressController extends Controller
     {
         $user = auth()->user();
 
-        return view('account.address.create', compact('user'));
+        $states = [
+            ['name' => 'Johor',           'zone' => 'west_my'],
+            ['name' => 'Kedah',           'zone' => 'west_my'],
+            ['name' => 'Kelantan',        'zone' => 'west_my'],
+            ['name' => 'Melaka',          'zone' => 'west_my'],
+            ['name' => 'Negeri Sembilan', 'zone' => 'west_my'],
+            ['name' => 'Pahang',          'zone' => 'west_my'],
+            ['name' => 'Perak',           'zone' => 'west_my'],
+            ['name' => 'Perlis',          'zone' => 'west_my'],
+            ['name' => 'Penang',          'zone' => 'west_my'],
+            ['name' => 'Selangor',        'zone' => 'west_my'],
+            ['name' => 'Terengganu',      'zone' => 'west_my'],
+            ['name' => 'Kuala Lumpur',    'zone' => 'west_my'],
+            ['name' => 'Putrajaya',       'zone' => 'west_my'],
+
+            ['name' => 'Sabah',           'zone' => 'east_my'],
+            ['name' => 'Sarawak',         'zone' => 'east_my'],
+            ['name' => 'Labuan',          'zone' => 'east_my'],
+        ];
+
+        return view('account.address.create', compact('user', 'states'));
     }
+
 
     public function store(Request $request)
     {
@@ -75,7 +96,27 @@ class AccountAddressController extends Controller
             abort(404);
         }
 
-        return view('account.address.edit', compact('user', 'address'));
+        $states = [
+            ['name' => 'Johor',           'zone' => 'west_my'],
+            ['name' => 'Kedah',           'zone' => 'west_my'],
+            ['name' => 'Kelantan',        'zone' => 'west_my'],
+            ['name' => 'Melaka',          'zone' => 'west_my'],
+            ['name' => 'Negeri Sembilan', 'zone' => 'west_my'],
+            ['name' => 'Pahang',          'zone' => 'west_my'],
+            ['name' => 'Perak',           'zone' => 'west_my'],
+            ['name' => 'Perlis',          'zone' => 'west_my'],
+            ['name' => 'Penang',          'zone' => 'west_my'],
+            ['name' => 'Selangor',        'zone' => 'west_my'],
+            ['name' => 'Terengganu',      'zone' => 'west_my'],
+            ['name' => 'Kuala Lumpur',    'zone' => 'west_my'],
+            ['name' => 'Putrajaya',       'zone' => 'west_my'],
+
+            ['name' => 'Sabah',           'zone' => 'east_my'],
+            ['name' => 'Sarawak',         'zone' => 'east_my'],
+            ['name' => 'Labuan',          'zone' => 'east_my'],
+        ];
+
+        return view('account.address.edit', compact('user', 'address', 'states'));
     }
 
     public function update(Request $request, UserAddress $address)

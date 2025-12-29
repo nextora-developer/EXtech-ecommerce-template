@@ -135,11 +135,21 @@
                                     <label class="block text-sm text-gray-500 mb-1">
                                         State
                                     </label>
-                                    <input type="text" name="state" value="{{ old('state') }}"
+
+                                    <select name="state"
                                         class="w-full rounded-xl border-gray-200 text-base px-3 py-3
-                                              focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
-                                        placeholder="e.g. Selangor">
+                                               focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+
+                                        <option value="">Select State</option>
+
+                                        @foreach ($states as $s)
+                                            <option value="{{ $s['name'] }}" @selected(old('state', $address->state ?? '') === $s['name'])>
+                                                {{ $s['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
+
 
                                 <div>
                                     <label class="block text-sm text-gray-500 mb-1">

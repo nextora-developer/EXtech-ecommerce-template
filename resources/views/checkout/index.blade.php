@@ -197,10 +197,21 @@
                                         <label class="block text-sm font-medium text-gray-500 mb-2">
                                             State
                                         </label>
-                                        <input type="text" name="state"
-                                            value="{{ old('state', $defaultAddress->state ?? '') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="e.g. Selangor" required>
+
+                                        <select name="state"
+                                            class="w-full px-3 py-3 rounded-xl border-gray-300
+                                                   focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
+                                            data-state-select required>
+
+                                            <option value="">Select State</option>
+
+                                            @foreach ($states as $s)
+                                                <option value="{{ $s['name'] }}" data-zone="{{ $s['zone'] }}"
+                                                    @selected(old('state', $defaultAddress->state ?? '') === $s['name'])>
+                                                    {{ $s['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
 
                                     <div>
@@ -471,7 +482,13 @@
                                 </div>
                                 <div class="flex justify-between">
                                     <dt class="text-gray-500">Shipping</dt>
-                                    <dd class="text-gray-700">To be confirmed</dd>
+                                    <dd class="text-gray-700" data-shipping-text>
+                                        @if (!$hasPhysical)
+                                            Free
+                                        @else
+                                            To be confirmed
+                                        @endif
+                                    </dd>
                                 </div>
                             </dl>
 
@@ -479,10 +496,13 @@
 
                             <div class="flex justify-between items-center mb-4 text-base">
                                 <span class="font-semibold text-gray-900">Total</span>
-                                <span class="text-lg font-semibold text-[#8f6a10]">
+
+                                <span class="text-lg font-semibold text-[#8f6a10]" data-total-text>
+                                    {{-- 默认先显示 Subtotal --}}
                                     RM {{ number_format($subtotal, 2) }}
                                 </span>
                             </div>
+
 
                             {{-- Desktop：按钮放在右边 card 里 --}}
                             <button type="submit"
@@ -641,6 +661,56 @@
             }
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stateSelect = document.querySelector('[data-state-select]');
+            const shippingText = document.querySelector('[data-shipping-text]');
+            const totalText = document.querySelector('[data-total-text]');
+            const hasPhysical = @json($hasPhysical);
+            const shippingRates = @json($shippingRates); // { west_my: 8, east_my: 15, ... }
+            const subtotal = {{ $subtotal }}; // 纯数字
+
+            if (!stateSelect || !shippingText || !totalText) return;
+
+            // 全部 digital → 永远 Free，Total = subtotal
+            if (!hasPhysical) {
+                shippingText.textContent = 'Free';
+                totalText.textContent = 'RM ' + subtotal.toFixed(2);
+                return;
+            }
+
+            function updateShipping() {
+                const selected = stateSelect.selectedOptions[0];
+                const zone = selected ? selected.dataset.zone : null;
+
+                // 还没选 / 没有 zone → 待确认
+                if (!zone) {
+                    shippingText.textContent = 'To be confirmed';
+                    totalText.textContent = 'RM ' + subtotal.toFixed(2);
+                    return;
+                }
+
+                const fee = Number(shippingRates[zone] ?? 0);
+
+                if (fee === 0) {
+                    shippingText.textContent = 'Free';
+                    totalText.textContent = 'RM ' + subtotal.toFixed(2);
+                } else {
+                    shippingText.textContent = 'RM ' + fee.toFixed(2);
+                    totalText.textContent = 'RM ' + (subtotal + fee).toFixed(2);
+                }
+            }
+
+            stateSelect.addEventListener('change', updateShipping);
+
+            // 页面加载时根据默认 state 算一次
+            updateShipping();
+        });
+    </script>
+
+
+
 
 
 </x-app-layout>

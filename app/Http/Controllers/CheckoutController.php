@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\PaymentMethod;
+use App\Models\ShippingRate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
@@ -23,14 +25,48 @@ class CheckoutController extends Controller
         $items    = $cart->items;
         $subtotal = $items->sum(fn($i) => $i->unit_price * $i->qty);
 
-        // 🔹 这里拿 defaultAddress（如果你 User 里有这个关系）
-        $user            = auth()->user();
-        $defaultAddress  = $user?->defaultAddress;   // User::defaultAddress 关系
-        $addresses      = $user?->addresses ?? collect(); // 所有地址
+        $user           = auth()->user();
+        $defaultAddress = $user?->defaultAddress;
+        $addresses      = $user?->addresses ?? collect();
 
         $paymentMethods = PaymentMethod::where('is_active', true)
             ->orderByDesc('is_default')
             ->get();
+
+        // ✅ 有没有实体商品
+        $hasPhysical = $items->contains(function ($item) {
+            return !$item->product->is_digital;   // 没勾 digital = 实体
+        });
+
+        // ✅ 先给 shippingFee = null，表示“待计算”
+        $shippingFee = null;
+
+        // ✅ 把 rate 丢给前端，用 JS 算（west_my / east_my）
+        $shippingRates = $hasPhysical
+            ? ShippingRate::pluck('rate', 'code')   // ['west_my' => 8, 'east_my' => 15, ...]
+            : collect();                             // 全部 digital 就不用运费了
+
+        $states = [
+            // West Malaysia
+            ['name' => 'Johor',           'zone' => 'west_my'],
+            ['name' => 'Kedah',           'zone' => 'west_my'],
+            ['name' => 'Kelantan',        'zone' => 'west_my'],
+            ['name' => 'Melaka',          'zone' => 'west_my'],
+            ['name' => 'Negeri Sembilan', 'zone' => 'west_my'],
+            ['name' => 'Pahang',          'zone' => 'west_my'],
+            ['name' => 'Perak',           'zone' => 'west_my'],
+            ['name' => 'Perlis',          'zone' => 'west_my'],
+            ['name' => 'Penang',          'zone' => 'west_my'],
+            ['name' => 'Selangor',        'zone' => 'west_my'],
+            ['name' => 'Terengganu',      'zone' => 'west_my'],
+            ['name' => 'Kuala Lumpur',    'zone' => 'west_my'],
+            ['name' => 'Putrajaya',       'zone' => 'west_my'],
+
+            // East Malaysia
+            ['name' => 'Sabah',           'zone' => 'east_my'],
+            ['name' => 'Sarawak',         'zone' => 'east_my'],
+            ['name' => 'Labuan',          'zone' => 'east_my'],
+        ];
 
         return view('checkout.index', compact(
             'items',
@@ -38,8 +74,14 @@ class CheckoutController extends Controller
             'defaultAddress',
             'addresses',
             'paymentMethods',
+            'shippingFee',
+            'shippingRates',
+            'hasPhysical',
+            'states', 
         ));
     }
+
+
 
     public function store(Request $request)
     {
@@ -100,8 +142,14 @@ class CheckoutController extends Controller
                 ->store('payment_receipts', 'public');
         }
 
-        DB::transaction(function () use ($request, $items, $subtotal, $shippingFee, $paymentMethod, $receiptPath, $cart) {
+        do {
+            $orderNo = 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6));
+        } while (\App\Models\Order::where('order_no', $orderNo)->exists());
+
+
+        DB::transaction(function () use ($request, $items, $subtotal, $shippingFee, $paymentMethod, $receiptPath, $cart,  $orderNo) {
             $order = Order::create([
+                'order_no'            => $orderNo,
                 'user_id'              => auth()->id(),
                 'customer_name'        => $request->name,
                 'customer_phone'       => $request->phone,
