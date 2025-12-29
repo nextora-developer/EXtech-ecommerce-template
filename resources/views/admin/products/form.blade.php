@@ -18,8 +18,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
                 <label class="form-label">Product name</label>
-                <input name="name" value="{{ old('name', $product->name) }}" class="form-input"
-                    placeholder="e.g. Gold Mug">
+                <input name="name" value="{{ old('name', $product->name) }}" class="form-input" placeholder="e.g. Gold Mug">
             </div>
 
             <div>
@@ -122,6 +121,8 @@
         </div>
 
 
+
+
         {{-- ROW 5 --}}
         <div class="border rounded-xl p-5 space-y-6">
             <div class="flex justify-between items-center">
@@ -133,6 +134,7 @@
                     <span>Use variations</span>
                 </label>
             </div>
+
 
             <div id="simplePriceStock" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -386,10 +388,28 @@
         {{-- ACTIONS + ACTIVE --}}
         <div class="flex justify-end items-center gap-6 pt-2">
 
+            {{-- Digital toggle (最前面) --}}
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="is_digital" value="1" class="sr-only peer"
+                    @checked(old('is_digital', $product->is_digital ?? false))>
+
+                <div
+                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-500 relative
+               after:content-['']
+               after:absolute after:top-[2px] after:left-[2px]
+               after:bg-white after:h-5 after:w-5 after:rounded-full
+               peer-checked:after:translate-x-full after:transition-all">
+                </div>
+
+                <span class="text-sm text-gray-600">
+                    Digital Product
+                </span>
+            </label>
+
             {{-- Active toggle --}}
             <label class="inline-flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_active" value="1" class="sr-only peer"
-                    @checked(old('is_active', $product->is_active))>
+                    @checked(old('is_active', $product->is_active ?? true))>
 
                 <div
                     class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#D4AF37] relative

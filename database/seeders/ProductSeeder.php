@@ -21,15 +21,18 @@ class ProductSeeder extends Seeder
             $name = $faker->words(rand(2, 4), true);
 
             $product = Product::create([
-                'category_id'        => rand(1, 5), // 假设 category 有 1–5
+                'category_id'        => rand(1, 5),
                 'name'               => ucfirst($name),
                 'slug'               => Str::slug($name) . '-' . $i,
                 'short_description'  => $faker->sentence(8),
                 'description'        => $faker->paragraph(5),
                 'price'              => $faker->randomFloat(2, 10, 300),
                 'stock'              => $faker->numberBetween(0, 50),
-                'has_variants'       => rand(0, 1),
-                'is_active'          => rand(0, 1),
+
+                'has_variants'       => (bool) rand(0, 1),
+                'is_active'          => (bool) rand(0, 1),
+                'is_digital'         => (bool) rand(0, 1),   // 👈 新增
+
                 'image'              => null,
             ]);
 

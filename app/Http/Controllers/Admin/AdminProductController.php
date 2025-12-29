@@ -82,14 +82,16 @@ class AdminProductController extends Controller
             'image'     => ['nullable', 'image', 'max:2048'],
 
             'is_active' => ['nullable', 'boolean'],
+            'is_digital' => ['nullable', 'boolean'],
         ]);
 
         // slug auto
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
 
         // checkbox normalize
-        $data['is_active']    = (bool) ($data['is_active'] ?? false);
-        $data['has_variants'] = (bool) ($data['has_variants'] ?? false);
+        $data['is_active']   = $request->boolean('is_active');
+        $data['has_variants'] = $request->boolean('has_variants');
+        $data['is_digital']   = $request->boolean('is_digital');
 
         // 先拿出来 variants & images，剩下的是 products 表的数据
         $variantsInput = $data['variants'] ?? [];
@@ -284,14 +286,16 @@ class AdminProductController extends Controller
             'image'     => ['nullable', 'image', 'max:2048'],
 
             'is_active' => ['nullable', 'boolean'],
+            'is_digital' => ['nullable', 'boolean'],
         ]);
 
         // slug auto
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
 
         // checkbox normalize
-        $data['is_active']    = (bool) ($data['is_active'] ?? false);
-        $data['has_variants'] = (bool) ($data['has_variants'] ?? false);
+        $data['is_active']   = $request->boolean('is_active');
+        $data['has_variants'] = $request->boolean('has_variants');
+        $data['is_digital']   = $request->boolean('is_digital');
 
         // 拆出 variants，剩下是 products 表字段
         $variantsInput = $data['variants'] ?? [];
