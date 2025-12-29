@@ -67,13 +67,40 @@ class CheckoutController extends Controller
         $items    = $cart->items;
         $subtotal = $items->sum(fn($i) => $i->unit_price * $i->qty);
 
+        // 1️⃣ 检查有没有实体产品
+        $hasPhysical = $items->contains(function ($item) {
+            return !$item->product->is_digital; // 没设 true 就当实体
+        });
+
+        // 默认运费
+        $shippingFee = 0;
+
+        if ($hasPhysical) {
+            // 2️⃣ 根据 state 判断东马 / 西马
+            $eastStates = ['Sabah', 'Sarawak', 'Labuan'];
+
+            $zoneCode = in_array($request->state, $eastStates)
+                ? 'east_my'
+                : 'west_my';
+
+            // 3️⃣ 去 DB 拿 rate，找不到就当 0
+            $rate = ShippingRate::where('code', $zoneCode)->value('rate') ?? 0;
+
+            $shippingFee = $rate;
+        } else {
+            // 全部 digital
+            $shippingFee = ShippingRate::where('code', 'digital')->value('rate') ?? 0;
+        }
+
+        $total = $subtotal + $shippingFee;
+
         $receiptPath = null;
         if ($request->hasFile('payment_receipt')) {
             $receiptPath = $request->file('payment_receipt')
                 ->store('payment_receipts', 'public');
         }
 
-        DB::transaction(function () use ($request, $items, $subtotal, $paymentMethod, $receiptPath, $cart) {
+        DB::transaction(function () use ($request, $items, $subtotal, $shippingFee, $paymentMethod, $receiptPath, $cart) {
             $order = Order::create([
                 'user_id'              => auth()->id(),
                 'customer_name'        => $request->name,
@@ -86,6 +113,7 @@ class CheckoutController extends Controller
                 'state'                => $request->state,
                 'country'              => $request->country,
                 'subtotal'             => $subtotal,
+                'shipping_fee'         => $shippingFee,   // 🆕
                 'total'                => $subtotal,
                 'status'               => 'pending',
                 'payment_method_code'  => $paymentMethod->code,

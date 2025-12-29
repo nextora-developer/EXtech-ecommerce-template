@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\AdminAddressController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminPaymentMethodController;
+use App\Http\Controllers\Admin\AdminShippingController;
+
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
@@ -164,6 +166,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     // Payment Method
     Route::resource('payment-methods', AdminPaymentMethodController::class);
 
+    // Shipping
+    Route::get('/shipping', [AdminShippingController::class, 'index'])->name('shipping.index');
+    Route::get('/shipping/create', [AdminShippingController::class, 'create'])->name('shipping.create');
+    Route::post('/shipping', [AdminShippingController::class, 'store'])->name('shipping.store');
+    Route::get('/shipping/{rate}/edit', [AdminShippingController::class, 'edit'])->name('shipping.edit');
+    Route::put('/shipping/{rate}', [AdminShippingController::class, 'update'])->name('shipping.update');
 });
 
 require __DIR__ . '/auth.php';

@@ -41,9 +41,12 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
         ]);
 
-         $this->call([
+        $this->call([
             PaymentMethodSeeder::class,
         ]);
 
+        $this->call([
+            ShippingRateSeeder::class,
+        ]);
     }
 }

@@ -18,6 +18,7 @@ class Product extends Model
         'description',
         'price',
         'stock',
+        'is_digital',
         'has_variants',
         'is_active',
         'image'
