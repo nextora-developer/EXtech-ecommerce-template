@@ -481,7 +481,7 @@
                                     </dd>
                                 </div>
                                 <div class="flex justify-between">
-                                    <dt class="text-gray-500">Shipping</dt>
+                                    <dt class="text-gray-500">Shipping Fee</dt>
                                     <dd class="text-gray-700" data-shipping-text>
                                         @if (!$hasPhysical)
                                             Free
@@ -555,7 +555,7 @@
             const line2Input = document.querySelector('input[name="address_line2"]');
             const postcodeInput = document.querySelector('input[name="postcode"]');
             const cityInput = document.querySelector('input[name="city"]');
-            const stateInput = document.querySelector('input[name="state"]');
+            const stateSelect = document.querySelector('[data-state-select]');
             const countryInput = document.querySelector('input[name="country"]');
 
             if (buttons.length) {
@@ -568,8 +568,29 @@
                         if (line2Input) line2Input.value = btn.dataset.address_line2 || '';
                         if (postcodeInput) postcodeInput.value = btn.dataset.postcode || '';
                         if (cityInput) cityInput.value = btn.dataset.city || '';
-                        if (stateInput) stateInput.value = btn.dataset.state || '';
                         if (countryInput) countryInput.value = btn.dataset.country || '';
+                        // 👇 处理 state dropdown
+                        if (stateSelect) {
+                            const stateName = btn.dataset.state || '';
+
+                            // 尝试匹配 option 的 value（你的 option value 是州名）
+                            let found = false;
+                            Array.from(stateSelect.options).forEach(opt => {
+                                if (opt.value === stateName) {
+                                    found = true;
+                                }
+                            });
+
+                            if (found) {
+                                stateSelect.value = stateName;
+                                // 触发一次 change，让运费 + Total 跟着更新
+                                stateSelect.dispatchEvent(new Event('change'));
+                            } else {
+                                // 找不到匹配，就清空 & 维持 To be confirmed
+                                stateSelect.value = '';
+                                stateSelect.dispatchEvent(new Event('change'));
+                            }
+                        }
 
                         // 高亮当前选中
                         buttons.forEach(b => {
