@@ -16,6 +16,7 @@ class Product extends Model
         'slug',
         'short_description',
         'description',
+        'specs',
         'price',
         'stock',
         'is_digital',
@@ -23,6 +24,11 @@ class Product extends Model
         'is_active',
         'image'
     ];
+
+    protected $casts = [
+        'specs' => 'array',
+    ];
+
 
     public function category()
     {

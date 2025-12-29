@@ -67,8 +67,61 @@
 
         </div>
 
-
         {{-- ROW 4 --}}
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+            @php
+                // 取旧输入（验证失败返回）或现有规格
+                $specs = old('specs', $product->specs ?? []);
+            @endphp
+
+            <div class="lg:col-span-4">
+                <label class="form-label">Additional Info (Specs)</label>
+
+                <div id="specs-wrapper" class="space-y-2">
+
+                    @if (!empty($specs))
+                        @foreach ($specs as $index => $row)
+                            <div class="flex gap-2 spec-row">
+                                <input type="text" name="specs[{{ $index }}][name]" class="form-input w-1/3"
+                                    placeholder="Label (e.g. Material)" value="{{ $row['name'] ?? '' }}">
+
+                                <input type="text" name="specs[{{ $index }}][value]" class="form-input flex-1"
+                                    placeholder="Value (e.g. 100% Cotton)" value="{{ $row['value'] ?? '' }}">
+
+                                <button type="button" class="px-2 text-xs text-red-500" onclick="removeSpecRow(this)">
+                                    Remove
+                                </button>
+                            </div>
+                        @endforeach
+                    @else
+                        {{-- 默认至少一行 --}}
+                        <div class="flex gap-2 spec-row">
+                            <input type="text" name="specs[0][name]" class="form-input w-1/3"
+                                placeholder="Label (e.g. Material)">
+
+                            <input type="text" name="specs[0][value]" class="form-input flex-1"
+                                placeholder="Value (e.g. 100% Cotton)">
+
+                            <button type="button" class="px-2 text-xs text-red-500" onclick="removeSpecRow(this)">
+                                Remove
+                            </button>
+                        </div>
+                    @endif
+
+                </div>
+
+                <button type="button"
+                    class="mt-2 inline-flex items-center px-3 py-1 text-xs border rounded-lg hover:bg-gray-50"
+                    onclick="addSpecRow()">
+                    + Add Spec
+                </button>
+            </div>
+
+        </div>
+
+
+        {{-- ROW 5 --}}
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {{-- product image upload card --}}
             <div class="border rounded-xl p-4 lg:col-span-4">
@@ -127,7 +180,7 @@
 
 
 
-        {{-- ROW 5 --}}
+        {{-- ROW 6 --}}
         <div class="border rounded-xl p-5 space-y-6">
             <div class="flex justify-between items-center">
                 <p class="font-medium text-gray-900">Pricing & Stock</p>
@@ -698,5 +751,38 @@
                 });
             }
         });
+    </script>
+
+    <script>
+        function addSpecRow() {
+            const wrapper = document.getElementById('specs-wrapper');
+            const index = wrapper.querySelectorAll('.spec-row').length;
+
+            wrapper.insertAdjacentHTML('beforeend', `
+            <div class="flex gap-2 spec-row">
+                <input type="text"
+                    name="specs[${index}][name]"
+                    class="form-input w-1/3"
+                    placeholder="Label (e.g. Material)">
+
+                <input type="text"
+                    name="specs[${index}][value]"
+                    class="form-input flex-1"
+                    placeholder="Value (e.g. 100% Cotton)">
+
+                <button type="button"
+                    class="px-2 text-xs text-red-500"
+                    onclick="removeSpecRow(this)">
+                    Remove
+                </button>
+            </div>
+        `);
+        }
+
+        function removeSpecRow(btn) {
+            const row = btn.closest('.spec-row');
+            if (!row) return;
+            row.remove();
+        }
     </script>
 @endpush

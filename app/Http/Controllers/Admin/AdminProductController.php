@@ -74,6 +74,11 @@ class AdminProductController extends Controller
             'variants.*.price'      => ['nullable', 'numeric', 'min:0'],
             'variants.*.stock'      => ['nullable', 'integer', 'min:0'],
 
+            // ⭐ Shopee-style 规格（Additional Info）
+            'specs'              => ['nullable', 'array'],
+            'specs.*.name'       => ['nullable', 'string', 'max:255'],
+            'specs.*.value'      => ['nullable', 'string', 'max:1000'],
+
             // 多图上传
             'images'     => ['nullable', 'array'],
             'images.*'   => ['nullable', 'image', 'max:2048'],
@@ -93,13 +98,23 @@ class AdminProductController extends Controller
         $data['has_variants'] = $request->boolean('has_variants');
         $data['is_digital']   = $request->boolean('is_digital');
 
-        // 先拿出来 variants & images，剩下的是 products 表的数据
+        // 先拿出来 variants & specs & images，剩下的是 products 表的数据
         $variantsInput = $data['variants'] ?? [];
+        $specsInput    = $data['specs'] ?? [];
+
         unset($data['variants']);
 
         $imagesInput = $request->file('images', []); // 这里直接从 request 拿 file
 
         // 如果你已经完全不用旧的 image 字段，这里可以不处理 $data['image']
+
+        // ⭐ 处理 specs：过滤掉全空的行
+        $specs = collect($specsInput)
+            ->filter(function ($row) {
+                return filled($row['name'] ?? null) || filled($row['value'] ?? null);
+            })
+            ->values()
+            ->all();
 
         // 如果使用 variants，可以把主 stock 当总和（可选）
         if ($data['has_variants']) {
@@ -112,6 +127,9 @@ class AdminProductController extends Controller
             // 没有 variants：price 和 stock 在 validation 已经 required_without 处理
             $data['stock'] = $data['stock'] ?? 0;
         }
+
+        // ⭐ 把处理好的 specs 塞回 data
+        $data['specs'] = $specs;
 
         // 先创建产品（先不处理 image 字段）
         $product = Product::create($data);
@@ -278,6 +296,11 @@ class AdminProductController extends Controller
             'variants.*.price'      => ['nullable', 'numeric', 'min:0'],
             'variants.*.stock'      => ['nullable', 'integer', 'min:0'],
 
+            // ⭐ Shopee-style 规格（Additional Info）
+            'specs'              => ['nullable', 'array'],
+            'specs.*.name'       => ['nullable', 'string', 'max:255'],
+            'specs.*.value'      => ['nullable', 'string', 'max:1000'],
+
             // 多图上传
             'images'     => ['nullable', 'array'],
             'images.*'   => ['nullable', 'image', 'max:2048'],
@@ -297,11 +320,22 @@ class AdminProductController extends Controller
         $data['has_variants'] = $request->boolean('has_variants');
         $data['is_digital']   = $request->boolean('is_digital');
 
-        // 拆出 variants，剩下是 products 表字段
+        // 拆出 variants / specs，其余为 products 字段
         $variantsInput = $data['variants'] ?? [];
+        $specsInput    = $data['specs'] ?? [];
+
         unset($data['variants']);
 
         $imagesInput = $request->file('images', []);
+
+        // ⭐ 处理 specs：过滤空行
+        $specs = collect($specsInput)
+            ->filter(
+                fn($row) =>
+                filled($row['name'] ?? null) || filled($row['value'] ?? null)
+            )
+            ->values()
+            ->all();
 
         // 处理 stock（和 store() 一样）
         if ($data['has_variants']) {
@@ -313,6 +347,9 @@ class AdminProductController extends Controller
         } else {
             $data['stock'] = $data['stock'] ?? 0;
         }
+
+        // ⭐ 保存 specs
+        $data['specs'] = $specs;
 
         // 先更新 product 本体（不动 image 字段，后面根据新图片再 update）
         $product->update($data);
