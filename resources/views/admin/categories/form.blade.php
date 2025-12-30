@@ -1,146 +1,150 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="flex items-start justify-between mb-4">
+    <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900">
-                {{ $category->exists ? 'Edit Category' : 'New Category' }}
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
+                {{ $category->exists ? 'Edit Category' : 'Create New Category' }}
             </h1>
-            <p class="text-sm text-gray-500">Keep it simple: name + optional slug.</p>
+            <p class="text-sm text-gray-500 mt-1">Define your category details and aesthetic icon.</p>
         </div>
-        
+
         <a href="{{ route('admin.categories.index') }}"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
-          hover:bg-gray-50 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
-            <span>Back</span>
+            <span>Back to List</span>
         </a>
     </div>
 
     <form method="POST" enctype="multipart/form-data"
         action="{{ $category->exists ? route('admin.categories.update', $category) : route('admin.categories.store') }}"
-        class="bg-white rounded-2xl border border-[#D4AF37]/18 p-5 max-w-3xl shadow-[0_18px_40px_rgba(0,0,0,0.06)]">
+        class="max-w-4xl">
         @csrf
         @if ($category->exists)
             @method('PUT')
         @endif
 
-        <div class="space-y-4">
-            <div>
-                <label class="text-xs text-gray-500">Name</label>
-                <input name="name" value="{{ old('name', $category->name) }}"
-                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
-                    placeholder="e.g. Accessories" required>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <div>
-                <label class="text-xs text-gray-500">Slug (optional)</label>
-                <input name="slug" value="{{ old('slug', $category->slug) }}"
-                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
-                    placeholder="auto-generated if empty">
-            </div>
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <h2 class="text-sm font-bold text-gray-900 mb-5 uppercase tracking-wider">General Information</h2>
 
-            {{-- Icon upload card (with preview + filename + clear) --}}
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-[13px] font-bold text-gray-700 mb-2">Category Name</label>
+                            <input name="name" value="{{ old('name', $category->name) }}"
+                                class="w-full rounded-xl border-gray-200 bg-gray-50/50 px-4 py-3 focus:bg-white focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 transition-all placeholder:text-gray-400"
+                                placeholder="e.g. Premium Accessories" required>
+                        </div>
 
-                {{-- LEFT: Icon upload (span 2) --}}
-                <div class="lg:col-span-2">
-                    {{-- 这里放你现有的 Icon upload card（带 JS 的那块） --}}
-                    {{-- Icon upload card (with preview + filename + clear) --}}
-                    <div class="border rounded-xl p-4 mt-3">
-                        <label class="text-xs text-gray-500 block mb-2">Category Icon</label>
+                        <div>
+                            <label class="block text-[13px] font-bold text-gray-700 mb-2">Custom Slug <span
+                                    class="text-gray-400 font-normal">(Optional)</span></label>
+                            <div class="relative">
+                                <span
+                                    class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 text-sm font-mono">/</span>
+                                <input name="slug" value="{{ old('slug', $category->slug) }}"
+                                    class="w-full rounded-xl border-gray-200 bg-gray-50/50 pl-8 pr-4 py-3 focus:bg-white focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 transition-all font-mono text-sm"
+                                    placeholder="auto-generated-if-empty">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="flex items-center gap-4">
+                <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <h2 class="text-sm font-bold text-gray-900 mb-5 uppercase tracking-wider">Visual Identity</h2>
+
+                    <div
+                        class="flex flex-col md:flex-row items-center gap-8 p-4 rounded-2xl bg-gray-50/50 border border-dashed border-gray-200">
+                        <div class="relative group">
                             <div
-                                class="h-16 w-16 rounded-full bg-gray-100 border overflow-hidden flex items-center justify-center">
+                                class="h-24 w-24 rounded-2xl bg-white border-2 border-white shadow-md overflow-hidden flex items-center justify-center ring-2 ring-gray-100 transition-transform group-hover:scale-105">
                                 <img id="catIconPreview"
                                     src="{{ $category->icon ? asset('storage/' . $category->icon) : '' }}"
-                                    class="h-full w-full object-cover {{ $category->icon ? '' : 'hidden' }}"
-                                    alt="Icon Preview" />
+                                    class="h-full w-full object-cover {{ $category->icon ? '' : 'hidden' }}" />
                                 <div id="catIconPlaceholder" class="{{ $category->icon ? 'hidden' : '' }}">
-                                    <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3 16.5V6.75A2.25 2.25 0 015.25 4.5h13.5A2.25 2.25 0 0121 6.75v9.75" />
+                                    <svg class="h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="flex-1">
-                                <div class="text-sm font-medium text-gray-900" id="catIconFileName">
-                                    {{ $category->icon ? 'Current image uploaded' : 'No image selected' }}
-                                </div>
-                                <div class="text-xs text-gray-500 mt-1" id="catIconFileMeta">
-                                    {{ $category->icon ? 'You can replace it below' : 'PNG/JPG up to 1MB' }}
-                                </div>
+                        <div class="flex-1 text-center md:text-left">
+                            <h3 class="text-sm font-bold text-gray-900" id="catIconFileName">
+                                {{ $category->icon ? 'Existing Icon' : 'Select Category Icon' }}
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1 mb-4" id="catIconFileMeta">
+                                {{ $category->icon ? 'You can keep current or upload a new one' : 'Recommended: PNG/JPG, Square, Max 1MB' }}
+                            </p>
 
-                                <div class="mt-3 flex items-center gap-2">
-                                    <label
-                                        class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 bg-white
-                                      hover:bg-gray-50 cursor-pointer text-sm">
-                                        Choose file
-                                        <input id="catIconInput" type="file" name="icon" class="hidden"
-                                            accept="image/*">
-                                    </label>
-
-                                    <button type="button" id="catIconClearBtn"
-                                        class="px-3 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-sm">
-                                        Clear
-                                    </button>
-                                </div>
+                            <div class="flex items-center justify-center md:justify-start gap-3">
+                                <label
+                                    class="px-4 py-2 bg-gray-900 text-white rounded-xl text-xs font-bold cursor-pointer hover:bg-gray-800 transition-all active:scale-95 shadow-md">
+                                    Upload New Image
+                                    <input id="catIconInput" type="file" name="icon" class="hidden" accept="image/*">
+                                </label>
+                                <button type="button" id="catIconClearBtn"
+                                    class="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
+                                    Remove
+                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {{-- RIGHT: Settings --}}
-                <div class="space-y-4">
-
-                    {{-- Sort Order card --}}
-                    <label class="text-xs text-gray-500 block">Sort Order</label>
-                    <input name="sort_order" value="{{ old('sort_order', $category->sort_order ?? 0) }}"
-                        class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
-                        type="number" min="0">
-
-                    {{-- Active card (toggle) --}}
-                    <div class="border rounded-xl p-4 flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">Active</p>
-                            <p class="text-xs text-gray-500">Visible for product selection</p>
-                        </div>
-
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="is_active" value="1" class="sr-only peer"
-                                @checked(old('is_active', $category->is_active ?? true))>
-                            <div
-                                class="w-11 h-6 bg-gray-200 rounded-full peer
-                            peer-checked:bg-[#D4AF37]
-                            after:content-['']
-                            after:absolute after:top-[2px] after:left-[2px]
-                            after:bg-white after:h-5 after:w-5 after:rounded-full
-                            after:transition-all
-                            peer-checked:after:translate-x-full">
-                            </div>
-                        </label>
-                    </div>
-
                 </div>
             </div>
 
-        </div>
+            <div class="space-y-6">
+                <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <h2 class="text-sm font-bold text-gray-900 mb-5 uppercase tracking-wider">Publishing</h2>
 
-        <div class="mt-5 flex justify-end gap-2">
-            <button
-                class="px-4 py-2 rounded-xl bg-[#D4AF37] text-white font-semibold hover:bg-[#c29c2f]">
-                Save
-            </button>
-            <a href="{{ route('admin.categories.index') }}"
-                class="px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
-                Cancel
-            </a>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-[13px] font-bold text-gray-700 mb-2">Display Order</label>
+                            <div class="flex items-center gap-3">
+                                <input name="sort_order" value="{{ old('sort_order', $category->sort_order ?? 0) }}"
+                                    class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-2.5 focus:bg-white focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 transition-all"
+                                    type="number" min="0">
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-50">
+
+                        <div class="flex items-center justify-between group">
+                            <div>
+                                <p class="text-[13px] font-bold text-gray-900 group-hover:text-[#8f6a10] transition-colors">
+                                    Visible Status</p>
+                                <p class="text-[11px] text-gray-500">Show on store front</p>
+                            </div>
+
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="is_active" value="1" class="sr-only peer"
+                                    @checked(old('is_active', $category->is_active ?? true))>
+                                <div
+                                    class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-emerald-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:h-5 after:w-5 after:rounded-full after:transition-all peer-checked:after:translate-x-full">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <button
+                        class="w-full py-4 bg-[#D4AF37] text-white font-bold rounded-2xl shadow-lg shadow-[#D4AF37]/20 hover:bg-[#c29c2f] hover:shadow-xl transition-all active:scale-[0.98]">
+                        Save Category
+                    </button>
+                    <a href="{{ route('admin.categories.index') }}"
+                        class="w-full py-4 bg-white border border-gray-200 text-gray-500 font-bold rounded-2xl text-center hover:bg-gray-50 transition-all">
+                        Discard Changes
+                    </a>
+                </div>
+            </div>
         </div>
     </form>
 @endsection
@@ -159,17 +163,18 @@
 
             const formatBytes = (bytes) => {
                 if (!bytes) return '';
-                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const sizes = ['B', 'KB', 'MB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(1024));
-                return (bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + ' ' + sizes[i];
+                return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
             };
 
             input.addEventListener('change', () => {
                 const file = input.files && input.files[0];
                 if (!file) return;
 
-                fileName.textContent = file.name; // ✅ show real selected file name
-                fileMeta.textContent = `${formatBytes(file.size)} • ${file.type || 'image'}`;
+                fileName.textContent = file.name;
+                fileMeta.textContent =
+                    `${formatBytes(file.size)} • ${file.type.split('/')[1].toUpperCase()}`;
 
                 const url = URL.createObjectURL(file);
                 preview.src = url;
@@ -182,8 +187,8 @@
                 preview.src = '';
                 preview.classList.add('hidden');
                 placeholder.classList.remove('hidden');
-                fileName.textContent = 'No image selected';
-                fileMeta.textContent = 'PNG/JPG up to 1MB';
+                fileName.textContent = 'Select Category Icon';
+                fileMeta.textContent = 'Recommended: PNG/JPG, Square, Max 1MB';
             });
         });
     </script>

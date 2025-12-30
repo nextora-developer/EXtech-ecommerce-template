@@ -1,143 +1,168 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="flex items-center justify-between mb-4">
+    {{-- Header Section --}}
+    <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-semibold">
-                {{ $address->exists ? 'Edit address' : 'Add address' }}
+            <h1 class="text-3xl font-semibold text-gray-900 tracking-tight">
+                {{ $address->exists ? 'Edit Address' : 'Register New Location' }}
             </h1>
-            <p class="text-sm text-gray-500">
-                For user: {{ $user->name }} ({{ $user->email }})
+            <p class="text-sm text-gray-500 mt-1">
+                Assigning to: <span class="font-bold text-[#8f6a10]">{{ $user->name }}</span> ({{ $user->email }})
             </p>
         </div>
 
         <a href="{{ route('admin.users.edit', $user) }}"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
-          hover:bg-gray-50 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+                   text-sm font-semibold text-gray-600 hover:bg-gray-50 transition shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
             <span>Back</span>
         </a>
     </div>
 
     @if ($errors->any())
-        <div class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+        <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-red-500">
+                <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                    clip-rule="evenodd" />
+            </svg>
             {{ $errors->first() }}
         </div>
     @endif
 
     <form method="POST"
         action="{{ $address->exists ? route('admin.addresses.update', $address) : route('admin.addresses.store', $user) }}"
-        class="bg-white rounded-2xl border p-5 w-full">
+        class="bg-white border border-[#D4AF37]/18 rounded-2xl p-8 shadow-[0_18px_40px_rgba(0,0,0,0.06)] w-full">
 
         @csrf
         @if ($address->exists)
             @method('PUT')
         @endif
 
-        <div class="space-y-6 text-sm">
-
-            {{-- Row 1: 3 columns --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                    <label class="text-xs text-gray-500">Recipient name</label>
-                    <input type="text" name="recipient_name"
-                        value="{{ old('recipient_name', $address->recipient_name) }}" placeholder="e.g. Tan Mei Ling"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+        <div class="space-y-8">
+            {{-- Section: Recipient Details --}}
+            <div>
+                <div class="flex items-center gap-2 mb-5">
+                    <span class="w-1.5 h-6 bg-[#D4AF37] rounded-full"></span>
+                    <h2 class="font-bold text-gray-900">Recipient Information</h2>
                 </div>
 
-                <div>
-                    <label class="text-xs text-gray-500">Phone Number</label>
-                    <input type="text" name="phone" value="{{ old('phone', $address->phone) }}"
-                        placeholder="e.g. 012-3456789"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Recipient Name</label>
+                        <input type="text" name="recipient_name"
+                            value="{{ old('recipient_name', $address->recipient_name) }}" placeholder="e.g. Tan Mei Ling"
+                            class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
+                    </div>
 
-                <div>
-                    <label class="text-xs text-gray-500">Email Address</label>
-                    <input type="email" name="email" value="{{ old('email', $address->email) }}"
-                        placeholder="e.g. you@example.com"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-                </div>
-            </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Contact Number</label>
+                        <input type="text" name="phone" value="{{ old('phone', $address->phone) }}"
+                            placeholder="e.g. 012-3456789"
+                            class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
+                    </div>
 
-            {{-- Row 2: 2 columns --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-xs text-gray-500">Address line 1</label>
-                    <input type="text" name="address_line1" value="{{ old('address_line1', $address->address_line1) }}"
-                        placeholder="House / Street / Building"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-                </div>
-
-                <div>
-                    <label class="text-xs text-gray-500">Address line 2 (optional)</label>
-                    <input type="text" name="address_line2" value="{{ old('address_line2', $address->address_line2) }}"
-                        placeholder="Apartment / Unit / Floor (optional)"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+                    <div>
+                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400 text-gray-300">Email
+                            (Optional)</label>
+                        <input type="email" name="email" value="{{ old('email', $address->email) }}"
+                            placeholder="e.g. you@example.com"
+                            class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
+                    </div>
                 </div>
             </div>
 
-            {{-- Row 3: 4 columns --}}
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div>
-                    <label class="text-xs text-gray-500">Postcode</label>
-                    <input type="text" name="postcode" value="{{ old('postcode', $address->postcode) }}"
-                        placeholder="e.g. 47000"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+            {{-- Section: Address Details --}}
+            <div class="border-t border-gray-100 pt-8">
+                <div class="flex items-center gap-2 mb-5">
+                    <span class="w-1.5 h-6 bg-[#D4AF37] rounded-full"></span>
+                    <h2 class="font-bold text-gray-900">Delivery Address</h2>
                 </div>
 
-                <div>
-                    <label class="text-xs text-gray-500">City</label>
-                    <input type="text" name="city" value="{{ old('city', $address->city) }}"
-                        placeholder="e.g. Petaling Jaya"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-                </div>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Address Line
+                                1</label>
+                            <input type="text" name="address_line1"
+                                value="{{ old('address_line1', $address->address_line1) }}"
+                                placeholder="House No, Street, Building Name"
+                                class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
+                        </div>
 
-                <div>
-                    <label class="text-xs text-gray-500">State</label>
-                    <select name="state"
-                        class="mt-1 w-full rounded-xl border-gray-200 text-base px-3 py-3
-                       focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-                        <option value="">Select State</option>
-                        @foreach ($states as $s)
-                            <option value="{{ $s['name'] }}" @selected(old('state', $address->state ?? '') === $s['name'])>
-                                {{ $s['name'] }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                        <div>
+                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-300">Address Line
+                                2</label>
+                            <input type="text" name="address_line2"
+                                value="{{ old('address_line2', $address->address_line2) }}"
+                                placeholder="Apartment, Unit, Floor (Optional)"
+                                class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
+                        </div>
+                    </div>
 
-                <div>
-                    <label class="text-xs text-gray-500">Country</label>
-                    <input type="text" name="country" value="{{ old('country', $address->country ?? 'Malaysia') }}"
-                        placeholder="e.g. Malaysia"
-                        class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+                        <div>
+                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Postcode</label>
+                            <input type="text" name="postcode" value="{{ old('postcode', $address->postcode) }}"
+                                placeholder="e.g. 47000"
+                                class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium text-center">
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">City</label>
+                            <input type="text" name="city" value="{{ old('city', $address->city) }}"
+                                placeholder="e.g. Petaling Jaya"
+                                class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">State</label>
+                            <select name="state"
+                                class="mt-1.5 w-full rounded-xl border-gray-200 font-medium focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+                                <option value="">Select State</option>
+                                @foreach ($states as $s)
+                                    <option value="{{ $s['name'] }}" @selected(old('state', $address->state ?? '') === $s['name'])>
+                                        {{ $s['name'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Country</label>
+                            <input type="text" name="country"
+                                value="{{ old('country', $address->country ?? 'Malaysia') }}"
+                                class="mt-1.5 w-full rounded-xl border-gray-200 bg-gray-50 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-semibold">
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
 
-        {{-- Default address toggle --}}
-        <div class="flex items-center justify-between pt-4">
-            <label class="inline-flex items-center gap-2 text-base text-gray-600">
+        {{-- Footer Actions --}}
+        <div class="mt-10 pt-8 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <label class="flex items-center gap-3 cursor-pointer group">
                 <input type="checkbox" name="is_default" value="1"
-                    class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]/40"
+                    class="w-5 h-5 rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]/40 transition"
                     {{ old('is_default', $address->is_default ?? false) ? 'checked' : '' }}>
-                <span>Set as my default address</span>
+                <span class="text-sm font-bold text-gray-600 group-hover:text-[#8f6a10] transition">Set as primary delivery
+                    address</span>
             </label>
-        </div>
 
-        <div class="mt-6 flex gap-3">
-            <button class="px-5 py-2 rounded-xl bg-[#D4AF37] text-white text-sm font-semibold hover:bg-[#c29c2f]">
-                Save address
-            </button>
-            <a href="{{ route('admin.users.edit', $user) }}"
-                class="px-5 py-2 rounded-xl border border-gray-300 text-sm hover:bg-gray-50">
-                Cancel
-            </a>
+            <div class="flex gap-3">
+                <a href="{{ route('admin.users.edit', $user) }}"
+                    class="px-6 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-gray-50 transition">
+                    Cancel
+                </a>
+                <button
+                    class="px-8 py-2.5 rounded-xl bg-[#D4AF37] text-white text-sm font-bold hover:bg-[#c29c2f] transition shadow-lg shadow-[#D4AF37]/20">
+                    {{ $address->exists ? 'Update Address' : 'Save Address' }}
+                </button>
+            </div>
         </div>
     </form>
 @endsection

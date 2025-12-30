@@ -14,12 +14,12 @@ class AdminDashboardController extends Controller
         $paidOrders    = Order::where('status', 'paid')->count();
 
         // Revenue: count only orders that are "earned" (adjust if you want)
-        $revenue = (int) Order::whereIn('status', ['paid', 'processing', 'shipped', 'completed'])
+        $sales = (int) Order::whereIn('status', ['completed'])
             ->sum('total');
 
         // Today's metrics (nice to have)
         $todayOrders = Order::whereDate('created_at', now()->toDateString())->count();
-        $todayRevenue = (int) Order::whereDate('created_at', now()->toDateString())
+        $todaySales = (int) Order::whereDate('created_at', now()->toDateString())
             ->whereIn('status', ['paid', 'processing', 'shipped', 'completed'])
             ->sum('total');
 
@@ -29,9 +29,9 @@ class AdminDashboardController extends Controller
             'totalOrders',
             'pendingOrders',
             'paidOrders',
-            'revenue',
+            'sales',
             'todayOrders',
-            'todayRevenue',
+            'todaySales',
             'latestOrders'
         ));
     }

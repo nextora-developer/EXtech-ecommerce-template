@@ -1,144 +1,155 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="flex items-start justify-between gap-4 mb-6">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-3xl font-semibold text-gray-900">Orders</h1>
-            <p class="text-sm text-gray-500 mt-1">Search, filter, and manage order status.</p>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Orders</h1>
+            <p class="text-sm text-gray-500 mt-1">Search, filter and manage customer orders</p>
         </div>
     </div>
 
     {{-- Filters --}}
-    <form method="GET"
-        class="bg-white border border-[#D4AF37]/18 rounded-2xl p-4
-                              shadow-[0_18px_40px_rgba(0,0,0,0.06)] mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-            <div class="md:col-span-2">
-                <label class="text-xs text-gray-500">Keyword</label>
-                <input name="keyword" value="{{ request('keyword') }}" placeholder="Order No / Name / Phone"
-                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
+    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm mb-6 transition-all">
+        <form method="GET" class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1 relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input name="keyword" value="{{ request('keyword') }}" placeholder="Search order no, name or phone…"
+                    class="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border-transparent rounded-xl text-sm
+                              focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] transition-all">
             </div>
 
-            <div>
-                <label class="text-xs text-gray-500">Status</label>
-                <select name="status"
-                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-                    <option value="">All</option>
-                    @foreach ($statuses as $s)
-                        <option value="{{ $s }}" @selected(request('status') === $s)>{{ strtoupper($s) }}</option>
-                    @endforeach
-                </select>
-            </div>
+            <select name="status"
+                class="min-w-[140px] py-2.5 bg-gray-50 border-transparent rounded-xl text-sm
+                       focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] transition-all">
+                <option value="">All Status</option>
+                @foreach ($statuses as $s)
+                    <option value="{{ $s }}" @selected(request('status') === $s)>{{ strtoupper($s) }}</option>
+                @endforeach
+            </select>
 
-            <div>
-                <label class="text-xs text-gray-500">From</label>
-                <input type="date" name="from" value="{{ request('from') }}"
-                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-            </div>
+            <input type="date" name="from" value="{{ request('from') }}"
+                class="py-2.5 bg-gray-50 border-transparent rounded-xl text-sm
+                       focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] transition-all">
 
-            <div>
-                <label class="text-xs text-gray-500">To</label>
-                <input type="date" name="to" value="{{ request('to') }}"
-                    class="mt-1 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-            </div>
-        </div>
+            <input type="date" name="to" value="{{ request('to') }}"
+                class="py-2.5 bg-gray-50 border-transparent rounded-xl text-sm
+                       focus:bg-white focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] transition-all">
 
-        <div class="flex items-center gap-2 mt-4">
             <button
-                class="px-4 py-2 rounded-xl bg-[#D4AF37]/15 text-[#8f6a10] border border-[#D4AF37]/30
-                           hover:bg-[#D4AF37]/20 transition font-semibold">
+                class="px-6 py-2.5 rounded-xl bg-[#D4AF37]/10 text-[#8f6a10]
+                       border border-[#D4AF37]/20 hover:bg-[#D4AF37] hover:text-white
+                       transition-all font-bold text-sm">
                 Filter
             </button>
 
             <a href="{{ route('admin.orders.index') }}"
-                class="px-4 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition">
+                class="px-4 py-2.5 rounded-xl border border-gray-100 text-gray-500 hover:bg-gray-50
+                       transition-all text-sm flex items-center justify-center">
                 Reset
             </a>
-
-            <div class="ml-auto text-sm text-gray-500">
-                {{ $orders->total() }} orders
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 
     {{-- Table --}}
-    <div
-        class="bg-white border border-[#D4AF37]/18 rounded-2xl overflow-hidden
-                shadow-[0_18px_40px_rgba(0,0,0,0.06)]">
-        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <div class="font-semibold text-gray-900">Order List</div>
-            <div class="text-xs text-gray-500">Latest first</div>
-        </div>
-
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="text-left text-gray-600 bg-gray-50">
-                    <tr>
-                        <th class="px-5 py-3">Order No</th>
-                        <th class="px-5 py-3">Customer</th>
-                        <th class="px-5 py-3">Status</th>
-                        <th class="px-5 py-3">Total</th>
-                        <th class="px-5 py-3">Created</th>
-                        <th class="px-5 py-3 text-right">Action</th>
+                <thead>
+                    <tr class="bg-gray-50/50 border-b border-gray-50">
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Order No
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Customer
+                        </th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Total</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Created
+                        </th>
+                        <th class="px-6 py-4"></th>
                     </tr>
                 </thead>
-                <tbody class="text-gray-800">
-                    @forelse ($orders as $o)
-                        <tr class="border-t border-gray-100 hover:bg-[#D4AF37]/10 transition">
-                            <td class="px-5 py-3 font-semibold">{{ $o->order_no }}</td>
 
-                            <td class="px-5 py-3">
-                                <div class="font-medium">{{ $o->customer_name ?? '-' }}</div>
-                                <div class="text-xs text-gray-500">{{ $o->customer_phone ?? '' }}</div>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse ($orders as $o)
+                        @php
+                            $status = strtoupper($o->status);
+                            $colors = [
+                                'PENDING' => 'bg-amber-50 text-amber-700 border border-amber-200',
+                                'PAID' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+                                'PROCESSING' => 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+                                'SHIPPED' => 'bg-blue-50 text-blue-700 border border-blue-200',
+                                'COMPLETED' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+                                'CANCELLED' => 'bg-red-50 text-red-600 border border-red-200',
+                            ];
+                            $style = $colors[$status] ?? 'bg-gray-50 text-gray-500 border border-gray-200';
+                        @endphp
+
+                        <tr class="group hover:bg-[#D4AF37]/5 transition-colors">
+                            <td class="px-6 py-4 font-bold text-gray-900 group-hover:text-[#8f6a10]">
+                                {{ $o->order_no }}
                             </td>
 
-                            @php
-                                $status = strtoupper($o->status);
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">{{ $o->customer_name ?? '-' }}</div>
+                                <div class="text-xs text-gray-400">{{ $o->customer_phone ?? '' }}</div>
+                            </td>
 
-                                $colors = [
-                                    'PENDING' => 'border-yellow-500 bg-yellow-50 text-yellow-700',
-                                    'PAID' => 'border-green-500 bg-green-50 text-green-700',
-                                    'PROCESSING' => 'border-indigo-500 bg-indigo-50 text-indigo-700',
-                                    'SHIPPED' => 'border-blue-500 bg-blue-50 text-blue-700',
-                                    'COMPLETED' => 'border-emerald-500 bg-emerald-50 text-emerald-700',
-                                    'CANCELLED' => 'border-red-500 bg-red-50 text-red-700',
-                                ];
-
-                                $style = $colors[$status] ?? 'border-gray-400 bg-gray-100 text-gray-700'; // fallback
-                            @endphp
-
-                            <td class="px-5 py-3">
+                            <td class="px-6 py-4">
                                 <span
-                                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold {{ $style }}">
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider {{ $style }}">
                                     {{ $status }}
                                 </span>
                             </td>
 
-                            <td class="px-5 py-3">
+                            <td class="px-6 py-4 font-bold text-gray-900">
                                 RM {{ number_format($o->total ?? 0, 2) }}
                             </td>
 
-                            <td class="px-5 py-3 text-gray-500">
+                            <td class="px-6 py-4 text-gray-500">
                                 {{ optional($o->created_at)->format('Y-m-d H:i') }}
                             </td>
 
-                            <td class="px-5 py-3 text-right">
-                                <a href="{{ route('admin.orders.show', $o) }}"
-                                    class="text-[#8f6a10] font-semibold hover:underline">
-                                    View
-                                </a>
+                            <td class="px-6 py-4 text-right">
+
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('admin.orders.show', $o) }}"
+                                        class="p-2 rounded-lg text-gray-400 hover:text-[#8f6a10] hover:bg-[#D4AF37]/10 transition-all"
+                                        title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td class="px-5 py-10 text-gray-500" colspan="6">No orders found.</td>
+                            <td colspan="6" class="px-6 py-20 text-center text-gray-400">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                        <svg class="w-8 h-8 text-gray-200" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                        </svg>
+                                    </div>
+                                    <p class="font-medium">No orders found</p>
+                                    <p class="text-xs mt-1 text-gray-300">Try adjusting your filters or search keywords</p>
+                                </div>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div class="px-5 py-4 border-t border-gray-100">
+        <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
             {{ $orders->links() }}
         </div>
     </div>
