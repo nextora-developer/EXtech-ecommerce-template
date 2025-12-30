@@ -484,7 +484,7 @@
                                     <dt class="text-gray-500">Shipping Fee</dt>
                                     <dd class="text-gray-700" data-shipping-text>
                                         @if (!$hasPhysical)
-                                            Free
+                                            Digital Product (Free)
                                         @else
                                             To be confirmed
                                         @endif
@@ -696,7 +696,7 @@
 
             // 全部 digital → 永远 Free，Total = subtotal
             if (!hasPhysical) {
-                shippingText.textContent = 'Free';
+                shippingText.textContent = 'Digital Product (Free)';
                 totalText.textContent = 'RM ' + subtotal.toFixed(2);
                 return;
             }
