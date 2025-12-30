@@ -5,7 +5,7 @@
             {{-- Back / breadcrumb --}}
             <div class="mb-4 flex items-center gap-2 text-sm text-gray-500">
                 <a href="{{ route('shop.index') }}" class="hover:text-[#8f6a10]">
-                    ← Back to Shop
+                    Back to Shop
                 </a>
                 <span class="text-gray-400">/</span>
                 <span class="truncate">
@@ -39,22 +39,22 @@
                                 {{-- 填充 ♥ --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37" viewBox="0 0 24 24" class="h-5 w-5">
                                     <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                         2 12.28 2 8.5 2 5.42 4.42
-                                                                         3 7.5 3c1.74 0 3.41.81 4.5
-                                                                         2.09C13.09 3.81 14.76 3 16.5
-                                                                         3 19.58 3 22 5.42 22 8.5c0
-                                                                         3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                                                     2 12.28 2 8.5 2 5.42 4.42
+                                                                                     3 7.5 3c1.74 0 3.41.81 4.5
+                                                                                     2.09C13.09 3.81 14.76 3 16.5
+                                                                                     3 19.58 3 22 5.42 22 8.5c0
+                                                                                     3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                 </svg>
                             @else
                                 {{-- 空心 ♥ --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10" stroke-width="1.8"
                                     viewBox="0 0 24 24" class="h-5 w-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                                       0-3.6 1-4.5 2.5C10.6 4.5
-                                                                       8.9 3.5 7 3.5 4.2 3.5 2
-                                                                       5.7 2 8.5c0 5.2 5.5 8.9
-                                                                       9.8 12.7.1.1.3.1.4
-                                                                       0C15.5 17.4 21 13.7 21 8.5z" />
+                                                                                   0-3.6 1-4.5 2.5C10.6 4.5
+                                                                                   8.9 3.5 7 3.5 4.2 3.5 2
+                                                                                   5.7 2 8.5c0 5.2 5.5 8.9
+                                                                                   9.8 12.7.1.1.3.1.4
+                                                                                   0C15.5 17.4 21 13.7 21 8.5z" />
                                 </svg>
                             @endif
                         </button>
@@ -67,16 +67,16 @@
                     {{-- 左边：图片 --}}
                     <div>
                         @php
-                            // gallery array
                             $gallery = [];
 
+                            // 有多图时，只用多图
                             if (isset($product->images) && count($product->images)) {
                                 foreach ($product->images as $img) {
                                     $gallery[] = asset('storage/' . $img->path);
                                 }
                             }
-
-                            if ($product->image ?? false) {
+                            // 没有多图时，才 fallback 用单图字段
+                            elseif ($product->image ?? false) {
                                 $gallery[] = asset('storage/' . $product->image);
                             }
 
@@ -88,7 +88,7 @@
                         <div data-gallery class="max-w-lg mx-auto">
 
                             {{-- 大图：跟首页更新一致 aspect-[4/3] --}}
-                            <div class="relative rounded-2xl overflow-hidden bg-black aspect-square mb-3">
+                            <div class="relative rounded-2xl overflow-hidden aspect-square mb-3">
 
                                 <div class="flex h-full transition-transform duration-500 ease-out" data-gallery-track>
                                     @foreach ($gallery as $url)
@@ -242,7 +242,7 @@
                                 <div id="variant-picker" data-variants='@json($variantMap)' class="space-y-4">
                                     @foreach ($product->options as $option)
                                         <div>
-                                            <p class="text-[11px] uppercase tracking-[0.16em] text-gray-500 mb-1">
+                                            <p class="text-xs uppercase tracking-[0.16em] text-gray-500 mb-1">
                                                 {{ $option->label ?? $option->name }}
                                             </p>
 
@@ -261,8 +261,8 @@
                                         </div>
                                     @endforeach
 
-                                    <p class="text-xs text-[#B28A15]" id="variant-status">
-                                        请先选择所有选项组合。
+                                    <p class="text-sm text-[#B28A15]" id="variant-status">
+                                        Please select all options first.
                                     </p>
 
                                     {{-- 这个 hidden 一定在 form 里面 --}}
@@ -325,13 +325,13 @@
                 {{-- Tab Headers --}}
                 <div class="flex border-b border-gray-200 mb-4">
                     <button type="button" id="tab-btn-desc" onclick="switchTab('desc')"
-                        class="px-4 py-2 text-sm font-semibold border-b-2
+                        class="px-4 py-2 text-base font-semibold border-b-2
                text-gray-700 border-[#D4AF37]">
                         Long Description
                     </button>
 
                     <button type="button" id="tab-btn-info" onclick="switchTab('info')"
-                        class="px-4 py-2 text-sm font-semibold border-b-2
+                        class="px-4 py-2 text-base font-semibold border-b-2
                text-gray-500 border-transparent hover:text-[#8f6a10]">
                         Additional Info
                     </button>
@@ -354,7 +354,7 @@
                         <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
 
                             <div class="px-4 py-3 border-b bg-gray-50 rounded-t-2xl">
-                                <h4 class="font-semibold text-gray-700">Product Specifications</h4>
+                                <h4 class="font-semibold text-base text-gray-700">Product Specifications</h4>
                             </div>
 
                             <dl class="divide-y">
@@ -430,12 +430,13 @@
                                                     {{-- 已收藏：金色 ♥ --}}
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
-                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                             2 12.28 2 8.5 2 5.42 4.42
-                                                                             3 7.5 3c1.74 0 3.41.81 4.5
-                                                                             2.09C13.09 3.81 14.76 3 16.5
-                                                                             3 19.58 3 22 5.42 22 8.5c0
-                                                                             3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                        <path
+                                                            d="M12 21.35l-1.45-1.32C5.4 15.36
+                                                                                         2 12.28 2 8.5 2 5.42 4.42
+                                                                                         3 7.5 3c1.74 0 3.41.81 4.5
+                                                                                         2.09C13.09 3.81 14.76 3 16.5
+                                                                                         3 19.58 3 22 5.42 22 8.5c0
+                                                                                         3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
                                                     {{-- 未收藏：空心 ♥ --}}
@@ -443,11 +444,11 @@
                                                         stroke="#8f6a10" stroke-width="1.8" viewBox="0 0 24 24"
                                                         class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                                           0-3.6 1-4.5 2.5C10.6 4.5
-                                                                           8.9 3.5 7 3.5 4.2 3.5 2
-                                                                           5.7 2 8.5c0 5.2 5.5 8.9
-                                                                           9.8 12.7.1.1.3.1.4 0C15.5
-                                                                           17.4 21 13.7 21 8.5z" />
+                                                                                       0-3.6 1-4.5 2.5C10.6 4.5
+                                                                                       8.9 3.5 7 3.5 4.2 3.5 2
+                                                                                       5.7 2 8.5c0 5.2 5.5 8.9
+                                                                                       9.8 12.7.1.1.3.1.4 0C15.5
+                                                                                       17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
@@ -488,6 +489,20 @@
             @endif
         </div>
     </div>
+
+    <style>
+        /* Chrome / Edge / Safari */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -613,7 +628,7 @@
                             statusEl.classList.remove('text-gray-500');
                             statusEl.classList.add('text-red-500');
                         } else {
-                            statusEl.textContent = '请先选择所有选项组合。';
+                            statusEl.textContent = 'Please select all options first.';
                             statusEl.classList.remove('text-red-500');
                             statusEl.classList.add('text-gray-500');
                         }
@@ -631,7 +646,7 @@
 
                 if (statusEl) {
                     const parts = optionKeys.map(key => `${key}: ${selections[key]}`);
-                    statusEl.textContent = '已选择：' + parts.join(' • ');
+                    statusEl.textContent = 'Selected：' + parts.join(' • ');
                     statusEl.classList.remove('text-red-500');
                     statusEl.classList.add('text-gray-500');
                 }

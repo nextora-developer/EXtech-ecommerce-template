@@ -104,11 +104,11 @@
                 <div>
                     <h4 class="text-gray-900 font-semibold text-base mb-4">My Account</h4>
                     <ul class="space-y-2 text-sm text-gray-700">
-                        <li><a class="hover:text-[#D4AF37]">Account</a></li>
-                        <li><a class="hover:text-[#D4AF37]">Orders</a></li>
-                        <li><a class="hover:text-[#D4AF37]">Favorite</a></li>
-                        <li><a class="hover:text-[#D4AF37]">Address</a></li>
-                        <li><a class="hover:text-[#D4AF37]">Profile</a></li>
+                        <li><a class="hover:text-[#D4AF37]" href="{{ route('account.index') }}">Account</a></li>
+                        <li><a class="hover:text-[#D4AF37]" href="{{ route('account.orders.index') }}">Orders</a></li>
+                        <li><a class="hover:text-[#D4AF37]" href="{{ route('account.index') }}">Favorite</a></li>
+                        <li><a class="hover:text-[#D4AF37]" href="{{ route('account.index') }}">Address</a></li>
+                        <li><a class="hover:text-[#D4AF37]" href="{{ route('account.index') }}">Profile</a></li>
                     </ul>
                 </div>
 
