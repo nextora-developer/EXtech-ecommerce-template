@@ -47,7 +47,7 @@
             <button
                 class="px-4 py-2 rounded-xl bg-[#D4AF37]/15 text-[#8f6a10] border border-[#D4AF37]/30
                            hover:bg-[#D4AF37]/20 transition font-semibold">
-                Apply
+                Filter
             </button>
 
             <a href="{{ route('admin.orders.index') }}"

@@ -1,9 +1,24 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <h1 class="text-2xl font-semibold mb-4">
-        {{ $product->exists ? 'Edit Product' : 'New Product' }}
-    </h1>
+    <div class="flex items-start justify-between mb-4">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">
+                {{ $product->exists ? 'Edit Product' : 'New Product' }}
+            </h1>
+            <p class="text-sm text-gray-500">Keep it simple: name + optional slug.</p>
+        </div>
+
+        <a href="{{ route('admin.products.index') }}"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
+          hover:bg-gray-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+                class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            <span>Back</span>
+        </a>
+    </div>
 
     <form method="POST" enctype="multipart/form-data"
         action="{{ $product->exists ? route('admin.products.update', $product) : route('admin.products.store') }}"
@@ -18,7 +33,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
                 <label class="form-label">Product name</label>
-                <input name="name" value="{{ old('name', $product->name) }}" class="form-input" placeholder="e.g. Gold Mug" required>
+                <input name="name" value="{{ old('name', $product->name) }}" class="form-input"
+                    placeholder="e.g. Gold Mug" required>
             </div>
 
             <div>
@@ -219,8 +235,12 @@
                             </p>
                         </div>
                         <button type="button" id="addVariationGroupBtn"
-                            class="px-3 py-1.5 rounded-lg text-sm border border-gray-300 hover:bg-gray-50">
-                            + Add variation group
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D4AF37] text-white text-sm hover:bg-[#c29c2f]">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Add variation</span>
                         </button>
                     </div>
 
@@ -279,8 +299,8 @@
 
                     <div class="flex justify-end">
                         <button type="button" id="generateFromVariationsBtn"
-                            class="px-3 py-1.5 rounded-lg text-xs border border-[#D4AF37]
-                               text-[#D4AF37] hover:bg-[#D4AF37]/5">
+                            class="px-3 py-1.5 rounded-xl bg-[#D4AF37]/15 text-[#8f6a10] text-sm border border-[#D4AF37]/30
+                           hover:bg-[#D4AF37]/20 transition">
                             Generate variation list
                         </button>
                     </div>
@@ -435,8 +455,12 @@
 
                     <div class="flex justify-end pt-2">
                         <button type="button" id="addVariantRow"
-                            class="px-3 py-1.5 rounded-lg text-sm border border-gray-300 hover:bg-gray-50">
-                            + Add row manually
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D4AF37] text-white text-sm hover:bg-[#c29c2f]">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Add row manually</span>
                         </button>
                     </div>
                 </div>
@@ -444,7 +468,7 @@
         </div>
 
         {{-- ACTIONS + ACTIVE --}}
-        <div class="flex justify-end items-center gap-6 pt-2">
+        <div class="flex justify-end items-center gap-4 pt-2">
 
             {{-- Digital toggle (最前面) --}}
             <label class="inline-flex items-center gap-2 cursor-pointer">
@@ -480,9 +504,7 @@
                 <span class="text-sm text-gray-600">Active</span>
             </label>
 
-            <button
-                class="px-5 py-2 rounded-xl bg-[#D4AF37]/20
-                   text-[#8f6a10] font-semibold hover:bg-[#D4AF37]/30 transition">
+            <button class="px-5 py-2 rounded-xl bg-[#D4AF37] text-white font-semibold hover:bg-[#c29c2f]">
                 Save
             </button>
 

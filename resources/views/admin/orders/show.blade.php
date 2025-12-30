@@ -21,8 +21,13 @@
         </div>
 
         <a href="{{ route('admin.orders.index') }}"
-            class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition">
-            Back
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
+          hover:bg-gray-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+                class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            <span>Back</span>
         </a>
     </div>
 
@@ -210,10 +215,7 @@
                     @endforeach
                 </select>
 
-                <button
-                    class="w-full mt-2 px-4 py-2 rounded-xl
-                               bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#8f6a10]
-                               hover:bg-[#D4AF37]/20 transition font-semibold">
+                <button class="w-full mt-2 px-4 py-2 rounded-xl bg-[#D4AF37] text-white font-semibold hover:bg-[#c29c2f]">
                     Save Changes
                 </button>
             </form>
@@ -233,15 +235,24 @@
                     <div class="mt-3 text-xs text-gray-500">Payment Receipt</div>
 
                     <button onclick="document.getElementById('receiptModal').showModal()"
-                        class="inline-flex items-center mt-1 px-3 py-1.5 rounded-lg border border-gray-300
-               bg-white hover:bg-gray-100 text-sm font-medium text-gray-700">
-                        View Receipt
+                        class="inline-flex items-center gap-2 mt-1 px-3 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-100 text-sm font-medium text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                        <span>View Receipt</span>
                     </button>
 
                     <a href="{{ asset('storage/' . $order->payment_receipt_path) }}" download
-                        class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium
-          bg-[#D4AF37] text-white hover:bg-[#C49A2F]">
-                        Download
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-[#D4AF37] text-white hover:bg-[#C49A2F]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        <span>Download</span>
                     </a>
                 @endif
 

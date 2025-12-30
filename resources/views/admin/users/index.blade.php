@@ -26,7 +26,13 @@
                 <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
             </select>
 
-            <button class="px-4 rounded-xl border">Filter</button>
+            <button
+                class="px-4 py-2 rounded-xl bg-[#D4AF37]/15 text-[#8f6a10] border border-[#D4AF37]/30
+                           hover:bg-[#D4AF37]/20 transition font-semibold">Filter</button>
+            <a href="{{ route('admin.users.index') }}"
+                class="px-4 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition">
+                Reset
+            </a>
         </div>
     </form>
 

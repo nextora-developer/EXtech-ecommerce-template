@@ -7,8 +7,12 @@
             <p class="text-sm text-gray-500">Manage homepage hero banners</p>
         </div>
         <a href="{{ route('admin.banners.create') }}"
-            class="px-4 py-2 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#8f6a10] font-semibold hover:bg-[#D4AF37]/20 transition">
-            + New Banner
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D4AF37] text-white font-semibold hover:bg-[#c29c2f]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+                class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>New Banner</span>
         </a>
     </div>
 
@@ -23,8 +27,9 @@
                 <option value="active" @selected(request('status') === 'active')>Active</option>
                 <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
             </select>
-
-            <button class="px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+            
+            <button class="px-4 py-2 rounded-xl bg-[#D4AF37]/15 text-[#8f6a10] border border-[#D4AF37]/30
+                           hover:bg-[#D4AF37]/20 transition font-semibold">
                 Filter
             </button>
 

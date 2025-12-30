@@ -8,9 +8,15 @@
             </h1>
             <p class="text-sm text-gray-500">Keep it simple: name + optional slug.</p>
         </div>
+        
         <a href="{{ route('admin.categories.index') }}"
-            class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition">
-            Back
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
+          hover:bg-gray-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+                class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            <span>Back</span>
         </a>
     </div>
 
@@ -126,10 +132,9 @@
 
         </div>
 
-        <div class="mt-5 flex gap-2">
+        <div class="mt-5 flex justify-end gap-2">
             <button
-                class="px-4 py-2 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#8f6a10]
-                       hover:bg-[#D4AF37]/20 transition font-semibold">
+                class="px-4 py-2 rounded-xl bg-[#D4AF37] text-white font-semibold hover:bg-[#c29c2f]">
                 Save
             </button>
             <a href="{{ route('admin.categories.index') }}"

@@ -11,8 +11,14 @@
             </p>
         </div>
 
-        <a href="{{ route('admin.users.edit', $user) }}" class="text-sm text-gray-600 hover:text-[#8f6a10]">
-            ← Back to user
+        <a href="{{ route('admin.users.edit', $user) }}"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
+          hover:bg-gray-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+                class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            <span>Back</span>
         </a>
     </div>
 

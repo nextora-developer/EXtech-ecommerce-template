@@ -10,8 +10,13 @@
         </div>
 
         <a href="{{ route('admin.banners.index') }}"
-            class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition">
-            Back
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
+          hover:bg-gray-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"
+                class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            <span>Back</span>
         </a>
     </div>
 
@@ -104,9 +109,9 @@
                 <div class="space-y-4">
 
                     <div>
-                        <label class="text-xs text-gray-500 block">Sort Order</label>
+                        <label class="text-xs text-gray-500 block mb-2">Sort Order</label>
                         <input name="sort_order" value="{{ old('sort_order', $banner->sort_order ?? 0) }}"
-                            class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
+                            class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 mb-2"
                             type="number" min="0">
                     </div>
 
@@ -136,10 +141,8 @@
 
         </div>
 
-        <div class="mt-5 flex gap-2">
-            <button
-                class="px-4 py-2 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#8f6a10]
-                hover:bg-[#D4AF37]/20 transition font-semibold">
+        <div class="mt-5 flex justify-end gap-2">
+            <button class="px-4 py-2 rounded-xl bg-[#D4AF37] text-white font-semibold hover:bg-[#c29c2f]">
                 Save
             </button>
 

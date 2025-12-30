@@ -7,9 +7,16 @@
             <p class="text-sm text-gray-500">Update user profile & status</p>
         </div>
 
-        <a href="{{ route('admin.users.show', $user) }}" class="text-sm text-gray-600 hover:text-[#8f6a10]">
-            ← Back to details
+        <a href="{{ route('admin.users.show', $user) }}"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200
+          hover:bg-gray-50 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            <span>Back</span>
         </a>
+
     </div>
 
     @if ($errors->any())
@@ -73,10 +80,12 @@
                 <h2 class="text-base font-semibold text-gray-700">Addresses</h2>
 
                 <a href="{{ route('admin.addresses.create', $user) }}"
-                    class="text-sm px-3 py-2 rounded-lg
-          bg-[#D4AF37] text-white font-semibold
-          hover:bg-[#C2982F] transition">
-                    + Add address
+                    class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#D4AF37] text-white text-sm hover:bg-[#c29c2f]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                        stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>Add address</span>
                 </a>
 
             </div>
