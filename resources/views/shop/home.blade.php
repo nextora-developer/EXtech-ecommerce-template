@@ -17,19 +17,6 @@
                                     <div class="w-full h-full bg-cover bg-center bg-no-repeat"
                                         style="background-image: url('{{ asset('storage/' . $banner->image_path) }}');">
                                     </div>
-
-                                    {{-- 遮罩 --}}
-                                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition"></div>
-
-                                    {{-- @if ($banner->title)
-                                <div class="absolute left-6 bottom-6 text-white">
-                                    <p class="text-xs uppercase tracking-[0.15em] text-white/70 mb-1">Shop
-                                    </p>
-                                    <h2 class="text-lg sm:text-2xl font-semibold drop-shadow">
-                                        {{ $banner->title }}
-                                    </h2>
-                                </div>
-                            @endif --}}
                                 </a>
                             @endforeach
                         </div>
@@ -195,20 +182,20 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42
-                                            4.42 3 7.5 3c1.74 0 3.41.81 4.5
-                                            2.09C13.09 3.81 14.76 3 16.5
-                                            3 19.58 3 22 5.42 22 8.5c0
-                                            3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                        4.42 3 7.5 3c1.74 0 3.41.81 4.5
+                                                        2.09C13.09 3.81 14.76 3 16.5
+                                                        3 19.58 3 22 5.42 22 8.5c0
+                                                        3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
                                                     {{-- empty heart --}}
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10"
                                                         stroke-width="1.8" viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                            0-3.6 1-4.5 2.5C10.6 4.5 8.9 3.5
-                                            7 3.5 4.2 3.5 2 5.7 2 8.5c0 5.2
-                                            5.5 8.9 9.8 12.7.1.1.3.1.4
-                                            0C15.5 17.4 21 13.7 21 8.5z" />
+                                                        0-3.6 1-4.5 2.5C10.6 4.5 8.9 3.5
+                                                        7 3.5 4.2 3.5 2 5.7 2 8.5c0 5.2
+                                                        5.5 8.9 9.8 12.7.1.1.3.1.4
+                                                        0C15.5 17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
@@ -280,54 +267,92 @@
         </section>
 
         {{-- Trust & Value Section --}}
-        <section class="bg-white border-t">
-            <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <section class="bg-white border-t border-gray-100">
+            <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-6">
 
-                    <div class="flex items-start gap-3">
-                        <span class="text-[#D4AF37] text-xl">🚚</span>
+                    {{-- Delivery --}}
+                    <div class="flex flex-col items-center text-center md:items-start md:text-left gap-4 group">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#D4AF37]/5 text-[#8f6a10] group-hover:bg-[#D4AF37] group-hover:text-white transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25c0-4.446-3.51-8.11-8.048-8.11h-.852a4.482 4.482 0 00-4.488 4.488v2.602M19.5 14.25l-2.25-6.75m-10.5 6.75h12.75" />
+                            </svg>
+                        </div>
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-900">
-                                Fast & Reliable Delivery
+                            <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
+                                Fast Delivery
                             </h4>
-                            <p class="text-xs text-gray-500">
-                                Orders processed and shipped within 1–3 working days.
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                Processed and shipped within <span class="font-medium text-gray-700">1–3 working
+                                    days</span>.
                             </p>
                         </div>
                     </div>
 
-                    <div class="flex items-start gap-3">
-                        <span class="text-[#D4AF37] text-xl">🔒</span>
+                    {{-- Payment --}}
+                    <div class="flex flex-col items-center text-center md:items-start md:text-left gap-4 group">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#D4AF37]/5 text-[#8f6a10] group-hover:bg-[#D4AF37] group-hover:text-white transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.744c0 5.052 3.823 9.213 8.712 9.637.222.019.447.029.672.029.224 0 .449-.01.671-.029 4.89-.423 8.713-4.585 8.713-9.637 0-1.305-.209-2.56-.598-3.744A11.959 11.959 0 0112 2.714z" />
+                            </svg>
+                        </div>
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-900">
-                                Secure Payment
+                            <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
+                                Secure Checkout
                             </h4>
-                            <p class="text-xs text-gray-500">
-                                Protected checkout with trusted payment gateways.
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                Your transactions are protected by <span
+                                    class="font-medium text-gray-700">industry-standard encryption</span>.
                             </p>
                         </div>
                     </div>
 
-                    <div class="flex items-start gap-3">
-                        <span class="text-[#D4AF37] text-xl">↩️</span>
+                    {{-- Returns --}}
+                    <div class="flex flex-col items-center text-center md:items-start md:text-left gap-4 group">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#D4AF37]/5 text-[#8f6a10] group-hover:bg-[#D4AF37] group-hover:text-white transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                            </svg>
+                        </div>
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-900">
-                                Hassle-free Returns
+                            <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
+                                Easy Returns
                             </h4>
-                            <p class="text-xs text-gray-500">
-                                Simple return policy for eligible items.
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                Not satisfied? Enjoy <span class="font-medium text-gray-700">hassle-free returns</span>
+                                on eligible items.
                             </p>
                         </div>
                     </div>
 
-                    <div class="flex items-start gap-3">
-                        <span class="text-[#D4AF37] text-xl">⭐</span>
+                    {{-- Local --}}
+                    <div class="flex flex-col items-center text-center md:items-start md:text-left gap-4 group">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#D4AF37]/5 text-[#8f6a10] group-hover:bg-[#D4AF37] group-hover:text-white transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                            </svg>
+                        </div>
                         <div>
-                            <h4 class="text-sm font-semibold text-gray-900">
-                                Trusted Local Seller
+                            <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
+                                Malaysian Seller
                             </h4>
-                            <p class="text-xs text-gray-500">
-                                Shop proudly serves Malaysia customers.
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                Supporting the <span class="font-medium text-gray-700">local community</span> with
+                                pride and quality.
                             </p>
                         </div>
                     </div>
@@ -336,23 +361,44 @@
             </div>
         </section>
 
-        {{-- Bottom CTA --}}
-        <section class="bg-white border-t border-gray-200">
+        {{-- Bottom CTA Section --}}
+        <section class="relative bg-white border-t border-gray-100 overflow-hidden">
+            {{-- Subtle decorative element --}}
             <div
-                class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                    <p class="text-sm font-semibold text-gray-900">
-                        Ready to explore more from Shop?
-                    </p>
-                    <p class="text-xs sm:text-sm text-gray-500">
-                        Browse categories, check details and complete your order in just a few steps.
-                    </p>
-                </div>
-                <div class="flex gap-3">
-                    <a href="{{ route('shop.index') }}"
-                        class="inline-flex items-center px-4 py-2 rounded-full text-xs sm:text-sm font-medium bg-[#D4AF37] text-black hover:bg-[#f5d68a]">
-                        Start shopping now
-                    </a>
+                class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-3xl">
+            </div>
+
+            <div class="relative max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+                <div
+                    class="flex flex-col md:flex-row items-center justify-between gap-8 bg-gray-50/50 rounded-3xl p-8 md:p-12 border border-gray-100">
+
+                    <div class="text-center md:text-left max-w-xl">
+                        <h3 class="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+                            Ready to elevate your lifestyle?
+                        </h3>
+                        <p class="mt-2 text-sm md:text-base text-gray-500 leading-relaxed">
+                            Discover our full collection of premium essentials. Quality, security, and
+                            elegance—delivered straight to your door.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 shrink-0">
+                        <a href="{{ route('shop.index') }}"
+                            class="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-sm font-bold bg-[#D4AF37] text-white shadow-lg shadow-[#D4AF37]/20 hover:bg-[#8f6a10] hover:-translate-y-0.5 transition-all duration-300">
+                            Start Shopping
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M14.25 7.75L18.5 12m0 0l-4.25 4.25M18.5 12H5.5" />
+                            </svg>
+                        </a>
+
+                        {{-- Optional Secondary Button --}}
+                        <a href="#categories"
+                            class="inline-flex items-center justify-center px-8 py-3.5 rounded-full text-sm font-bold bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 transition-all duration-300">
+                            View Categories
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
