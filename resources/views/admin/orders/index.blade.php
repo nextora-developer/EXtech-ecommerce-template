@@ -110,7 +110,7 @@
                             </td>
 
                             <td class="px-6 py-4 text-gray-500">
-                                {{ optional($o->created_at)->format('Y-m-d H:i') }}
+                                {{ optional($o->created_at)->format('d M Y H:i A') }}
                             </td>
 
                             <td class="px-6 py-4 text-right">

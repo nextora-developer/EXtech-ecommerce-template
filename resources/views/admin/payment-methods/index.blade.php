@@ -63,19 +63,19 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-50">
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[160px]">
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[300px]">
                             Method
                         </th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[160px]">
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[200px]">
                             Code
                         </th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[200px]">
                             Bank
                         </th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[110px]">
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[150px]">
                             Default
                         </th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[90px]">
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider w-[150px]">
                             Status
                         </th>
                         <th class="px-6 py-4"></th>

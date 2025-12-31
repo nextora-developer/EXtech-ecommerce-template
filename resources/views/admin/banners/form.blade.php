@@ -5,7 +5,7 @@
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-3xl font-semibold text-gray-900 tracking-tight">
-                {{ $banner->exists ? 'Modify Banner' : 'Create Homepage Banner' }}
+                {{ $banner->exists ? 'Edir Banner' : 'Create Homepage Banner' }}
             </h1>
             <p class="text-sm text-gray-500 mt-1">Recommended aspect ratio: 1920 × 600 pixels.</p>
         </div>
@@ -41,14 +41,14 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Display Title</label>
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">Display Title</label>
                             <input name="title" value="{{ old('title', $banner->title) }}"
                                 class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                                 placeholder="e.g. Raya Sale 2024">
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Destination URL</label>
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">Destination URL</label>
                             <input name="link_url" value="{{ old('link_url', $banner->link_url) }}"
                                 class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                                 placeholder="e.g. /shop/towels">
@@ -58,7 +58,7 @@
 
                 {{-- Image Upload Zone --}}
                 <div class="border border-dashed border-gray-200 rounded-2xl p-6 bg-gray-50/50">
-                    <label class="text-[10px] uppercase font-black tracking-widest text-[#8f6a10] block mb-4">Creative Asset</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-[#8f6a10] block mb-4">Creative Asset</label>
 
                     <div class="flex flex-col md:flex-row gap-6">
                         {{-- Preview Box --}}
@@ -81,7 +81,7 @@
                             <div class="text-sm font-bold text-gray-900 leading-none" id="bannerFileName">
                                 {{ $banner->image_path ? 'Existing Banner' : 'Upload Graphic' }}
                             </div>
-                            <p class="text-[11px] text-gray-400 mt-1 uppercase font-semibold" id="bannerFileMeta">
+                            <p class="text-xs text-gray-400 mt-1 uppercase font-semibold" id="bannerFileMeta">
                                 {{ $banner->image_path ? 'Replace by selecting a new file' : 'PNG, JPG or WebP (Max 3MB)' }}
                             </p>
 
@@ -114,14 +114,14 @@
                             <input name="sort_order" value="{{ old('sort_order', $banner->sort_order ?? 0) }}"
                                 class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                                 type="number" min="0">
-                            <p class="text-[10px] text-gray-400 mt-1">Lower numbers appear first.</p>
+                            <p class="text-xs text-gray-400 mt-1">Lower numbers appear first.</p>
                         </div>
 
                         <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-xs font-black uppercase tracking-widest text-gray-700">Banner Status</p>
-                                    <p class="text-[11px] text-gray-400 mt-0.5">Show on live store</p>
+                                    <p class="text-xs text-gray-400 mt-0.5">Show on live store</p>
                                 </div>
 
                                 <label class="relative inline-flex items-center cursor-pointer">

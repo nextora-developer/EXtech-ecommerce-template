@@ -158,8 +158,8 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="text-xs text-gray-500">{{ $o->created_at->format('M d, Y') }}</span>
-                                <span class="text-[10px] text-gray-400 block">{{ $o->created_at->format('H:i A') }}</span>
+                                <span class="text-sm text-gray-500">{{ $o->created_at->format('d M Y') }}</span>
+                                <span class="text-xs text-gray-400 block">{{ $o->created_at->format('H:i A') }}</span>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <a href="{{ route('admin.orders.show', $o) }}"

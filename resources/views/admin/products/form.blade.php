@@ -55,7 +55,7 @@
                 {{-- ROW 1 --}}
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div>
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400">
                             Product Name
                         </label>
                         <input name="name" value="{{ old('name', $product->name) }}"
@@ -65,7 +65,7 @@
                     </div>
 
                     <div>
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400">
                             Slug (optional)
                         </label>
                         <input name="slug" value="{{ old('slug', $product->slug) }}"
@@ -75,7 +75,7 @@
                     </div>
 
                     <div>
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400">
                             Category
                         </label>
                         <select name="category_id"
@@ -102,7 +102,7 @@
                 {{-- ROW 2 --}}
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <div class="lg:col-span-4">
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400">
                             Short Description
                         </label>
                         <textarea name="short_description" rows="4"
@@ -115,7 +115,7 @@
                 {{-- ROW 3 --}}
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-4">
                     <div class="lg:col-span-4">
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400">
                             Long Description
                         </label>
 
@@ -194,7 +194,7 @@
                 </div>
 
                 <div class="border rounded-xl p-4">
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400 mb-2 block">
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400 mb-2 block">
                         Gallery
                     </label>
 
@@ -268,7 +268,7 @@
                     {{-- Simple price / stock --}}
                     <div id="simplePriceStock" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">
                                 Price
                             </label>
                             <input name="price" value="{{ old('price', $product->price) }}"
@@ -278,7 +278,7 @@
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">
                                 Stock
                             </label>
                             <input name="stock" value="{{ old('stock', $product->stock) }}"

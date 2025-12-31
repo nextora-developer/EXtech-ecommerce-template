@@ -69,7 +69,7 @@
 
                             {{-- Last Updated --}}
                             <td class="px-6 py-4 text-gray-500">
-                                {{ $rate->updated_at ? $rate->updated_at->format('Y-m-d H:i') : '—' }}
+                                {{ $rate->updated_at ? $rate->updated_at->format('d M Y H:i A') : '—' }}
                             </td>
 
                             {{-- Action --}}

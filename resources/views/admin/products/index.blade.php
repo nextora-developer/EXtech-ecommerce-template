@@ -169,7 +169,7 @@
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     {{-- View --}}
-                                    <a href="{{ route('admin.products.show',$p) }}"
+                                    {{-- <a href="{{ route('admin.products.show',$p) }}"
                                        class="p-2 rounded-lg text-gray-400 hover:text-[#8f6a10]
                                               hover:bg-[#D4AF37]/10 transition-all"
                                        title="View">
@@ -182,7 +182,7 @@
                                                      -1.274 4.057-5.065 7-9.542 7
                                                      -4.477 0-8.268-2.943-9.542-7z" />
                                         </svg>
-                                    </a>
+                                    </a> --}}
 
                                     {{-- Edit --}}
                                     <a href="{{ route('admin.products.edit',$p) }}"

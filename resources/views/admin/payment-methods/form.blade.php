@@ -39,7 +39,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Display Name</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Display Name</label>
                     <input name="name" value="{{ old('name', $paymentMethod->name) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                         placeholder="e.g. Bank Transfer / FPX" required>
@@ -49,7 +49,7 @@
                 </div>
 
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">System Code</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">System Code</label>
                     <input name="code" value="{{ old('code', $paymentMethod->code) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-mono text-sm"
                         placeholder="online_transfer" required>
@@ -59,13 +59,13 @@
                 </div>
 
                 <div class="lg:col-span-2">
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Short Description</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Short Description</label>
                     <input name="short_description"
                         value="{{ old('short_description', $paymentMethod->short_description) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                         placeholder="e.g. Instant transfer to our Maybank account">
-                    <p class="text-[10px] text-gray-400 mt-1 uppercase font-bold tracking-tight">Appears below the title at
-                        checkout.</p>
+                    <p class="text-xs text-gray-400 mt-1 uppercase font-bold">Appears below the title at
+                        checkout</p>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@
                 <div class="bg-gray-50/50 rounded-2xl p-4 border border-gray-100 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-black uppercase tracking-widest text-gray-700">Active Status</p>
-                        <p class="text-[10px] text-gray-400 mt-0.5 font-bold">Show as option for customers</p>
+                        <p class="text-xs text-gray-400 mt-0.5 font-bold">Show as option for customers</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="is_active" value="1" class="sr-only peer"
@@ -88,7 +88,7 @@
                 <div class="bg-gray-50/50 rounded-2xl p-4 border border-gray-100 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-black uppercase tracking-widest text-gray-700">Set Default</p>
-                        <p class="text-[10px] text-gray-400 mt-0.5 font-bold">Pre-selected at checkout</p>
+                        <p class="text-xs text-gray-400 mt-0.5 font-bold">Pre-selected at checkout</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="is_default" value="1" class="sr-only peer"
@@ -110,20 +110,20 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Bank Name</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Bank Name</label>
                     <input name="bank_name" value="{{ old('bank_name', $paymentMethod->bank_name) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                         placeholder="e.g. Maybank / CIMB">
                 </div>
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Account Name</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Account Name</label>
                     <input name="bank_account_name"
                         value="{{ old('bank_account_name', $paymentMethod->bank_account_name) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                         placeholder="Company Sdn Bhd">
                 </div>
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Account Number</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Account Number</label>
                     <input name="bank_account_number"
                         value="{{ old('bank_account_number', $paymentMethod->bank_account_number) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
@@ -132,7 +132,7 @@
             </div>
 
             <div>
-                <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Customer Instructions</label>
+                <label class="text-xs uppercase font-black tracking-widest text-gray-400">Customer Instructions</label>
                 <textarea name="instructions" rows="3"
                     class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm"
                     placeholder="e.g. Please upload your bank slip within 24 hours.">{{ old('instructions', $paymentMethod->instructions) }}</textarea>
@@ -166,7 +166,7 @@
                     <p class="text-sm font-bold text-gray-900" id="qrFileName">
                         {{ $paymentMethod->duitnow_qr_path ? 'Current QR Code Active' : 'No QR uploaded' }}
                     </p>
-                    <p class="text-[10px] text-gray-400 mt-0.5 uppercase font-bold tracking-tight" id="qrFileMeta">
+                    <p class="text-xs text-gray-400 mt-0.5 uppercase font-bold" id="qrFileMeta">
                         Recommended: Square PNG/JPG, Max 4MB
                     </p>
 

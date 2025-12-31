@@ -5,7 +5,7 @@
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-3xl font-semibold text-gray-900 tracking-tight">
-                {{ $address->exists ? 'Edit Address' : 'Register New Location' }}
+                {{ $address->exists ? 'Edit Address' : 'Create New Address' }}
             </h1>
             <p class="text-sm text-gray-500 mt-1">
                 Assigning to: <span class="font-bold text-[#8f6a10]">{{ $user->name }}</span> ({{ $user->email }})
@@ -53,21 +53,21 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Recipient Name</label>
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400">Recipient Name</label>
                         <input type="text" name="recipient_name"
                             value="{{ old('recipient_name', $address->recipient_name) }}" placeholder="e.g. Tan Mei Ling"
                             class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
                     </div>
 
                     <div>
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Contact Number</label>
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400">Contact Number</label>
                         <input type="text" name="phone" value="{{ old('phone', $address->phone) }}"
                             placeholder="e.g. 012-3456789"
                             class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
                     </div>
 
                     <div>
-                        <label class="text-[10px] uppercase font-black tracking-widest text-gray-400 text-gray-300">Email
+                        <label class="text-xs uppercase font-black tracking-widest text-gray-400 text-gray-300">Email
                             (Optional)</label>
                         <input type="email" name="email" value="{{ old('email', $address->email) }}"
                             placeholder="e.g. you@example.com"
@@ -86,7 +86,7 @@
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Address Line
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">Address Line
                                 1</label>
                             <input type="text" name="address_line1"
                                 value="{{ old('address_line1', $address->address_line1) }}"
@@ -95,7 +95,7 @@
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-300">Address Line
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-300">Address Line
                                 2</label>
                             <input type="text" name="address_line2"
                                 value="{{ old('address_line2', $address->address_line2) }}"
@@ -106,21 +106,21 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Postcode</label>
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">Postcode</label>
                             <input type="text" name="postcode" value="{{ old('postcode', $address->postcode) }}"
                                 placeholder="e.g. 47000"
-                                class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium text-center">
+                                class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">City</label>
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">City</label>
                             <input type="text" name="city" value="{{ old('city', $address->city) }}"
                                 placeholder="e.g. Petaling Jaya"
                                 class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">State</label>
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">State</label>
                             <select name="state"
                                 class="mt-1.5 w-full rounded-xl border-gray-200 font-medium focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
                                 <option value="">Select State</option>
@@ -133,7 +133,7 @@
                         </div>
 
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Country</label>
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">Country</label>
                             <input type="text" name="country"
                                 value="{{ old('country', $address->country ?? 'Malaysia') }}"
                                 class="mt-1.5 w-full rounded-xl border-gray-200 bg-gray-50 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-semibold">
@@ -149,7 +149,7 @@
                 <input type="checkbox" name="is_default" value="1"
                     class="w-5 h-5 rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]/40 transition"
                     {{ old('is_default', $address->is_default ?? false) ? 'checked' : '' }}>
-                <span class="text-sm font-bold text-gray-600 group-hover:text-[#8f6a10] transition">Set as primary delivery
+                <span class="text-sm font-bold text-gray-600 group-hover:text-[#8f6a10] transition">Set as default delivery
                     address</span>
             </label>
 

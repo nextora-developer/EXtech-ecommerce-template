@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                    <h2 class="text-sm font-bold text-gray-900 mb-5 uppercase tracking-wider">Visual Identity</h2>
+                    <h2 class="text-sm font-bold text-gray-900 mb-5 uppercase tracking-wider">Upload Image</h2>
 
                     <div
                         class="flex flex-col md:flex-row items-center gap-8 p-4 rounded-2xl bg-gray-50/50 border border-dashed border-gray-200">

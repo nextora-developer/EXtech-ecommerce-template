@@ -70,22 +70,22 @@
             {{-- Info Grid --}}
             <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                 <div class="rounded-xl bg-gray-50/80 border border-gray-100 px-4 py-3">
-                    <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-1">Email Address</p>
+                    <p class="text-xs uppercase font-bold tracking-widest text-gray-400 mb-1">Email Address</p>
                     <p class="text-gray-900 font-semibold truncate">{{ $user->email ?? '—' }}</p>
                 </div>
 
                 <div class="rounded-xl bg-gray-50/80 border border-gray-100 px-4 py-3">
-                    <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-1">Mobile Phone</p>
+                    <p class="text-xs uppercase font-bold tracking-widest text-gray-400 mb-1">Mobile Phone</p>
                     <p class="text-gray-900 font-semibold">{{ $user->phone ?? '—' }}</p>
                 </div>
 
                 <div class="rounded-xl bg-gray-50/80 border border-gray-100 px-4 py-3">
-                    <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-1">Member Since</p>
+                    <p class="text-xs uppercase font-bold tracking-widest text-gray-400 mb-1">Created date</p>
                     <p class="text-gray-900 font-semibold">{{ $user->created_at?->format('M d, Y') ?? '—' }}</p>
                 </div>
 
                 <div class="rounded-xl bg-gray-50/80 border border-gray-100 px-4 py-3">
-                    <p class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-1">Last Updated</p>
+                    <p class="text-xs uppercase font-bold tracking-widest text-gray-400 mb-1">Last Updated</p>
                     <p class="text-gray-900 font-semibold">{{ $user->updated_at?->format('M d, Y') ?? '—' }}</p>
                 </div>
             </div>
@@ -159,7 +159,7 @@
                         </svg>
                         Shopping Activity
                     </h2>
-                    <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Modules Pending</span>
+                    <span class="text-xs font-bold text-gray-300 uppercase tracking-widest">Modules Pending</span>
                 </div>
 
                 <div

@@ -40,33 +40,33 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Full Name</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Full Name</label>
                     <input type="text" name="name" value="{{ old('name', $user->name) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
                 </div>
 
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">IC Number</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">IC Number</label>
                     <input type="text" name="ic_number" value="{{ old('ic_number', $user->ic_number) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                         placeholder="Optional">
                 </div>
 
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400 text-[#8f6a10]">Change Password</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400 text-[#8f6a10]">Change Password</label>
                     <input type="password" name="password"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30"
                         placeholder="Leave blank to keep current">
                 </div>
 
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Email Address</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Email Address</label>
                     <input type="email" name="email" value="{{ old('email', $user->email) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
                 </div>
 
                 <div>
-                    <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Phone Number</label>
+                    <label class="text-xs uppercase font-black tracking-widest text-gray-400">Phone Number</label>
                     <input type="text" name="phone" value="{{ old('phone', $user->phone) }}"
                         class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium">
                 </div>
@@ -122,13 +122,13 @@
 
                         <div class="flex flex-col items-end justify-between ml-4">
                             <a href="{{ route('admin.addresses.edit', $address) }}"
-                                class="text-[10px] font-black uppercase text-gray-400 hover:text-[#8f6a10] tracking-widest transition">Edit</a>
+                                class="text-xs font-black uppercase text-gray-400 hover:text-[#8f6a10] tracking-widest transition">Edit</a>
 
                             <form action="{{ route('admin.addresses.destroy', $address) }}" method="POST"
                                 onsubmit="return confirm('Archive this address?');">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-[10px] font-black uppercase text-red-300 hover:text-red-600 tracking-widest transition">Delete</button>
+                                <button class="text-xs font-black uppercase text-red-300 hover:text-red-600 tracking-widest transition">Delete</button>
                             </form>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
 
         {{-- Footer Actions --}}
         <div class="mt-10 pt-6 border-t border-gray-100 flex items-center justify-between">
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">
                 Last activity: {{ $user->updated_at?->diffForHumans() ?? 'Never' }}
             </p>
             
