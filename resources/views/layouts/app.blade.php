@@ -175,6 +175,38 @@
         </div>
     </footer>
 
+    <script>
+        function refreshCartCount() {
+            console.log('Refreshing cart count…');
+            const badge = document.querySelector('[data-cart-count]');
+            if (!badge) return;
+
+            fetch("{{ route('cart.count') }}", {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (typeof data.count !== 'undefined') {
+                        badge.textContent = data.count;
+                    }
+                })
+                .catch(() => {});
+        }
+
+        document.addEventListener('DOMContentLoaded', refreshCartCount);
+
+        window.addEventListener('pageshow', function(event) {
+            const navEntries = performance.getEntriesByType('navigation');
+            const navType = navEntries[0] ? navEntries[0].type : null;
+
+            if (event.persisted || navType === 'back_forward') {
+                refreshCartCount();
+            }
+        });
+    </script>
+
 
 
 

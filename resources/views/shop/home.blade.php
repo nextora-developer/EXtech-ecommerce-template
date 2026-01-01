@@ -144,7 +144,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6">
                         @foreach ($featured as $product)
                             <a href="{{ route('shop.show', $product->slug) }}"
-                                class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#D4AF37]/60 transition overflow-hidden flex flex-col">
+                                class="group relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#D4AF37]/60 transition overflow-hidden flex flex-col">
                                 {{-- Product image --}}
                                 <div class="relative aspect-square bg-gray-100 overflow-hidden">
                                     @if ($product->image ?? false)
@@ -218,29 +218,27 @@
 
                                     <div class="mt-2 flex items-center justify-between">
                                         <p class="text-sm font-semibold text-[#8f6a10]">
-                                            @if ($product->has_variants && $product->variants->count())
-                                                @php
-                                                    // 拿有填 price 的 variants
-                                                    $variantPrices = $product->variants->whereNotNull('price');
-                                                    $min = $variantPrices->min('price');
-                                                    $max = $variantPrices->max('price');
-                                                @endphp
+                                                    @if ($product->has_variants && $product->variants->count())
+                                                        @php
+                                                            $variantPrices = $product->variants->whereNotNull('price');
+                                                            $min = $variantPrices->min('price');
+                                                            $max = $variantPrices->max('price');
+                                                        @endphp
 
-                                                @if ($min === null)
-                                                    {{-- 有 variants 但是都没有填价钱 --}}
-                                                    RM 0.00
-                                                @elseif ($min == $max)
-                                                    {{-- 所有 variants 同一个价钱 --}}
-                                                    RM {{ number_format($min, 2) }}
-                                                @else
-                                                    {{-- 显示价钱范围 --}}
-                                                    RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
-                                                @endif
-                                            @else
-                                                {{-- 没有 variants，用 product 本身的 price --}}
-                                                RM {{ number_format($product->price ?? 0, 2) }}
-                                            @endif
-                                        </p>
+                                                        @if ($min == $max)
+                                                            {{-- 所有 variant 同价 --}}
+                                                            RM {{ number_format($min, 2) }}
+                                                        @else
+                                                            {{-- 显示最低价，加 From --}}
+                                                            <span
+                                                                class="text-xs font-normal text-gray-400 mr-1">From</span>
+                                                            RM {{ number_format($min, 2) }}
+                                                        @endif
+                                                    @else
+                                                        {{-- 没有 variants --}}
+                                                        RM {{ number_format($product->price ?? 0, 2) }}
+                                                    @endif
+                                                </p>
 
                                         <button type="button"
                                             class="inline-flex items-center rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-700 group-hover:border-[#D4AF37]/70 group-hover:text-[#8f6a10]">

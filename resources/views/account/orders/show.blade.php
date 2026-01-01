@@ -1,15 +1,20 @@
 <x-app-layout>
-    <div class="bg-[#f7f7f9] py-8">
-        <div class="max-w-7xl5 mx-auto sm:px-6 lg:px-8">
+    <div class="bg-[#f7f7f9] min-h-screen py-10">
+        <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- 面包屑 --}}
-            <div class="text-sm text-gray-500 mb-4">
-                <a href="{{ route('account.index') }}" class="hover:text-[#8f6a10]">Home</a>
-                <span class="mx-1">/</span>
+            {{-- Breadcrumb --}}
+            <nav class="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-gray-400 mb-8">
+                <a href="{{ route('home') }}" class="hover:text-[#8f6a10] transition-colors">Home</a>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
                 <a href="{{ route('account.orders.index') }}" class="hover:text-[#8f6a10]">Orders</a>
-                <span class="mx-1">/</span>
-                <span>{{ $order->order_no }}</span>
-            </div>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span class="text-gray-900">{{ $order->order_no }}</span>
+
+            </nav>
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
@@ -67,8 +72,85 @@
 
                             </div>
 
-
                         </div>
+
+                        {{-- 🔥 REFINED ORDER STATUS BAR --}}
+                        @php
+                            $steps = [
+                                'pending' => [
+                                    'label' => 'Pending',
+                                    'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+                                ],
+                                'paid' => [
+                                    'label' => 'Paid',
+                                    'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+                                ],
+                                'processing' => [
+                                    'label' => 'Processing',
+                                    'icon' =>
+                                        'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z',
+                                ],
+                                'shipped' => [
+                                    'label' => 'Shipped',
+                                    'icon' =>
+                                        'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4',
+                                ],
+                                'completed' => ['label' => 'Received', 'icon' => 'M5 13l4 4L19 7'],
+                            ];
+
+                            $orderFlow = array_keys($steps);
+                            $currentIndex = array_search($order->status, $orderFlow);
+                        @endphp
+
+                        <div class="mt-10 mb-12 px-2">
+                            <div class="flex items-center">
+                                @foreach ($steps as $key => $data)
+                                    @php
+                                        $index = array_search($key, $orderFlow);
+                                        $isDone = $index <= $currentIndex;
+                                        $isLast = $loop->last;
+                                    @endphp
+
+                                    <div class="flex items-center {{ !$isLast ? 'flex-1' : '' }}">
+                                        {{-- Step Point --}}
+                                        <div class="relative flex flex-col items-center group">
+                                            <div
+                                                class="w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500 border
+                        {{ $isDone
+                            ? 'bg-black border-black text-white shadow-lg shadow-black/20'
+                            : 'bg-white border-gray-300 text-gray-500' }}">
+
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="1.5" d="{{ $data['icon'] }}" />
+                                                </svg>
+                                            </div>
+
+                                            {{-- Label --}}
+                                            <div class="absolute -bottom-7 whitespace-nowrap">
+                                                <span
+                                                    class="text-[9px] font-black uppercase tracking-[0.2em] transition-colors duration-300
+                            {{ $isDone ? 'text-black' : 'text-gray-500' }}">
+                                                    {{ $data['label'] }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {{-- Connector Line --}}
+                                        @if (!$isLast)
+                                            <div class="flex-1 h-[2px] mx-4 rounded-full overflow-hidden bg-gray-100">
+                                                <div
+                                                    class="h-full transition-all duration-1000 ease-out 
+                            {{ $isDone && $currentIndex > $index ? 'w-full bg-[#D4AF37]' : 'w-0' }}">
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        {{-- 🔥 END STATUS BAR --}}
 
                         {{-- Info blocks --}}
                         <div class="grid md:grid-cols-2 gap-6 mt-8">
@@ -191,20 +273,36 @@
                                     @foreach ($order->items as $item)
                                         <tr>
                                             <td class="px-4 py-3 text-gray-900 flex items-center gap-3">
+                                                {{-- Product image OR icon placeholder --}}
                                                 @if ($item->product?->image)
                                                     <img src="{{ asset('storage/' . $item->product->image) }}"
                                                         class="w-12 h-12 rounded object-cover">
+                                                @else
+                                                    <div
+                                                        class="w-12 h-12 rounded bg-gray-100 border border-gray-200 flex items-center justify-center">
+
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="w-6 h-6 text-gray-300" fill="none"
+                                                            viewBox="0 0 24 24" stroke-width="1.8"
+                                                            stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                                        </svg>
+
+                                                    </div>
                                                 @endif
+
                                                 <div>
                                                     {{ $item->product_name }}
+
                                                     @if ($item->variant_label)
                                                         <div class="text-sm text-gray-500">
                                                             {{ $item->variant_label }}
                                                         </div>
                                                     @endif
-
                                                 </div>
                                             </td>
+
 
                                             <td class="px-4 py-3 text-right text-gray-700">
                                                 {{ $item->qty }}

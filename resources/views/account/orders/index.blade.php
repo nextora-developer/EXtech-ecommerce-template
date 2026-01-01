@@ -1,37 +1,40 @@
 <x-app-layout>
-    <div class="bg-[#f7f7f9] py-8">
-        <div class="max-w-7xl5 mx-auto sm:px-6 lg:px-8">
+    <div class="bg-[#f7f7f9] min-h-screen py-10">
+        <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <nav class="text-sm text-gray-500 mb-4">
-                <a href="{{ route('home') }}" class="hover:text-[#8f6a10]">Home</a>
-                <span class="mx-1">/</span>
-                <span class="text-gray-400">Orders</span>
+            <nav class="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-gray-400 mb-8">
+                <a href="{{ route('home') }}" class="hover:text-[#8f6a10] transition-colors">Home</a>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span class="text-gray-900">Orders</span>
             </nav>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-                {{-- Include Sidebar --}}
+                {{-- Left Sidebar --}}
                 <aside class="lg:col-span-1">
                     @include('account.partials.sidebar')
                 </aside>
 
                 {{-- Right Content --}}
-                <main class="lg:col-span-3 space-y-5">
+                <main class="lg:col-span-3 space-y-6">
 
-                    {{-- Card 1: Filter Tabs + Search --}}
-                    <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                    {{-- Header & Filters --}}
+                    <section class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-gray-50">
+                            <h1 class="text-2xl font-black text-gray-900">Order History</h1>
+                            <p class="text-sm text-gray-500 mt-1">Track, manage and view details of your past purchases.
+                            </p>
+                        </div>
 
-                        @php
-                            $status = request('status', 'all');
-                        @endphp
-
-                        {{-- Tabs --}}
-                        <div class="flex items-center gap-6 border-b border-gray-200 pb-2 text-base">
+                        {{-- Horizontal Scrollable Tabs --}}
+                        <div class="px-6 py-2 bg-gray-50/50 flex items-center gap-2 overflow-x-auto no-scrollbar">
                             @php
                                 $status = request('status', 'all');
                                 $tabs = [
-                                    'all' => 'All',
+                                    'all' => 'All Orders',
                                     'pending' => 'Pending',
                                     'paid' => 'Paid',
                                     'processing' => 'Processing',
@@ -41,140 +44,154 @@
                                 ];
                             @endphp
 
-                            @php
-                                $counts = [
-                                    'all' => $allOrders->count(),
-                                    'pending' => $allOrders->where('status', 'pending')->count(),
-                                    'paid' => $allOrders->where('status', 'paid')->count(),
-                                    'processing' => $allOrders->where('status', 'processing')->count(),
-                                    'shipped' => $allOrders->where('status', 'shipped')->count(),
-                                    'completed' => $allOrders->where('status', 'completed')->count(),
-                                    'cancelled' => $allOrders->where('status', 'cancelled')->count(),
-                                ];
-                            @endphp
-
                             @foreach ($tabs as $key => $label)
-                                @php
-                                    $active = $status === $key;
-                                @endphp
-
+                                @php $isActive = $status === $key; @endphp
                                 <a href="{{ route('account.orders.index', ['status' => $key]) }}"
-                                    class="{{ $active ? 'text-[#8f6a10] font-semibold' : 'text-gray-500 hover:text-gray-800' }}">
-                                    {{ $label }} ({{ $counts[$key] ?? 0 }})
+                                    class="whitespace-nowrap px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-300
+                                    {{ $isActive
+                                        ? 'bg-[#D4AF37] text-white shadow-md shadow-orange-900/20'
+                                        : 'text-gray-400 hover:text-gray-900 hover:bg-gray-100' }}">
+                                    {{ $label }}
+                                    <span
+                                        class="ml-1 opacity-60 text-xs">{{ $allOrders->where('status', $key === 'all' ? '!=' : '==', $key)->count() }}</span>
                                 </a>
                             @endforeach
                         </div>
 
-                        {{-- Search --}}
-                        <form method="GET" action="{{ route('account.orders.index') }}"
-                            class="mt-4 flex items-center gap-3">
+                        {{-- Search Bar --}}
+                        <div class="p-6">
+                            <form method="GET" action="{{ route('account.orders.index') }}" class="relative max-w-md">
+                                <input type="hidden" name="status" value="{{ $status }}">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                                <input type="text" name="order_no" value="{{ request('order_no') }}"
+                                    placeholder="Search by order ID..."
+                                    class="block w-full pl-11 pr-24 py-3 bg-gray-50 border-none rounded-2xl text-sm text-gray-900 focus:ring-2 focus:ring-[#D4AF37]/20 transition-all">
 
-                            <input type="hidden" name="status" value="{{ $status }}">
-
-                            <input type="text" name="order_no" value="{{ request('order_no') }}"
-                                placeholder="Order number"
-                                class="flex-1 rounded-full border border-gray-200 px-5 py-3 text-base text-gray-800 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30">
-
-                            <button type="submit"
-                                class="px-6 py-3 rounded-full bg-[#D4AF37] text-white text-base font-semibold shadow hover:brightness-110 transition">
-                                Search
-                            </button>
-
-                            {{-- Reset --}}
-                            <a href="{{ route('account.orders.index', ['status' => $status]) }}"
-                                class="px-6 py-3 rounded-full bg-gray-200 text-gray-700 text-base font-medium hover:bg-gray-300 transition">
-                                Reset
-                            </a>
-                        </form>
-
+                                <div class="absolute inset-y-1.5 right-1.5 flex gap-1">
+                                    @if (request('order_no'))
+                                        <a href="{{ route('account.orders.index', ['status' => $status]) }}"
+                                            class="px-3 flex items-center text-xs font-bold text-gray-400 hover:text-gray-600">Reset</a>
+                                    @endif
+                                    <button type="submit"
+                                        class="px-4 bg-[#D4AF37] text-white rounded-xl text-xs font-bold hover:bg-[#EBCB5A] transition-colors">
+                                        Find
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </section>
 
-                    {{-- Card 2: Orders List --}}
-                    <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-semibold text-[#0A0A0C]">
-                                My Orders
-                            </h2>
-                        </div>
-
+                    {{-- Orders List --}}
+                    <div class="space-y-4">
                         @forelse ($orders as $order)
                             <a href="{{ route('account.orders.show', $order) }}"
-                                class="rounded-xl border border-gray-200 px-4 py-3 mb-3 bg-gray-50
-              flex items-center gap-4 hover:bg-[#FFF9E6] hover:border-[#D4AF37]/50
-              transition cursor-pointer">
+                                class="group block bg-white rounded-3xl border border-gray-100 p-5 hover:border-[#D4AF37]/40 hover:shadow-xl hover:shadow-orange-100/30 transition-all duration-500">
 
-                                {{-- 封面商品缩略图 --}}
-                                @php
-                                    $firstItem = $order->items->first();
-                                    $thumb = null;
-
-                                    if ($firstItem && $firstItem->product && $firstItem->product->image) {
-                                        $thumb = asset('storage/' . $firstItem->product->image);
-                                    }
-                                @endphp
-
-                                <div
-                                    class="w-14 h-14 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 flex-shrink-0">
-                                    @if ($thumb)
-                                        <img src="{{ $thumb }}" class="w-full h-full object-cover"
-                                            alt="">
-                                    @else
+                                <div class="flex flex-col md:flex-row md:items-center gap-6">
+                                    {{-- Thumbnail Stack --}}
+                                    <div class="relative flex-shrink-0">
+                                        @php
+                                            $firstItem = $order->items->first();
+                                            $thumb =
+                                                $firstItem && $firstItem->product && $firstItem->product->image
+                                                    ? asset('storage/' . $firstItem->product->image)
+                                                    : null;
+                                        @endphp
                                         <div
-                                            class="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                                            —
+                                            class="w-20 h-20 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm relative z-10">
+                                            @if ($thumb)
+                                                <img src="{{ $thumb }}"
+                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                            @else
+                                                <div
+                                                    class="w-full h-full flex items-center justify-center text-gray-300">
+                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path
+                                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                            stroke-width="1" stroke-linecap="round"
+                                                            stroke-linejoin="round" />
+                                                    </svg></div>
+                                            @endif
                                         </div>
-                                    @endif
-                                </div>
-
-                                {{-- 订单信息 --}}
-                                <div class="flex-1 flex justify-between items-center">
-
-                                    <div>
-                                        <span class="font-medium text-[#8f6a10] hover:text-[#D4AF37]">
-                                            {{ $order->order_no }}
-                                        </span>
-
-                                        <div class="text-sm text-gray-500 mt-1">
-                                            {{ $order->created_at->format('d M Y, H:i') }}
-                                        </div>
+                                        {{-- Visual Stack Effect for multiple items --}}
+                                        @if ($order->items->count() > 1)
+                                            <div
+                                                class="absolute top-1 left-1 w-20 h-20 bg-gray-100 border border-gray-200 rounded-2xl -z-10 translate-x-1 -translate-y-1">
+                                            </div>
+                                        @endif
                                     </div>
 
-                                    <div class="flex items-center gap-4 font-medium text-[#0A0A0C]">
+                                    {{-- Order Details --}}
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-3 mb-1">
+                                            <span
+                                                class="text-sm font-black text-gray-900 group-hover:text-[#8f6a10] transition-colors">#{{ $order->order_no }}</span>
+                                            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                            <span
+                                                class="text-xs font-medium text-gray-400 uppercase tracking-tighter">{{ $order->created_at->format('d M Y') }}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 line-clamp-1 mb-3">
+                                            Purchased {{ $order->items->count() }}
+                                            item{{ $order->items->count() > 1 ? 's' : '' }} •
+                                            Delivering to <span
+                                                class="text-gray-700 font-medium">{{ $order->shipping_city ?? 'Registered Address' }}</span>
+                                        </p>
 
+                                        {{-- Ghost Status Badges --}}
                                         @php
-                                            $colors = [
-                                                'pending' => 'bg-amber-100 text-[#8f6a10]',
-                                                'paid' => 'bg-green-100 text-green-700',
-                                                'processing' => 'bg-blue-100 text-blue-700',
-                                                'shipped' => 'bg-indigo-100 text-indigo-700',
-                                                'completed' => 'bg-emerald-100 text-emerald-700',
-                                                'cancelled' => 'bg-red-100 text-red-600',
+                                            $statusClasses = [
+                                                'pending' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                                'paid' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                                'processing' => 'bg-blue-50 text-blue-700 border-blue-100',
+                                                'shipped' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
+                                                'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                                'cancelled' => 'bg-red-50 text-red-700 border-red-100',
                                             ];
                                         @endphp
-
                                         <span
-                                            class="px-2 py-1 rounded-full text-sm font-medium
-                             {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
-                                            {{ ucfirst($order->status) }}
-                                        </span>
-
-                                        <span class="text-base">
-                                            RM {{ number_format($order->total, 2) }}
+                                            class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border {{ $statusClasses[$order->status] ?? 'bg-gray-50 border-gray-100' }}">
+                                            {{ $order->status }}
                                         </span>
                                     </div>
 
+                                    {{-- Price & Action --}}
+                                    <div
+                                        class="flex md:flex-col items-center md:items-end justify-between gap-2 border-t md:border-t-0 pt-4 md:pt-0 border-gray-50">
+                                        <div class="text-lg font-black text-gray-900">
+                                            <span
+                                                class="text-xs font-normal text-gray-400 mr-1">RM</span>{{ number_format($order->total, 2) }}
+                                        </div>
+                                        <div
+                                            class="text-[10px] font-bold text-[#8f6a10] uppercase tracking-widest flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            View Details
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path d="M14 5l7 7-7 7M3 12h18" stroke-width="3" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </a>
                         @empty
-                            <p class="text-base text-gray-500">No orders yet.</p>
+                            <div class="bg-white rounded-3xl border border-dashed border-gray-200 p-20 text-center">
+                                <p class="text-gray-400 font-medium">No orders found matching these criteria.</p>
+                                <a href="{{ route('account.orders.index') }}"
+                                    class="text-sm font-bold text-[#8f6a10] mt-2 inline-block">Clear all filters</a>
+                            </div>
                         @endforelse
 
-
-                        <div class="mt-4">
+                        <div class="mt-8">
                             {{ $orders->links() }}
                         </div>
-
-                    </section>
+                    </div>
                 </main>
 
             </div>

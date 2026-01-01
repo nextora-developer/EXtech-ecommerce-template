@@ -3,7 +3,7 @@
         <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+            <nav class="flex items-center space-x-2 uppercase text-sm text-gray-500 mb-6">
                 <a href="{{ route('shop.index') }}" class="hover:text-[#8f6a10] transition-colors">Shop</a>
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 <span class="text-gray-900 font-medium">{{ $product->name }}</span>
@@ -186,7 +186,7 @@
                                         @else
                                             <span class="font-semibold">RM {{ number_format($min, 2) }}</span>
                                             <span class="text-gray-300 mx-1">–</span>
-                                            <span>RM {{ number_format($max, 2) }}</span>
+                                            <span class="font-semibold">RM {{ number_format($max, 2) }}</span>
                                         @endif
                                     @else
                                         <span class="font-semibold">

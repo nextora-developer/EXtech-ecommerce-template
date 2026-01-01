@@ -3,7 +3,7 @@
         <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+            <nav class="flex items-center uppercase space-x-2 text-sm text-gray-500 mb-6">
                 <a href="{{ route('home') }}" class="hover:text-[#8f6a10] transition-colors">Home</a>
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -398,12 +398,17 @@
                                                                 </p>
 
                                                                 <input type="file" name="payment_receipt" required
-                                                                    class="w-full text-sm text-gray-500
-                                               file:mr-4 file:py-2 file:px-4
-                                               file:rounded-full file:border-0
-                                               file:text-xs file:font-bold
-                                               file:bg-[#D4AF37] file:text-white
-                                               hover:file:bg-[#b9962c] transition">
+                                                                    class=" text-sm text-gray-700
+                                                                    border border-gray-200 rounded-2xl
+                                                                        file:mr-4 file:py-2 file:px-4
+                                                                    file:rounded-full file:border-0
+                                                                    file:text-xs file:font-bold
+                                                                            file:bg-[#D4AF37] file:text-white
+                                                                    hover:file:bg-[#b9962c]
+                                                                    focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30
+                                                                        focus:outline-none
+                                                                    transition">
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -532,7 +537,7 @@
                                 {{-- Checkout Button --}}
                                 <div class="mt-6">
                                     <button type="submit"
-                                        class="w-full relative group overflow-hidden bg-gray-900 text-white px-4 py-4 rounded-2xl font-bold text-base shadow-xl hover:shadow-orange-200/50 transition-all duration-300 active:scale-[0.98]">
+                                        class="w-full relative group overflow-hidden bg-gray-900 text-white px-4 py-4 rounded-2xl font-bold text-base shadow-xl hover:shadow-black-200/50 transition-all duration-300 active:scale-[0.98]">
                                         <span class="relative z-10 flex items-center justify-center gap-2">
                                             Place Order
                                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform"
@@ -542,9 +547,9 @@
                                             </svg>
                                         </span>
                                         {{-- Hover Effect Layer --}}
-                                        <div
+                                        {{-- <div
                                             class="absolute inset-0 bg-[#8f6a10] translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                        </div>
+                                        </div> --}}
                                     </button>
 
                                     <div class="mt-4 flex flex-col items-center gap-2">

@@ -99,7 +99,7 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->route('cart.index');
+        return back()->with('success', 'Added to cart');
     }
 
 

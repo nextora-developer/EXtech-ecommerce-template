@@ -46,6 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
     Route::patch('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::get('/cart/count', function () {$count = auth()->user()?->cart?->items()?->count() ?? 0;
+
+        return response()->json([
+            'count' => $count,
+        ]);
+    })->name('cart.count');
 
     // Checkout 也要登录
     Route::get('/checkout', [CheckoutController::class, 'index'])

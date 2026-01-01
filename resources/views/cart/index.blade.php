@@ -3,7 +3,7 @@
         <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+            <nav class="flex items-center uppercase space-x-2 text-sm text-gray-500 mb-6">
                 <a href="{{ route('home') }}" class="hover:text-[#8f6a10] transition-colors">Home</a>
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -39,10 +39,10 @@
 
                     {{-- Left: Item List --}}
                     <div class="lg:col-span-8">
-                        <div class="flex items-center justify-between mb-6">
+                        {{-- <div class="flex items-center justify-between mb-6">
                             <h1 class="text-2xl font-bold text-gray-900">Shopping Cart <span
                                     class="text-gray-400 font-normal">({{ $items->count() }})</span></h1>
-                        </div>
+                        </div> --}}
 
                         <div class="space-y-4">
                             @foreach ($items as $item)

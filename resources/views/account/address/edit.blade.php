@@ -1,14 +1,19 @@
 <x-app-layout>
-    <div class="bg-[#f7f7f9] py-8">
-        <div class="max-w-7xl5 mx-auto sm:px-6 lg:px-8">
-
+    <div class="bg-[#f7f7f9] min-h-screen py-10">
+        <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
+            
             {{-- Breadcrumb --}}
-            <nav class="text-sm text-gray-500 mb-4">
-                <a href="{{ route('home') }}" class="hover:text-[#8f6a10]">Home</a>
-                <span class="mx-1">/</span>
-                <a href="{{ route('account.address.index') }}" class="hover:text-[#8f6a10]">My Addresses</a>
-                <span class="mx-1">/</span>
-                <span class="text-gray-400">Edit</span>
+            <nav class="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-gray-400 mb-8">
+                <a href="{{ route('home') }}" class="hover:text-[#8f6a10] transition-colors">Home</a>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <a href="{{ route('account.address.index') }}"
+                    class="hover:text-[#8f6a10] transition-colors">Addresses</a>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span class="text-gray-900">Edit</span>
             </nav>
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
