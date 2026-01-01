@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin user
-        User::create([
+        User::updateOrCreate([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
             'password' => Hash::make('password'), // ✅ 一定要 hash
