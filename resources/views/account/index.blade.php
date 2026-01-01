@@ -6,7 +6,7 @@
             <nav class="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-gray-400 mb-8">
                 <a href="{{ route('home') }}" class="hover:text-[#8f6a10] transition-colors">Home</a>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="text-gray-900">My Account</span>
+                <span class="text-gray-900">Account Overview</span>
             </nav>
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">

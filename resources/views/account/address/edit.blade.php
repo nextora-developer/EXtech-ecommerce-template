@@ -9,7 +9,7 @@
                     <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <a href="{{ route('account.address.index') }}"
-                    class="hover:text-[#8f6a10] transition-colors">Addresses</a>
+                    class="hover:text-[#8f6a10] transition-colors">Shipping Addresses</a>
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>

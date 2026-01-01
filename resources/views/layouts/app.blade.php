@@ -46,7 +46,7 @@
                     <div class="flex items-center gap-3 mb-6">
                         <div
                             class="h-9 w-9 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#8f6a10] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">
-                            BR
+                            EX
                         </div>
                         <span class="text-xl font-bold tracking-tight text-gray-900">Shop</span>
                     </div>
@@ -175,6 +175,22 @@
         </div>
     </footer>
 
+    {{-- Back to Top Button --}}
+    <button id="backToTopBtn"
+        class="hidden fixed right-4 bottom-4 z-50
+           w-11 h-11 rounded-full
+           bg-[#D4AF37] text-white
+           flex items-center justify-center
+           shadow-lg shadow-[#D4AF37]/40
+           hover:bg-[#c49a2f] transition-all duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
+
+
     <script>
         function refreshCartCount() {
             console.log('Refreshing cart count…');
@@ -207,7 +223,28 @@
         });
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const btn = document.getElementById("backToTopBtn");
 
+            // 显示 / 隐藏按钮
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 300) {
+                    btn.classList.remove("hidden");
+                } else {
+                    btn.classList.add("hidden");
+                }
+            });
+
+            // 回到顶部（平滑滚动）
+            btn.addEventListener("click", () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+        });
+    </script>
 
 
     @stack('scripts')

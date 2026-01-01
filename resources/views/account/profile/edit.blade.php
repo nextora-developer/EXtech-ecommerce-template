@@ -8,7 +8,7 @@
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                <span class="text-gray-900">Profile</span>
+                <span class="text-gray-900">Profile Setting</span>
             </nav>
 
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">

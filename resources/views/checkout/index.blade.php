@@ -63,6 +63,7 @@
                                                 @endphp
 
                                                 <button type="button" data-address-choice
+                                                    data-default="{{ $isDefault ? '1' : '0' }}"
                                                     data-name="{{ $addr->recipient_name }}"
                                                     data-phone="{{ $addr->phone }}" data-email="{{ $addr->email }}"
                                                     data-address_line1="{{ $addr->address_line1 }}"
@@ -70,20 +71,18 @@
                                                     data-postcode="{{ $addr->postcode }}"
                                                     data-city="{{ $addr->city }}" data-state="{{ $addr->state }}"
                                                     data-country="{{ $addr->country }}"
-                                                    class="min-w-[260px] max-w-[260px] text-left rounded-2xl border-2 p-4 transition-all relative group
-                            {{ $isDefault ? 'border-[#D4AF37] bg-[#FDF7E7]' : 'border-gray-100 bg-white hover:border-gray-300' }}">
+                                                    class="address-card min-w-[260px] max-w-[260px] text-left rounded-2xl border-2 p-4 transition-all relative group
+    border-gray-100 bg-white hover:border-gray-300">
 
                                                     @if ($isDefault)
                                                         <div class="absolute top-3 right-3">
-                                                            <div class="bg-[#D4AF37] text-white p-1 rounded-full">
-                                                                <svg class="w-3 h-3" fill="none"
-                                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="3" d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                            </div>
+                                                            <span
+                                                                class="px-2.5 py-1 rounded-full bg-[#D4AF37] text-white text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                                                                Default
+                                                            </span>
                                                         </div>
                                                     @endif
+
 
                                                     <p class="font-bold text-gray-900 mb-2 truncate pr-6">
                                                         {{ $addr->recipient_name }}</p>
@@ -610,49 +609,62 @@
             const stateSelect = document.querySelector('[data-state-select]');
             const countryInput = document.querySelector('input[name="country"]');
 
+            // 封装一个「选中卡片」的函数，点击 / 默认都可以用它
+            function activateAddress(btn) {
+                if (!btn) return;
+
+                if (nameInput) nameInput.value = btn.dataset.name || '';
+                if (phoneInput) phoneInput.value = btn.dataset.phone || '';
+                if (emailInput) emailInput.value = btn.dataset.email || '';
+                if (line1Input) line1Input.value = btn.dataset.address_line1 || '';
+                if (line2Input) line2Input.value = btn.dataset.address_line2 || '';
+                if (postcodeInput) postcodeInput.value = btn.dataset.postcode || '';
+                if (cityInput) cityInput.value = btn.dataset.city || '';
+                if (countryInput) countryInput.value = btn.dataset.country || '';
+
+                // 处理 state dropdown
+                if (stateSelect) {
+                    const stateName = btn.dataset.state || '';
+
+                    let found = false;
+                    Array.from(stateSelect.options).forEach(opt => {
+                        if (opt.value === stateName) {
+                            found = true;
+                        }
+                    });
+
+                    if (found) {
+                        stateSelect.value = stateName;
+                        stateSelect.dispatchEvent(new Event('change'));
+                    } else {
+                        stateSelect.value = '';
+                        stateSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+
+                // 高亮当前选中 & 还原其他
+                buttons.forEach(b => {
+                    b.classList.remove('border-[#D4AF37]', 'bg-[#FDF7E7]');
+                    b.classList.add('border-gray-100', 'bg-white');
+                });
+
+                btn.classList.remove('border-gray-100', 'bg-white');
+                btn.classList.add('border-[#D4AF37]', 'bg-[#FDF7E7]');
+            }
+
             if (buttons.length) {
+                // 点击任意地址卡 -> 选中 + 填表单
                 buttons.forEach(btn => {
                     btn.addEventListener('click', () => {
-                        if (nameInput) nameInput.value = btn.dataset.name || '';
-                        if (phoneInput) phoneInput.value = btn.dataset.phone || '';
-                        if (emailInput) emailInput.value = btn.dataset.email || '';
-                        if (line1Input) line1Input.value = btn.dataset.address_line1 || '';
-                        if (line2Input) line2Input.value = btn.dataset.address_line2 || '';
-                        if (postcodeInput) postcodeInput.value = btn.dataset.postcode || '';
-                        if (cityInput) cityInput.value = btn.dataset.city || '';
-                        if (countryInput) countryInput.value = btn.dataset.country || '';
-                        // 👇 处理 state dropdown
-                        if (stateSelect) {
-                            const stateName = btn.dataset.state || '';
-
-                            // 尝试匹配 option 的 value（你的 option value 是州名）
-                            let found = false;
-                            Array.from(stateSelect.options).forEach(opt => {
-                                if (opt.value === stateName) {
-                                    found = true;
-                                }
-                            });
-
-                            if (found) {
-                                stateSelect.value = stateName;
-                                // 触发一次 change，让运费 + Total 跟着更新
-                                stateSelect.dispatchEvent(new Event('change'));
-                            } else {
-                                // 找不到匹配，就清空 & 维持 To be confirmed
-                                stateSelect.value = '';
-                                stateSelect.dispatchEvent(new Event('change'));
-                            }
-                        }
-
-                        // 高亮当前选中
-                        buttons.forEach(b => {
-                            b.classList.remove('border-[#D4AF37]', 'bg-[#FDF7E7]');
-                            b.classList.add('border-gray-200', 'bg-gray-50');
-                        });
-                        btn.classList.remove('border-gray-200', 'bg-gray-50');
-                        btn.classList.add('border-[#D4AF37]', 'bg-[#FDF7E7]');
+                        activateAddress(btn);
                     });
                 });
+
+                // 页面载入时：如果有 data-default="1" 的卡片，就自动选中它
+                const defaultBtn = Array.from(buttons).find(b => b.dataset.default === '1');
+                if (defaultBtn) {
+                    activateAddress(defaultBtn);
+                }
             }
 
             // ------- 2) 水平滚动 (拖动 / 触屏 ONLY) -------

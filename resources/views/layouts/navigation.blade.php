@@ -9,7 +9,7 @@
                     <a href="{{ route('home') }}" class="group flex items-center gap-3">
                         <div
                             class="h-10 w-10 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#8f6a10] flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-[#D4AF37]/20 group-hover:scale-105 transition-transform">
-                            BR
+                            EX
                         </div>
                         <span
                             class="text-xl font-bold tracking-tight text-gray-900 group-hover:text-[#8f6a10] transition-colors">
@@ -116,8 +116,10 @@
                                 </button>
                             </x-slot>
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('account.index')">My Account</x-dropdown-link>
+                                <x-dropdown-link :href="route('account.index')">Account</x-dropdown-link>
                                 <x-dropdown-link :href="route('account.orders.index')">My Orders</x-dropdown-link>
+                                <x-dropdown-link :href="route('account.favorites.index')">Wishlist</x-dropdown-link>
+
                                 <hr class="my-1 border-gray-100">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -179,10 +181,16 @@
                         </div>
                     </div>
                     <div class="space-y-1">
-                        <a href="{{ route('account.index') }}" class="block p-2 text-sm text-gray-600 font-medium">My
-                            Profile</a>
+                        <a href="{{ route('account.index') }}"
+                            class="block p-2 text-sm text-gray-600 font-medium">Account</a>
                         <a href="{{ route('account.orders.index') }}"
                             class="block p-2 text-sm text-gray-600 font-medium">My Orders</a>
+                        <a href="{{ route('account.favorites.index') }}"
+                            class="block p-2 text-sm text-gray-600 font-medium">Wishlist</a>
+                        <a href="{{ route('account.address.index') }}"
+                            class="block p-2 text-sm text-gray-600 font-medium">Shipping Address</a>
+                        <a href="{{ route('account.profile.edit') }}"
+                            class="block p-2 text-sm text-gray-600 font-medium">Profile Settings</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left p-2 text-sm text-red-500 font-bold">Log

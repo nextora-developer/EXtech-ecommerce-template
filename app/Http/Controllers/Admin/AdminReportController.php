@@ -82,6 +82,7 @@ class AdminReportController extends Controller
 
         // 7) New Customers (假设 customers = users 表)
         $newCustomers = User::query()
+            ->where('is_admin', false)
             ->whereBetween('created_at', [$start, $end])
             ->count();
 
