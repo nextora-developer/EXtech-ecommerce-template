@@ -4,79 +4,95 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\ProductOption;
-use App\Models\ProductOptionValue;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // ✅ 只在 local 环境生成假数据，server 会直接 return，不会用到 Faker
-        if (! app()->environment('local')) {
-            return;
-        }
+        $products = [
+            [
+                'name' => 'Classic Cotton T-Shirt',
+                'category_id' => 1,
+                'price' => 39.90,
+                'stock' => 30,
+            ],
+            [
+                'name' => 'Premium Hoodie Jacket',
+                'category_id' => 1,
+                'price' => 119.00,
+                'stock' => 15,
+            ],
+            [
+                'name' => 'Leather Wallet',
+                'category_id' => 2,
+                'price' => 89.00,
+                'stock' => 20,
+            ],
+            [
+                'name' => 'Stylish Sports Bottle',
+                'category_id' => 2,
+                'price' => 29.90,
+                'stock' => 40,
+            ],
+            [
+                'name' => 'Minimalist Backpack',
+                'category_id' => 3,
+                'price' => 139.00,
+                'stock' => 12,
+            ],
+            [
+                'name' => 'Wireless Earbuds',
+                'category_id' => 3,
+                'price' => 159.00,
+                'stock' => 18,
+            ],
+            [
+                'name' => 'USB-C Fast Charger',
+                'category_id' => 4,
+                'price' => 49.90,
+                'stock' => 25,
+            ],
+            [
+                'name' => 'Bluetooth Portable Speaker',
+                'category_id' => 4,
+                'price' => 189.00,
+                'stock' => 10,
+            ],
+            [
+                'name' => 'Office Table Lamp',
+                'category_id' => 5,
+                'price' => 79.00,
+                'stock' => 16,
+            ],
+            [
+                'name' => 'Smart Digital Clock',
+                'category_id' => 5,
+                'price' => 99.00,
+                'stock' => 14,
+            ],
+        ];
 
-        // 这里用全类名，避免上面还要 use
-        $faker = \Faker\Factory::create();
+        foreach ($products as $item) {
 
-        for ($i = 1; $i <= 25; $i++) {
+            $slug = Str::slug($item['name']);
 
-            $name = $faker->words(rand(2, 4), true);
-
-            $product = Product::create([
-                'category_id'        => rand(1, 5),
-                'name'               => ucfirst($name),
-                'slug'               => Str::slug($name) . '-' . $i,
-                'short_description'  => $faker->sentence(8),
-                'description'        => $faker->paragraph(5),
-                'price'              => $faker->randomFloat(2, 10, 300),
-                'stock'              => $faker->numberBetween(0, 50),
-
-                'has_variants'       => (bool) rand(0, 1),
-                'is_active'          => (bool) rand(0, 1),
-                'is_digital'         => (bool) rand(0, 1),
-
-                'image'              => null,
-            ]);
-
-            if ($product->has_variants) {
-                $option = ProductOption::create([
-                    'product_id' => $product->id,
-                    'name'       => 'color',
-                    'label'      => 'Color',
-                    'sort_order' => 1,
-                ]);
-
-                $colors = ['Red', 'Blue', 'Green'];
-
-                foreach ($colors as $idx => $color) {
-                    ProductOptionValue::create([
-                        'product_option_id' => $option->id,
-                        'value'             => $color,
-                        'sort_order'        => $idx,
-                    ]);
-
-                    ProductVariant::create([
-                        'product_id' => $product->id,
-                        'sku'        => strtoupper(Str::random(6)),
-                        'options'    => [
-                            'label' => 'Color',
-                            'value' => $color,
-                        ],
-                        'price'      => $product->price + rand(1, 10),
-                        'stock'      => rand(1, 10),
-                        'image'      => null,
-                        'is_active'  => true,
-                    ]);
-                }
-
-                $product->update([
-                    'stock' => $product->variants()->sum('stock')
-                ]);
-            }
+            Product::updateOrCreate(
+                ['slug' => $slug], // 唯一条件
+                [
+                    'category_id'       => $item['category_id'],
+                    'name'              => $item['name'],
+                    'slug'              => $slug,
+                    'short_description' => 'High-quality product with elegant design.',
+                    'description'       => 'This is a premium product designed for daily lifestyle use.',
+                    'price'             => $item['price'],
+                    'stock'             => $item['stock'],
+                    'has_variants'      => false,
+                    'is_active'         => true,
+                    'is_digital'        => false,
+                    'image'             => null,
+                ]
+            );
         }
     }
 }
