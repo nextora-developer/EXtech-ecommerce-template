@@ -119,7 +119,15 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categories as $data) {
-            Category::create($data);
+            Category::updateOrCreate(
+                ['slug' => $data['slug']], // 唯一条件（判断已存在就更新）
+                [
+                    'name'       => $data['name'],
+                    'icon'       => $data['icon'],
+                    'is_active'  => $data['is_active'],
+                    'sort_order' => $data['sort_order'],
+                ]
+            );
         }
     }
 }
