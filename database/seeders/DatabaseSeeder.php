@@ -19,35 +19,28 @@ class DatabaseSeeder extends Seeder
     {
         // Admin user
         User::updateOrCreate(
-            ['email' => 'admin@admin.com'], // 用 email 当唯一条件就够了
+            ['email' => 'admin@admin.com'],
             [
-                'name' => 'Admin',
+                'name'     => 'Admin',
                 'password' => Hash::make('password'),
                 'is_admin' => true,
             ]
         );
 
-        // Normal customer
-        User::factory()->create([
-            'name' => 'User',
-            'email' => 'user@user.com',
-            'password' => Hash::make('password'), // ✅ 一定要 hash
-            'is_admin' => false,
-        ]);
+        // Normal customer（不用 factory 也行）
+        User::updateOrCreate(
+            ['email' => 'user@user.com'],
+            [
+                'name'     => 'User',
+                'password' => Hash::make('password'),
+                'is_admin' => false,
+            ]
+        );
 
         $this->call([
             CategorySeeder::class,
-        ]);
-
-        $this->call([
             ProductSeeder::class,
-        ]);
-
-        $this->call([
             PaymentMethodSeeder::class,
-        ]);
-
-        $this->call([
             ShippingRateSeeder::class,
         ]);
     }
