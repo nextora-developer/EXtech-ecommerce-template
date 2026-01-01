@@ -14,7 +14,13 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = Faker::create();
+        // ✅ 只在 local 环境生成假数据，server 会直接 return，不会用到 Faker
+        if (! app()->environment('local')) {
+            return;
+        }
+
+        // 这里用全类名，避免上面还要 use
+        $faker = \Faker\Factory::create();
 
         for ($i = 1; $i <= 25; $i++) {
 
@@ -31,15 +37,12 @@ class ProductSeeder extends Seeder
 
                 'has_variants'       => (bool) rand(0, 1),
                 'is_active'          => (bool) rand(0, 1),
-                'is_digital'         => (bool) rand(0, 1),   // 👈 新增
+                'is_digital'         => (bool) rand(0, 1),
 
                 'image'              => null,
             ]);
 
-            // === Variants ===
             if ($product->has_variants) {
-
-                // Create 1 option: Color
                 $option = ProductOption::create([
                     'product_id' => $product->id,
                     'name'       => 'color',
@@ -47,7 +50,6 @@ class ProductSeeder extends Seeder
                     'sort_order' => 1,
                 ]);
 
-                // Values (red, blue, green)
                 $colors = ['Red', 'Blue', 'Green'];
 
                 foreach ($colors as $idx => $color) {
@@ -71,7 +73,6 @@ class ProductSeeder extends Seeder
                     ]);
                 }
 
-                // Stock = sum
                 $product->update([
                     'stock' => $product->variants()->sum('stock')
                 ]);
