@@ -18,12 +18,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin user
-        User::updateOrCreate([
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'), // ✅ 一定要 hash
-            'is_admin' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@admin.com'], // 用 email 当唯一条件就够了
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+                'is_admin' => true,
+            ]
+        );
 
         // Normal customer
         User::factory()->create([
