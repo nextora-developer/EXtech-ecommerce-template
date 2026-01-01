@@ -148,7 +148,7 @@
                         </button>
                     </form>
 
-                    <p class="mt-4 text-[10px] text-gray-400">By subscribing, you agree to our Privacy Policy.</p>
+                    <p class="mt-4 text-xs text-gray-400">By subscribing, you agree to our Privacy Policy.</p>
                 </div>
 
             </div>

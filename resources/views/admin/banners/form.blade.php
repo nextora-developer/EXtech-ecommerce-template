@@ -110,7 +110,7 @@
 
                     <div class="space-y-4">
                         <div>
-                            <label class="text-[10px] uppercase font-black tracking-widest text-gray-400">Display Priority</label>
+                            <label class="text-xs uppercase font-black tracking-widest text-gray-400">Display Priority</label>
                             <input name="sort_order" value="{{ old('sort_order', $banner->sort_order ?? 0) }}"
                                 class="mt-1.5 w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 font-medium"
                                 type="number" min="0">

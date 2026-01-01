@@ -3,12 +3,16 @@
         <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <nav class="text-sm text-gray-500 mb-4">
-                <a href="{{ route('home') }}" class="hover:text-[#8f6a10]">Home</a>
-                <span class="mx-1">/</span>
-                <a href="{{ route('cart.index') }}" class="hover:text-[#8f6a10]">Cart</a>
-                <span class="mx-1">/</span>
-                <span class="text-gray-400">Checkout</span>
+            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+                <a href="{{ route('home') }}" class="hover:text-[#8f6a10] transition-colors">Home</a>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <a href="{{ route('cart.index') }}" class="hover:text-[#8f6a10] transition-colors">Shopping Cart</a>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                <span class="text-gray-900 font-medium">Checkout</span>
             </nav>
 
             {{-- 整个 checkout 表单 --}}
@@ -20,219 +24,231 @@
                     <div class="lg:col-span-3 space-y-4">
 
                         {{-- 左：信息 card --}}
-                        <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8 lg:col-span-2">
-
-                            <div class="mb-4">
-                                <h1 class="text-lg font-semibold text-[#0A0A0C] mb-1">
-                                    Checkout
-                                </h1>
-                                <p class="text-sm text-gray-500">
-                                    Please fill in your details to complete the order
-                                </p>
+                        <section
+                            class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden lg:col-span-2">
+                            {{-- Header Section --}}
+                            <div class="p-6 sm:p-8 border-b border-gray-50">
+                                <h1 class="text-2xl font-bold text-gray-900 mb-1">Shipping Details</h1>
+                                <p class="text-sm text-gray-500">Please provide your delivery information to complete
+                                    your order.</p>
                             </div>
 
-                            {{-- 🔹 Saved Addresses：地址切换 --}}
-                            @if (isset($addresses) && $addresses->count())
-                                <div class="mb-6">
-                                    {{-- <p class="text-xs font-medium text-gray-500 mb-2 uppercase tracking-[0.16em]">
-                                    Saved Addresses
-                                </p> --}}
+                            <div class="p-6 sm:p-8 space-y-8">
+                                {{-- 🔹 Saved Addresses Section --}}
+                                @if (isset($addresses) && $addresses->count())
+                                    <div>
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider">Saved
+                                                Addresses</h3>
+                                            <span class="text-xs text-gray-400">Scroll to view more →</span>
+                                        </div>
 
-                                    <div class="flex gap-3 overflow-x-auto pb-1 no-scrollbar" data-address-scroller>
-                                        @foreach ($addresses as $addr)
-                                            @php
-                                                $isDefault =
-                                                    isset($defaultAddress) && $defaultAddress->id === $addr->id;
-                                                $fullAddress = trim(
-                                                    implode(
-                                                        ', ',
-                                                        array_filter([
-                                                            $addr->address_line1 ?? null,
-                                                            $addr->address_line2 ?? null,
-                                                            ($addr->postcode ?? null) . ' ' . ($addr->city ?? null),
-                                                            $addr->state ?? null,
-                                                            $addr->country ?? null,
-                                                        ]),
-                                                    ),
-                                                );
-                                            @endphp
+                                        <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2"
+                                            data-address-scroller>
+                                            @foreach ($addresses as $addr)
+                                                @php
+                                                    $isDefault =
+                                                        isset($defaultAddress) && $defaultAddress->id === $addr->id;
+                                                    $fullAddress = trim(
+                                                        implode(
+                                                            ', ',
+                                                            array_filter([
+                                                                $addr->address_line1,
+                                                                $addr->address_line2,
+                                                                $addr->postcode . ' ' . $addr->city,
+                                                                $addr->state,
+                                                            ]),
+                                                        ),
+                                                    );
+                                                @endphp
 
-                                            <button type="button" data-address-choice
-                                                data-name="{{ $addr->recipient_name ?? '' }}"
-                                                data-phone="{{ $addr->phone ?? '' }}"
-                                                data-email="{{ $addr->email ?? '' }}"
-                                                data-address_line1="{{ $addr->address_line1 ?? '' }}"
-                                                data-address_line2="{{ $addr->address_line2 ?? '' }}"
-                                                data-postcode="{{ $addr->postcode ?? '' }}"
-                                                data-city="{{ $addr->city ?? '' }}"
-                                                data-state="{{ $addr->state ?? '' }}"
-                                                data-country="{{ $addr->country ?? '' }}"
-                                                class="min-w-[230px] text-left rounded-2xl border px-4 py-3 text-xs
-                            {{ $isDefault ? 'border-[#D4AF37] bg-[#FDF7E7]' : 'border-gray-200 bg-gray-50' }}
-                            hover:border-[#D4AF37] hover:bg-[#FDF3D7] transition">
+                                                <button type="button" data-address-choice
+                                                    data-name="{{ $addr->recipient_name }}"
+                                                    data-phone="{{ $addr->phone }}" data-email="{{ $addr->email }}"
+                                                    data-address_line1="{{ $addr->address_line1 }}"
+                                                    data-address_line2="{{ $addr->address_line2 }}"
+                                                    data-postcode="{{ $addr->postcode }}"
+                                                    data-city="{{ $addr->city }}" data-state="{{ $addr->state }}"
+                                                    data-country="{{ $addr->country }}"
+                                                    class="min-w-[260px] max-w-[260px] text-left rounded-2xl border-2 p-4 transition-all relative group
+                            {{ $isDefault ? 'border-[#D4AF37] bg-[#FDF7E7]' : 'border-gray-100 bg-white hover:border-gray-300' }}">
 
-                                                <div class="flex items-center justify-between mb-1">
-                                                    <span class="font-semibold text-gray-900 truncate">
-                                                        {{ $addr->recipient_name ?? 'Recipient' }}
-                                                    </span>
                                                     @if ($isDefault)
-                                                        <span
-                                                            class="ml-2 px-2 py-0.5 rounded-full bg-[#D4AF37] text-[10px] font-semibold text-white">
-                                                            Default
-                                                        </span>
+                                                        <div class="absolute top-3 right-3">
+                                                            <div class="bg-[#D4AF37] text-white p-1 rounded-full">
+                                                                <svg class="w-3 h-3" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="3" d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
                                                     @endif
-                                                </div>
 
-                                                <p class="text-gray-500 line-clamp-2">
-                                                    {{ $fullAddress }}
-                                                </p>
+                                                    <p class="font-bold text-gray-900 mb-2 truncate pr-6">
+                                                        {{ $addr->recipient_name }}</p>
+                                                    <p class="text-xs text-gray-600 line-clamp-2 mb-3 leading-relaxed">
+                                                        {{ $fullAddress }}</p>
 
-                                                @if (!empty($addr->phone))
-                                                    <p class="text-gray-400 mt-1">
-                                                        📞 {{ $addr->phone }}
-                                                    </p>
-                                                @endif
-                                            </button>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- 验证错误 --}}
-                            @if ($errors->any())
-                                <div class="mb-4 border border-red-200 bg-red-50 text-red-700 text-sm rounded-xl p-3">
-                                    <ul class="list-disc ml-5 space-y-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
-                            <div class="space-y-6">
-
-                                {{-- 联系人 + 电话 + Email --}}
-                                <div class="grid sm:grid-cols-3 gap-4">
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            Full Name
-                                        </label>
-                                        <input type="text" name="name"
-                                            value="{{ old('name', $defaultAddress->recipient_name ?? (auth()->user()->name ?? '')) }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="e.g. John Tan" required>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            Phone Number
-                                        </label>
-                                        <input type="text" name="phone"
-                                            value="{{ old('phone', $defaultAddress->phone ?? '') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="e.g. 012-3456789" required>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            Email Address
-                                        </label>
-                                        <input type="email" name="email"
-                                            value="{{ old('email', $defaultAddress->email ?? '') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="name@example.com" required>
-                                    </div>
-                                </div>
-
-
-                                {{-- Row 1 --}}
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            Address Line 1
-                                        </label>
-                                        <input type="text" name="address_line1"
-                                            value="{{ old('address_line1', $defaultAddress->address_line1 ?? '') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="Street, building, unit number" required>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            Address Line 2 (optional)
-                                        </label>
-                                        <input type="text" name="address_line2"
-                                            value="{{ old('address_line2', $defaultAddress->address_line2 ?? '') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="Apartment / Floor / Block">
-                                    </div>
-                                </div>
-
-
-                                {{-- Row 2 --}}
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            Postcode
-                                        </label>
-                                        <input type="text" name="postcode"
-                                            value="{{ old('postcode', $defaultAddress->postcode ?? '') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="e.g. 43000" required>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            City
-                                        </label>
-                                        <input type="text" name="city"
-                                            value="{{ old('city', $defaultAddress->city ?? '') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="e.g. Kajang" required>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            State
-                                        </label>
-
-                                        <select name="state"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300
-                                                   focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            data-state-select required>
-
-                                            <option value="">Select State</option>
-
-                                            @foreach ($states as $s)
-                                                <option value="{{ $s['name'] }}" data-zone="{{ $s['zone'] }}"
-                                                    @selected(old('state', $defaultAddress->state ?? '') === $s['name'])>
-                                                    {{ $s['name'] }}
-                                                </option>
+                                                    <div
+                                                        class="flex items-center gap-2 text-[11px] text-gray-400 font-medium">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                        </svg>
+                                                        {{ $addr->phone }}
+                                                    </div>
+                                                </button>
                                             @endforeach
-                                        </select>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Error Alerts --}}
+                                @if ($errors->any())
+                                    <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-xl">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm text-red-700 font-bold">There were some issues with
+                                                    your submission:</p>
+                                                <ul class="mt-1 text-sm text-red-600 list-disc list-inside">
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <div class="space-y-8">
+                                    {{-- Contact Information Group --}}
+                                    <div class="bg-gray-50/50 p-5 rounded-2xl border border-gray-100">
+                                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+                                            Contact Information</h3>
+                                        <div class="grid sm:grid-cols-3 gap-4">
+                                            <div class="sm:col-span-1">
+                                                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase">Full
+                                                    Name</label>
+                                                <input type="text" name="name"
+                                                    value="{{ old('name', $defaultAddress->recipient_name ?? auth()->user()->name) }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    placeholder="John Tan" required>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">Phone</label>
+                                                <input type="text" name="phone"
+                                                    value="{{ old('phone', $defaultAddress->phone ?? '') }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    placeholder="012-345 6789" required>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">Email</label>
+                                                <input type="email" name="email"
+                                                    value="{{ old('email', $defaultAddress->email ?? auth()->user()->email) }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    placeholder="name@email.com" required>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-2">
-                                            Country
-                                        </label>
-                                        <input type="text" name="country"
-                                            value="{{ old('country', $defaultAddress->country ?? 'Malaysia') }}"
-                                            class="w-full px-3 py-3 rounded-xl border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37] text-sm"
-                                            placeholder="e.g. Malaysia" required>
-                                    </div>
+                                    {{-- Shipping Address Group --}}
+                                    <div class="p-2">
+                                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+                                            Shipping Address</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">Address
+                                                    Line 1</label>
+                                                <input type="text" name="address_line1"
+                                                    value="{{ old('address_line1', $defaultAddress->address_line1 ?? '') }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    placeholder="No. 123, Street Name" required>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">Address
+                                                    Line 2 (Optional)</label>
+                                                <input type="text" name="address_line2"
+                                                    value="{{ old('address_line2', $defaultAddress->address_line2 ?? '') }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    placeholder="Apartment, unit, etc.">
+                                            </div>
+                                        </div>
 
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">Postcode</label>
+                                                <input type="text" name="postcode"
+                                                    value="{{ old('postcode', $defaultAddress->postcode ?? '') }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    placeholder="43000" required>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">City</label>
+                                                <input type="text" name="city"
+                                                    value="{{ old('city', $defaultAddress->city ?? '') }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    placeholder="Kajang" required>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">State</label>
+                                                <select name="state"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm bg-white"
+                                                    data-state-select required>
+                                                    <option value="">Select State</option>
+                                                    @foreach ($states as $s)
+                                                        <option value="{{ $s['name'] }}"
+                                                            data-zone="{{ $s['zone'] }}"
+                                                            @selected(old('state', $defaultAddress->state ?? '') === $s['name'])>
+                                                            {{ $s['name'] }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-700 mb-2 uppercase">Country</label>
+                                                <input type="text" name="country"
+                                                    value="{{ old('country', $defaultAddress->country ?? 'Malaysia') }}"
+                                                    class="w-full px-4 py-3 rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all text-sm shadow-sm"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </section>
 
                         {{-- Card 2：Payment Method --}}
-                        <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
-                            <h2 class="text-base font-semibold text-[#0A0A0C] mb-4">
-                                Payment Method
-                            </h2>
+                        <section class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                            {{-- Section Header --}}
+                            <div class="px-6 py-5 border-b border-gray-50 flex items-center gap-3">
+                                <div
+                                    class="h-8 w-8 rounded-full bg-[#FDF3D7] flex items-center justify-center text-[#8f6a10]">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-lg font-bold text-gray-900">Payment Method</h2>
+                            </div>
 
                             @php
                                 $defaultCode = old(
@@ -242,280 +258,311 @@
                                 );
                             @endphp
 
-                            <div class="space-y-5" id="payment-methods-container" data-default="{{ $defaultCode }}">
-                                @foreach ($paymentMethods as $method)
-                                    @php
-                                        $isOnlineTransfer = $method->code === 'online_transfer';
-                                    @endphp
+                            <div class="p-6 sm:p-8">
+                                <div class="space-y-4" id="payment-methods-container"
+                                    data-default="{{ $defaultCode }}">
+                                    @foreach ($paymentMethods as $method)
+                                        @php $isOnlineTransfer = $method->code === 'online_transfer'; @endphp
 
-                                    {{-- 🔶 ① 顶部 Payment Method 卡（单独一张） --}}
-                                    <label
-                                        class="rounded-2xl border border-gray-200 bg-[#FFF7EC] px-4 py-3 flex items-start gap-3 text-sm cursor-pointer hover:border-[#F97316] hover:bg-[#FFF0E0] transition">
+                                        <div class="payment-group">
+                                            {{-- 选择卡片 --}}
+                                            <label
+                                                class="relative flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200
+                        {{ $defaultCode === $method->code ? 'border-[#D4AF37] bg-[#FDFBF7]' : 'border-gray-100 bg-white hover:border-gray-200' }}">
 
-                                        {{-- radio --}}
-                                        <div class="mt-1">
-                                            <input type="radio" name="payment_method"
-                                                class="payment-radio h-4 w-4 text-[#F97316] border-gray-300 focus:ring-[#F97316]"
-                                                value="{{ $method->code }}" @checked($defaultCode === $method->code)>
-                                        </div>
+                                                <div class="flex items-center h-5">
+                                                    <input type="radio" name="payment_method"
+                                                        value="{{ $method->code }}" @checked($defaultCode === $method->code)
+                                                        class="payment-radio h-5 w-5 text-[#D4AF37] border-gray-300 focus:ring-[#D4AF37] cursor-pointer">
+                                                </div>
 
-                                        <div class="w-full flex items-center justify-between">
-                                            <div>
-                                                <p class="font-semibold text-gray-900 text-base">
-                                                    {{ $method->name }}
-                                                </p>
+                                                <div class="ml-4 flex-grow">
+                                                    <p class="font-bold text-gray-900">{{ $method->name }}</p>
 
-                                                @if ($method->short_description)
-                                                    <p class="text-gray-600 text-sm mt-1">
-                                                        {{ $method->short_description }}
-                                                    </p>
+                                                    @if ($method->short_description)
+                                                        <p class="text-xs text-gray-500 mt-0.5">
+                                                            {{ $method->short_description }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+
+                                                @if ($isOnlineTransfer)
+                                                    <div class="hidden sm:flex items-center gap-1 opacity-60">
+                                                        <div
+                                                            class="px-2 py-1 rounded bg-white border border-gray-100 text-[10px] font-bold text-blue-800">
+                                                            FPX
+                                                        </div>
+                                                    </div>
                                                 @endif
-                                            </div>
+                                            </label>
 
-                                        </div>
-                                    </label>
+                                            {{-- 详情展开 --}}
+                                            <div class="payment-detail transition-all duration-300 {{ $defaultCode === $method->code ? '' : 'hidden' }}"
+                                                data-code="{{ $method->code }}">
 
+                                                @if ($isOnlineTransfer)
+                                                    @php
+                                                        $amountToTransfer = $orderTotal ?? ($total ?? ($subtotal ?? 0));
+                                                    @endphp
 
-                                    {{-- 🔷 ② 下方 Detail 卡（独立一张 · 可展开/收起） --}}
-                                    <div class="payment-detail hidden" data-code="{{ $method->code }}">
-                                        @if ($isOnlineTransfer)
-                                            @php
-                                                $amountToTransfer = $orderTotal ?? ($total ?? ($subtotal ?? 0));
-                                            @endphp
-
-                                            <div
-                                                class="mt-3 bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-6">
-
-                                                {{-- Payment Instructions --}}
-                                                <div class="flex items-start gap-3">
                                                     <div
-                                                        class="mt-1 h-8 w-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
-                                                            fill="none" viewBox="0 0 24 24" stroke-width="1.8"
-                                                            stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="M11.25 11.25v5.25m0-8.25h.008v.008H11.25zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                    </div>
+                                                        class="mt-4 ml-6 p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-6">
 
-                                                    <div class="text-sm leading-relaxed">
-                                                        <p class="font-semibold text-gray-900">Payment Instructions:
-                                                        </p>
-                                                        @if ($method->instructions)
-                                                            <p class="text-gray-600 text-sm mt-1">
-                                                                {{ $method->instructions }}
-                                                            </p>
+                                                        {{-- Step 1 --}}
+                                                        <div class="flex gap-4">
+                                                            <span
+                                                                class="flex-shrink-0 w-6 h-6 rounded-full bg-[#D4AF37] text-white text-xs font-bold flex items-center justify-center">1</span>
+
+                                                            <div class="flex-grow">
+                                                                <h4 class="text-sm font-bold text-gray-900 mb-3">
+                                                                    Transfer to Bank Account
+                                                                </h4>
+
+                                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                                    <div
+                                                                        class="p-3 bg-white rounded-xl border border-gray-200">
+                                                                        <span
+                                                                            class="text-[10px] uppercase font-bold text-gray-400 block mb-1">
+                                                                            Account Number
+                                                                        </span>
+                                                                        <div class="flex items-center justify-between">
+                                                                            <span
+                                                                                class="font-mono font-bold text-gray-900">
+                                                                                {{ $method->bank_account_number }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div
+                                                                        class="p-3 bg-white rounded-xl border border-gray-200">
+                                                                        <span
+                                                                            class="text-[10px] uppercase font-bold text-gray-400 block mb-1">
+                                                                            Bank Name
+                                                                        </span>
+                                                                        <span class="font-bold text-gray-900 block">
+                                                                            {{ $method->bank_name }}
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <div
+                                                                        class="p-3 bg-[#FDF3D7] border border-[#E6D8A8] rounded-xl sm:col-span-2">
+                                                                        <span
+                                                                            class="text-[10px] uppercase font-bold text-[#8f6a10] block mb-1">
+                                                                            Exact Amount to Pay
+                                                                        </span>
+                                                                        <span
+                                                                            class="text-xl font-black text-[#8f6a10]">
+                                                                            RM
+                                                                            {{ number_format($amountToTransfer, 2) }}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {{-- Step 2 QR --}}
+                                                        @if ($method->duitnow_qr_path)
+                                                            <div class="flex gap-4">
+                                                                <span
+                                                                    class="flex-shrink-0 w-6 h-6 rounded-full bg-[#D4AF37] text-white text-xs font-bold flex items-center justify-center">2</span>
+
+                                                                <div>
+                                                                    <h4 class="text-sm font-bold text-gray-900 mb-2">
+                                                                        Or Scan DuitNow QR
+                                                                    </h4>
+
+                                                                    <div
+                                                                        class="inline-block p-3 bg-white border-2 border-dashed border-gray-200 rounded-2xl">
+                                                                        <img src="{{ asset('storage/' . $method->duitnow_qr_path) }}"
+                                                                            class="w-32 h-32 object-contain">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         @endif
-                                                    </div>
-                                                </div>
 
-                                                {{-- Bank Transfer Details --}}
-                                                <div>
-                                                    <p class="text-base font-semibold text-gray-900 mb-2">Bank Transfer
-                                                        Details</p>
+                                                        {{-- Step 3 Receipt --}}
+                                                        <div class="flex gap-4">
+                                                            <span
+                                                                class="flex-shrink-0 w-6 h-6 rounded-full bg-[#D4AF37] text-white text-xs font-bold flex items-center justify-center">
+                                                                {{ $method->duitnow_qr_path ? '3' : '2' }}
+                                                            </span>
 
-                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div class="flex-grow">
+                                                                <h4 class="text-sm font-bold text-gray-900 mb-2">
+                                                                    Upload Transaction Receipt
+                                                                </h4>
 
-                                                        {{-- Account Number --}}
-                                                        <div
-                                                            class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
-                                                            <p
-                                                                class="text-xs font-semibold tracking-[0.14em] text-gray-500 uppercase">
-                                                                Account Number
-                                                            </p>
-                                                            <p
-                                                                class="mt-2 text-base font-bold tracking-wide text-gray-900">
-                                                                {{ $method->bank_account_number }}
-                                                            </p>
-                                                        </div>
+                                                                <p class="text-xs text-gray-500 mb-3 italic">
+                                                                    Please upload a clear screenshot of your successful
+                                                                    transfer.
+                                                                </p>
 
-                                                        {{-- Account Name --}}
-                                                        <div
-                                                            class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
-                                                            <p
-                                                                class="text-xs font-semibold tracking-[0.14em] text-gray-500 uppercase">
-                                                                Account Name
-                                                            </p>
-                                                            <p class="mt-2 text-base font-bold text-gray-900">
-                                                                {{ $method->bank_account_name }}
-                                                            </p>
-                                                        </div>
-
-                                                        {{-- Amount To Transfer --}}
-                                                        <div
-                                                            class="rounded-2xl border border-amber-300 bg-[#FFF4E0] px-4 py-3">
-                                                            <p
-                                                                class="text-xs font-semibold tracking-[0.14em] text-amber-700 uppercase">
-                                                                Amount To Transfer
-                                                            </p>
-                                                            <p class="mt-2 text-2xl font-bold text-amber-800">
-                                                                RM {{ number_format($amountToTransfer, 2) }}
-                                                            </p>
-                                                        </div>
-
-                                                        {{-- Bank Name --}}
-                                                        <div
-                                                            class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3">
-                                                            <p
-                                                                class="text-xs font-semibold tracking-[0.14em] text-gray-500 uppercase">
-                                                                Bank Name
-                                                            </p>
-                                                            <p class="mt-2 text-base font-bold text-gray-900">
-                                                                {{ $method->bank_name }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {{-- QR --}}
-                                                @if ($method->duitnow_qr_path)
-                                                    <div>
-                                                        <p
-                                                            class="text-xs font-semibold tracking-[0.14em] text-gray-500 uppercase mb-2">
-                                                            Scan DuitNow QR
-                                                        </p>
-                                                        <div
-                                                            class="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
-                                                            <img src="{{ asset('storage/' . $method->duitnow_qr_path) }}"
-                                                                class="w-40 h-40 object-contain rounded-xl">
+                                                                <input type="file" name="payment_receipt" required
+                                                                    class="w-full text-sm text-gray-500
+                                               file:mr-4 file:py-2 file:px-4
+                                               file:rounded-full file:border-0
+                                               file:text-xs file:font-bold
+                                               file:bg-[#D4AF37] file:text-white
+                                               hover:file:bg-[#b9962c] transition">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 @endif
-
-                                                {{-- Upload --}}
-                                                <div class="pt-2 border-t border-gray-100">
-                                                    <label class="text-sm font-semibold text-gray-800">
-                                                        Upload Payment Receipt
-                                                        <span class="text-gray-500 ml-1">(Required)</span>
-                                                    </label>
-
-                                                    <input type="file" name="payment_receipt" required
-                                                        class="mt-2 block w-full sm:w-72 text-sm border border-gray-300 rounded-xl file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-[#FDF3D7] file:text-[#8f6a10] hover:file:bg-[#F9E6AE] file:focus:bg-[#FDF3D7] file:active:bg-[#F9E6AE]">
-                                                </div>
                                             </div>
-                                        @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                @error('payment_method')
+                                    <div
+                                        class="mt-4 p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        {{ $message }}
                                     </div>
-                                @endforeach
+                                @enderror
                             </div>
-
-
-                            @error('payment_method')
-                                <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
                         </section>
                     </div>
 
                     <div class="lg:col-span-2 space-y-4">
                         {{-- 右：Order Summary card --}}
-                        <aside class="bg-[#F9F4E5] rounded-2xl border border-[#E5D9B6] p-5 h-max lg:sticky lg:top-28">
-                            <h2 class="text-lg font-semibold text-[#0A0A0C] mb-4">
-                                Order Summary
-                            </h2>
+                        <aside
+                            class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-max lg:sticky lg:top-28">
+                            {{-- Card Header --}}
+                            <div class="px-5 py-4 border-b border-gray-50 bg-[#F9F4E5]/30">
+                                <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-[#8f6a10]" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                    Order Summary
+                                </h2>
+                            </div>
 
-                            {{-- 商品列表（迷你版 cart card） --}}
-                            <div class="space-y-3 mb-4 max-h-72 overflow-y-auto pr-1">
-                                @foreach ($items as $item)
-                                    @php
-                                        $p = $item->product;
-                                    @endphp
+                            <div class="p-5">
+                                {{-- 商品列表（可滚动） --}}
+                                <div
+                                    class="space-y-4 mb-6 max-h-[230px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-200">
 
-                                    <div
-                                        class="flex gap-3 border border-[#E5D9B6]/70 bg-white/60 rounded-2xl px-3 py-3 items-start">
-                                        {{-- 小图 --}}
-                                        <div
-                                            class="w-16 h-16 sm:w-18 sm:h-18 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
-                                            @if ($p?->image)
-                                                <img src="{{ asset('storage/' . $p->image) }}"
-                                                    alt="{{ $p->name }}" class="w-full h-full object-cover">
-                                            @else
-                                                <div
-                                                    class="w-full h-full flex items-center justify-center text-[10px] text-gray-400">
-                                                    No image
-                                                </div>
-                                            @endif
-                                        </div>
+                                    @foreach ($items as $item)
+                                        @php $p = $item->product; @endphp
 
-                                        {{-- 名称 + variant + qty + 小计 --}}
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex justify-between gap-2">
-                                                <div class="min-w-0">
-                                                    <p
-                                                        class="text-[11px] uppercase tracking-[0.16em] text-gray-400 mb-0.5">
-                                                        {{ $p->category->name ?? 'Product' }}
+                                        <div class="flex gap-3 group mt-1">
+                                            {{-- 小图 --}}
+                                            <div
+                                                class="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 overflow-visible flex-shrink-0 relative">
+                                                @if ($p?->image)
+                                                    <img src="{{ asset('storage/' . $p->image) }}"
+                                                        alt="{{ $p->name }}"
+                                                        class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                                                @else
+                                                    <div
+                                                        class="w-full h-full flex items-center justify-center text-[10px] text-gray-400">
+                                                        No image
+                                                    </div>
+                                                @endif
+
+                                                {{-- Qty Badge on Image --}}
+                                                <span
+                                                    class="absolute -top-1 -right-1 bg-gray-900 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                                                    {{ $item->qty }}
+                                                </span>
+
+                                            </div>
+
+                                            {{-- Info --}}
+                                            <div class="flex-1 min-w-0">
+                                                <h3
+                                                    class="text-sm font-medium text-gray-900 line-clamp-1 group-hover:text-[#8f6a10] transition-colors">
+                                                    {{ $p->name }}
+                                                </h3>
+
+                                                @if ($item->variant_label)
+                                                    <p class="text-[11px] text-gray-500 mt-0.5 truncate italic">
+                                                        {{ $item->variant_label }}
                                                     </p>
-                                                    <h3 class="text-sm font-semibold text-gray-900 line-clamp-2">
-                                                        {{ $p->name }}
-                                                    </h3>
+                                                @endif
 
-                                                    @if ($item->variant_label)
-                                                        <p class="text-xs text-gray-500 mt-0.5">
-                                                            {{ $item->variant_label }}
-                                                        </p>
-                                                    @endif
-
-                                                    <p class="text-xs text-gray-400 mt-0.5">
-                                                        Qty: {{ $item->qty }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="text-right">
-                                                    <p class="text-sm font-semibold text-[#8f6a10]">
-                                                        RM {{ number_format($item->unit_price * $item->qty, 2) }}
-                                                    </p>
-                                                    <p class="text-[11px] text-gray-400">
-                                                        RM {{ number_format($item->unit_price, 2) }} / pc
-                                                    </p>
-                                                </div>
+                                                <p class="text-sm font-bold text-gray-900 mt-1">
+                                                    RM {{ number_format($item->unit_price * $item->qty, 2) }}
+                                                </p>
                                             </div>
                                         </div>
+                                    @endforeach
+                                </div>
+
+                                {{-- 小计 / 运费 / 总额 --}}
+                                <div class="space-y-3 bg-gray-50 rounded-2xl p-4">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500">Subtotal</span>
+                                        <span class="font-bold text-gray-900 text-right">
+                                            RM {{ number_format($subtotal, 2) }}
+                                        </span>
                                     </div>
-                                @endforeach
-                            </div>
 
-                            {{-- 小计 / 运费 / 总额 --}}
-                            <dl class="space-y-2 text-base">
-                                <div class="flex justify-between">
-                                    <dt class="text-gray-500">Subtotal</dt>
-                                    <dd class="font-semibold text-gray-900">
-                                        RM {{ number_format($subtotal, 2) }}
-                                    </dd>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500">Shipping</span>
+                                        <span class="font-bold text-gray-900 text-right" data-shipping-text>
+                                            @if (!$hasPhysical)
+                                                <span class="text-green-600">Free</span>
+                                            @else
+                                                <span class="text-gray-400 font-normal">TBC</span>
+                                            @endif
+                                        </span>
+                                    </div>
+
+                                    <div class="border-t border-gray-200 my-1 pt-3 flex justify-between items-center">
+                                        <span class="text-base font-bold text-gray-900">Total</span>
+                                        <div class="text-right">
+                                            <span class="text-xl font-black text-[#8f6a10]" data-total-text>
+                                                RM {{ number_format($subtotal, 2) }}
+                                            </span>
+                                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">
+                                                Inclusive of Tax
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <dt class="text-gray-500">Shipping Fee</dt>
-                                    <dd class="text-gray-700" data-shipping-text>
-                                        @if (!$hasPhysical)
-                                            Digital Product (Free)
-                                        @else
-                                            To be confirmed
-                                        @endif
-                                    </dd>
+
+                                {{-- Checkout Button --}}
+                                <div class="mt-6">
+                                    <button type="submit"
+                                        class="w-full relative group overflow-hidden bg-gray-900 text-white px-4 py-4 rounded-2xl font-bold text-base shadow-xl hover:shadow-orange-200/50 transition-all duration-300 active:scale-[0.98]">
+                                        <span class="relative z-10 flex items-center justify-center gap-2">
+                                            Place Order
+                                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                            </svg>
+                                        </span>
+                                        {{-- Hover Effect Layer --}}
+                                        <div
+                                            class="absolute inset-0 bg-[#8f6a10] translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                        </div>
+                                    </button>
+
+                                    <div class="mt-4 flex flex-col items-center gap-2">
+                                        <div class="flex items-center gap-2 text-[11px] text-gray-400 font-medium">
+                                            <svg class="w-3.5 h-3.5 text-green-500" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Secure Encrypted Checkout
+                                        </div>
+                                    </div>
                                 </div>
-                            </dl>
-
-                            <div class="border-t border-[#E5D9B6] my-4"></div>
-
-                            <div class="flex justify-between items-center mb-4 text-base">
-                                <span class="font-semibold text-gray-900">Total</span>
-
-                                <span class="text-lg font-semibold text-[#8f6a10]" data-total-text>
-                                    {{-- 默认先显示 Subtotal --}}
-                                    RM {{ number_format($subtotal, 2) }}
-                                </span>
                             </div>
-
-
-                            {{-- Desktop：按钮放在右边 card 里 --}}
-                            <button type="submit"
-                                class="lg:inline-flex w-full items-center justify-center px-4 py-2.5 rounded-full bg-[#D4AF37] text-white text-base font-semibold shadow hover:brightness-110 transition">
-                                Place Order
-                            </button>
-
-                            <p class="mt-3 text-sm text-gray-500">
-                                Secure checkout · All prices in RM
-                            </p>
-
                         </aside>
                     </div>
+
                 </section>
             </form>
         </div>

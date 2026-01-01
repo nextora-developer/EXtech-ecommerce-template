@@ -285,7 +285,7 @@
                             <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
                                 Fast Delivery
                             </h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
+                            <p class="text-sm text-gray-500 leading-relaxed">
                                 Processed and shipped within <span class="font-medium text-gray-700">1–3 working
                                     days</span>.
                             </p>
@@ -306,7 +306,7 @@
                             <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
                                 Secure Checkout
                             </h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
+                            <p class="text-sm text-gray-500 leading-relaxed">
                                 Your transactions are protected by <span
                                     class="font-medium text-gray-700">industry-standard encryption</span>.
                             </p>
@@ -327,7 +327,7 @@
                             <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
                                 Easy Returns
                             </h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
+                            <p class="text-sm text-gray-500 leading-relaxed">
                                 Not satisfied? Enjoy <span class="font-medium text-gray-700">hassle-free returns</span>
                                 on eligible items.
                             </p>
@@ -350,7 +350,7 @@
                             <h4 class="text-sm font-bold text-gray-900 tracking-tight uppercase mb-1">
                                 Malaysian Seller
                             </h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
+                            <p class="text-sm text-gray-500 leading-relaxed">
                                 Supporting the <span class="font-medium text-gray-700">local community</span> with
                                 pride and quality.
                             </p>

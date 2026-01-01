@@ -116,7 +116,7 @@
                                 </button>
                             </x-slot>
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('account.index')">My Profile</x-dropdown-link>
+                                <x-dropdown-link :href="route('account.index')">My Account</x-dropdown-link>
                                 <x-dropdown-link :href="route('account.orders.index')">My Orders</x-dropdown-link>
                                 <hr class="my-1 border-gray-100">
                                 <form method="POST" action="{{ route('logout') }}">

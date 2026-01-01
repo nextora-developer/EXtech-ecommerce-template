@@ -1,166 +1,177 @@
 <x-app-layout>
-    <div class="bg-[#F5F5F7] min-h-screen">
-        <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+    <div class="bg-[#F8F8F9] min-h-screen font-sans antialiased text-gray-900 py-6 sm:py-10">
+        <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- Back / breadcrumb --}}
-            <div class="mb-4 flex items-center gap-2 text-sm text-gray-500">
-                <a href="{{ route('shop.index') }}" class="hover:text-[#8f6a10]">
-                    Back to Shop
-                </a>
-                <span class="text-gray-400">/</span>
-                <span class="truncate">
-                    {{ $product->name }}
-                </span>
-            </div>
+            {{-- Breadcrumb --}}
+            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+                <a href="{{ route('shop.index') }}" class="hover:text-[#8f6a10] transition-colors">Shop</a>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <span class="text-gray-900 font-medium">{{ $product->name }}</span>
+            </nav>
 
-            {{-- Main card --}}
+            {{-- 收藏状态计算 --}}
+            @auth
+                @php
+                    $isFavorited = auth()->user()->favorites->contains('product_id', $product->id);
+                @endphp
+            @endauth
+
+            {{-- Main Card --}}
             <div
-                class="relative bg-white rounded-2xl border border-[#D4AF37]/18 shadow-[0_18px_40px_rgba(0,0,0,0.06)] p-4 sm:p-6 lg:p-7">
+                class="bg-white rounded-[2rem] border border-gray-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
 
+                    {{-- Left: Image Gallery (Span 7) --}}
+                    <div class="lg:col-span-7 p-4 sm:p-8 lg:p-10 bg-[#FCFCFD] border-r border-gray-50">
+                        <div class="sticky top-10">
 
-                {{-- ❤️ Favorite button --}}
-                @auth
-                    @php
-                        $isFavorited = auth()->user()->favorites->contains('product_id', $product->id);
-                    @endphp
+                            @php
+                                $gallery = [];
 
-                    <form
-                        action="{{ $isFavorited ? route('account.favorites.destroy', $product) : route('account.favorites.store', $product) }}"
-                        method="POST" class="absolute top-3 right-3 z-30">
-                        @csrf
-                        @if ($isFavorited)
-                            @method('DELETE')
-                        @endif
-
-                        <button type="submit"
-                            class="w-9 h-9 flex items-center justify-center rounded-full bg-white/90 backdrop-blur hover:bg-white shadow-sm border border-gray-200 transition">
-
-                            @if ($isFavorited)
-                                {{-- 填充 ♥ --}}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37" viewBox="0 0 24 24" class="h-5 w-5">
-                                    <path
-                                        d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                                             2 12.28 2 8.5 2 5.42 4.42
-                                                                                             3 7.5 3c1.74 0 3.41.81 4.5
-                                                                                             2.09C13.09 3.81 14.76 3 16.5
-                                                                                             3 19.58 3 22 5.42 22 8.5c0
-                                                                                             3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                </svg>
-                            @else
-                                {{-- 空心 ♥ --}}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10" stroke-width="1.8"
-                                    viewBox="0 0 24 24" class="h-5 w-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                                                           0-3.6 1-4.5 2.5C10.6 4.5
-                                                                                           8.9 3.5 7 3.5 4.2 3.5 2
-                                                                                           5.7 2 8.5c0 5.2 5.5 8.9
-                                                                                           9.8 12.7.1.1.3.1.4
-                                                                                           0C15.5 17.4 21 13.7 21 8.5z" />
-                                </svg>
-                            @endif
-                        </button>
-                    </form>
-                @endauth
-
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
-
-                    {{-- 左边：图片 --}}
-                    <div>
-                        @php
-                            $gallery = [];
-
-                            // 有多图时，只用多图
-                            if (isset($product->images) && count($product->images)) {
-                                foreach ($product->images as $img) {
-                                    $gallery[] = asset('storage/' . $img->path);
+                                // 多图优先
+                                if (isset($product->images) && count($product->images)) {
+                                    foreach ($product->images as $img) {
+                                        $gallery[] = asset('storage/' . $img->path);
+                                    }
                                 }
-                            }
-                            // 没有多图时，才 fallback 用单图字段
-                            elseif ($product->image ?? false) {
-                                $gallery[] = asset('storage/' . $product->image);
-                            }
+                                // 没有多图时，才 fallback 用单图字段
+                                elseif ($product->image ?? false) {
+                                    $gallery[] = asset('storage/' . $product->image);
+                                }
 
-                            if (!count($gallery)) {
-                                $gallery[] = null;
-                            }
-                        @endphp
+                                if (!count($gallery)) {
+                                    $gallery[] = null;
+                                }
+                            @endphp
 
-                        <div data-gallery class="max-w-lg mx-auto">
+                            <div data-gallery class="relative group">
 
-                            {{-- 大图：跟首页更新一致 aspect-[4/3] --}}
-                            <div class="relative rounded-2xl overflow-hidden aspect-square mb-3">
+                                {{-- ❤️ Favorite Button --}}
+                                @auth
+                                    <form
+                                        action="{{ $isFavorited ? route('account.favorites.destroy', $product) : route('account.favorites.store', $product) }}"
+                                        method="POST" class="absolute top-4 right-4 z-30">
+                                        @csrf
+                                        @if ($isFavorited)
+                                            @method('DELETE')
+                                        @endif
+                                        <button type="submit"
+                                            class="w-11 h-11 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-white hover:scale-110 transition-all duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                fill="{{ $isFavorited ? '#D4AF37' : 'none' }}"
+                                                stroke="{{ $isFavorited ? '#D4AF37' : '#8f6a10' }}" stroke-width="1.5"
+                                                viewBox="0 0 24 24" class="h-6 w-6">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36
+                                                               2 12.28 2 8.5 2 5.42 4.42
+                                                               3 7.5 3c1.74 0 3.41.81 4.5
+                                                               2.09C13.09 3.81 14.76 3 16.5
+                                                               3 19.58 3 22 5.42 22 8.5c0
+                                                               3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                @endauth
 
-                                <div class="flex h-full transition-transform duration-500 ease-out" data-gallery-track>
-                                    @foreach ($gallery as $url)
-                                        <div class="w-full h-full shrink-0">
-                                            @if ($url)
-                                                <img src="{{ $url }}" class="w-full h-full object-cover"
-                                                    alt="{{ $product->name }}">
-                                            @else
-                                                <div
-                                                    class="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                                                    Image coming soon
-                                                </div>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                {{-- 遮罩 --}}
+                                {{-- Main Image Display（已缩小调整） --}}
                                 <div
-                                    class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-black/0 to-transparent">
+                                    class="relative rounded-3xl overflow-hidden aspect-[4/3] max-h-[520px] bg-white shadow-inner mb-6">
+
+                                    <div class="flex h-full transition-transform duration-700 ease-out"
+                                        data-gallery-track>
+                                        @foreach ($gallery as $url)
+                                            <div class="w-full h-full shrink-0">
+                                                @if ($url)
+                                                    <img src="{{ $url }}"
+                                                        class="w-full h-full object-contain select-none"
+                                                        alt="{{ $product->name }}">
+                                                @else
+                                                    <div
+                                                        class="w-full h-full flex flex-col items-center justify-center text-gray-300 bg-gray-50">
+                                                        <svg class="w-10 h-10 mb-2 opacity-20" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path
+                                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
+                                                        </svg>
+                                                        <span class="text-xs tracking-widest uppercase">
+                                                            Image Coming Soon
+                                                        </span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
 
                                 {{-- 左右按钮 --}}
                                 @if (count($gallery) > 1)
                                     <button type="button"
-                                        class="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 hover:bg-black/70 text-white items-center justify-center text-xs"
-                                        data-gallery-prev>‹</button>
+                                        class="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2
+                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
+                   text-white items-center justify-center text-sm shadow
+                   backdrop-blur-sm transition"
+                                        data-gallery-prev>
+                                        ‹
+                                    </button>
 
                                     <button type="button"
-                                        class="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/45 hover:bg-black/70 text-white items-center justify-center text-xs"
-                                        data-gallery-next>›</button>
+                                        class="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2
+                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
+                   text-white items-center justify-center text-sm shadow
+                   backdrop-blur-sm transition"
+                                        data-gallery-next>
+                                        ›
+                                    </button>
+                                @endif
+
+                                {{-- Thumbnails --}}
+                                @if (count($gallery) > 1)
+                                    <div class="flex gap-4 justify-center" data-gallery-thumbs>
+                                        @foreach ($gallery as $i => $url)
+                                            <button type="button" data-thumb-index="{{ $i }}"
+                                                class="group relative w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all {{ $loop->first ? 'border-[#D4AF37]' : 'border-transparent' }}">
+                                                @if ($url)
+                                                    <img src="{{ $url }}" class="w-full h-full object-cover">
+                                                @else
+                                                    <div
+                                                        class="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                                                        -
+                                                    </div>
+                                                @endif
+                                                <div
+                                                    class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition">
+                                                </div>
+                                            </button>
+                                        @endforeach
+                                    </div>
                                 @endif
 
                             </div>
-
-                            {{-- 小缩略图 --}}
-                            @if (count($gallery) > 1)
-                                <div class="flex gap-2 overflow-x-auto scrollbar-hide" data-gallery-thumbs>
-                                    @foreach ($gallery as $i => $url)
-                                        <button type="button" data-thumb-index="{{ $i }}"
-                                            class="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0 thumb-btn">
-                                            @if ($url)
-                                                <img src="{{ $url }}" class="w-full h-full object-cover">
-                                            @else
-                                                <div
-                                                    class="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                                                    -</div>
-                                            @endif
-                                            <span
-                                                class="absolute inset-0 bg-black/30 opacity-0 thumb-overlay transition"></span>
-                                        </button>
-                                    @endforeach
-                                </div>
-                            @endif
-
                         </div>
                     </div>
 
-                    {{-- 右边：详情 --}}
-                    <div class="flex flex-col h-full">
+                    {{-- Right: Product Details (Span 5) --}}
+                    <div class="lg:col-span-5 p-6 sm:p-10 lg:p-12 flex flex-col">
+                        <div class="flex-1">
 
-                        {{-- 标题 + 价格 --}}
-                        <div>
-                            {{-- 名称 --}}
-                            <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">
+                            {{-- Availability Badge --}}
+                            <div
+                                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold uppercase tracking-wider border border-emerald-100 mb-6">
+                                <span class="relative flex h-2 w-2">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                Ready Stock
+                            </div>
+
+                            {{-- Product Name --}}
+                            <h1 class="text-3xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight mb-4">
                                 {{ $product->name }}
                             </h1>
 
-                            {{-- 价格 --}}
-                            <div class="mt-5 flex items-end gap-3">
-                                <div class="text-2xl font-semibold text-[#8f6a10]" data-product-price>
+                            {{-- Price Display（用你原本的变体逻辑） --}}
+                            <div class="mt-2 mb-5 flex items-end gap-3">
+                                <div class="text-3xl font-light text-[#8f6a10]" data-product-price>
                                     @if ($product->has_variants && $product->variants->count())
                                         @php
                                             $variantPrices = $product->variants->whereNotNull('price');
@@ -169,234 +180,241 @@
                                         @endphp
 
                                         @if ($min === null)
-                                            RM 0.00
+                                            <span class="font-semibold">RM 0.00</span>
                                         @elseif ($min == $max)
-                                            RM {{ number_format($min, 2) }}
+                                            <span class="font-semibold">RM {{ number_format($min, 2) }}</span>
                                         @else
-                                            RM {{ number_format($min, 2) }} – {{ number_format($max, 2) }}
+                                            <span class="font-semibold">RM {{ number_format($min, 2) }}</span>
+                                            <span class="text-gray-300 mx-1">–</span>
+                                            <span>RM {{ number_format($max, 2) }}</span>
                                         @endif
                                     @else
-                                        RM {{ number_format($product->price ?? 0, 2) }}
+                                        <span class="font-semibold">
+                                            RM {{ number_format($product->price ?? 0, 2) }}
+                                        </span>
                                     @endif
                                 </div>
+                            </div>
 
-                                {{-- 小状态 badge --}}
+                            {{-- Feature Bar / 信任条 --}}
+                            <div class="grid grid-cols-2 gap-4 mb-6">
                                 <div
-                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full
-                        bg-emerald-50 text-emerald-700 text-sm font-medium border border-emerald-100">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Ready stock
+                                    class="flex items-center gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100">
+                                    <div class="p-2 bg-white rounded-xl shadow-sm">
+                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-[12px] font-medium text-gray-600">
+                                        Ships in 1–3 working days
+                                    </span>
+                                </div>
+                                <div
+                                    class="flex items-center gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100">
+                                    <div class="p-2 bg-white rounded-xl shadow-sm">
+                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-[12px] font-medium text-gray-600">
+                                        Easy returns within 7 days
+                                    </span>
                                 </div>
                             </div>
 
-                            {{-- 小信息条：发货 / 运费提示 --}}
-                            <div class="mt-5 inline-flex flex-wrap gap-2 text-sm text-gray-500">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gray-100">
-                                    Ships in 1–3 working days
-                                </span>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gray-100">
-                                    Free shipping over RM 150
-                                </span>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gray-100">
-                                    Easy returns within 7 days
-                                </span>
+                            {{-- Short Description --}}
+                            <div class="prose prose-sm text-gray-500 leading-relaxed mb-8 max-w-xl">
+                                @if ($product->short_description)
+                                    <p>{{ $product->short_description }}</p>
+                                @else
+                                    <p>A premium selection crafted for quality and durability.</p>
+                                @endif
                             </div>
-                        </div>
 
-                        {{-- 分割线 --}}
-                        <div class="mt-5 mb-4 border-t border-gray-100"></div>
+                            <hr class="border-gray-100 mb-8">
 
-                        {{-- 描述 --}}
-                        <div class="text-sm text-gray-700 leading-relaxed space-y-2 break-words max-w-xl">
-                            @if ($product->short_description)
-                                <p>{{ $product->short_description }}</p>
-                            @else
-                                <p class="text-gray-500 text-sm">
-                                    No description for this product yet.
-                                </p>
-                            @endif
-                        </div>
+                            {{-- Add to Cart + Variant Form（完整功能版） --}}
+                            <form method="POST" action="{{ route('cart.add', $product) }}" class="space-y-8">
+                                @csrf
 
-                        {{-- 再一条细分割线，把说明和变体区隔开 --}}
-                        <div class="mt-5 border-t border-gray-100"></div>
+                                {{-- Variants：用你原本的 variantMap 结构 --}}
+                                @if ($product->has_variants && $product->options->count())
+                                    @php
+                                        $variantMap = $product->variants
+                                            ->map(function ($variant) {
+                                                return [
+                                                    'id' => $variant->id,
+                                                    'price' => $variant->price,
+                                                    'stock' => $variant->stock,
+                                                    'options' => $variant->options ?? [],
+                                                ];
+                                            })
+                                            ->values();
+                                    @endphp
 
-                        {{-- Add to cart + Variant 表单 --}}
-                        <form method="POST" action="{{ route('cart.add', $product) }}"
-                            class="mt-5 flex flex-col gap-5">
-                            @csrf
-
-                            {{-- Variant 选择（分组：Color / Size 这种） --}}
-                            @if ($product->has_variants && $product->options->count())
-                                @php
-                                    $variantMap = $product->variants
-                                        ->map(function ($variant) {
-                                            return [
-                                                'id' => $variant->id,
-                                                'price' => $variant->price,
-                                                'stock' => $variant->stock,
-                                                'options' => $variant->options ?? [],
-                                            ];
-                                        })
-                                        ->values();
-                                @endphp
-
-                                <div id="variant-picker" data-variants='@json($variantMap)' class="space-y-4">
-                                    @foreach ($product->options as $option)
-                                        <div>
-                                            <p class="text-xs uppercase tracking-[0.16em] text-gray-500 mb-1">
-                                                {{ $option->label ?? $option->name }}
-                                            </p>
-
-                                            <div class="flex flex-wrap gap-2" data-option-key="{{ $option->name }}">
-                                                @foreach ($option->values as $value)
-                                                    <button type="button"
-                                                        class="variant-pill px-3.5 py-1.5 rounded-full border border-gray-300
-                                           text-xs sm:text-sm text-gray-800 bg-white
-                                           hover:border-[#D4AF37] hover:text-[#8f6a10] hover:bg-[#F9F4E5] transition"
-                                                        data-option-key="{{ $option->name }}"
-                                                        data-option-value="{{ $value->value }}">
-                                                        {{ $value->value }}
-                                                    </button>
-                                                @endforeach
+                                    <div id="variant-picker" data-variants='@json($variantMap)'
+                                        class="space-y-6">
+                                        @foreach ($product->options as $option)
+                                            <div>
+                                                <label
+                                                    class="block text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3">
+                                                    Select {{ $option->label ?? $option->name }}
+                                                </label>
+                                                <div class="flex flex-wrap gap-2.5"
+                                                    data-option-key="{{ $option->name }}">
+                                                    @foreach ($option->values as $value)
+                                                        <button type="button"
+                                                            class="variant-pill h-11 px-6 rounded-xl border border-gray-200 text-sm font-medium transition-all hover:border-[#D4AF37] hover:bg-[#FDFBF7] active:scale-95"
+                                                            data-option-key="{{ $option->name }}"
+                                                            data-option-value="{{ $value->value }}">
+                                                            {{ $value->value }}
+                                                        </button>
+                                                    @endforeach
+                                                </div>
                                             </div>
+                                        @endforeach
+
+                                        <p class="text-sm text-[#B28A15]" id="variant-status">
+                                            Please select all options first.
+                                        </p>
+
+                                        <input type="hidden" name="variant_id" id="variant_id">
+                                    </div>
+                                @endif
+
+                                {{-- Quantity & Add to Cart --}}
+                                <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+                                    <div class="w-32">
+                                        <label
+                                            class="block text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3">
+                                            Quantity
+                                        </label>
+                                        <div
+                                            class="flex items-center h-14 rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+                                            <button type="button"
+                                                class="flex-1 h-full text-gray-400 hover:text-gray-900 transition"
+                                                onclick="const input = this.parentElement.querySelector('input'); if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;">
+                                                –
+                                            </button>
+                                            <input type="number" name="quantity" value="1" min="1"
+                                                class="w-10 text-center border-0 focus:ring-0 font-bold text-gray-900">
+                                            <button type="button"
+                                                class="flex-1 h-full text-gray-400 hover:text-gray-900 transition"
+                                                onclick="const input = this.parentElement.querySelector('input'); input.value = parseInt(input.value || 1) + 1;">
+                                                +
+                                            </button>
                                         </div>
-                                    @endforeach
+                                    </div>
 
-                                    <p class="text-sm text-[#B28A15]" id="variant-status">
-                                        Please select all options first.
-                                    </p>
-
-                                    {{-- 这个 hidden 一定在 form 里面 --}}
-                                    <input type="hidden" name="variant_id" id="variant_id">
-                                </div>
-                            @endif
-
-                            {{-- 数量 + 加入购物车 --}}
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                                {{-- 数量 --}}
-                                <div>
-                                    <label class="block text-[11px] uppercase tracking-wide text-gray-400 mb-1">
-                                        Quantity
-                                    </label>
-                                    <div
-                                        class="inline-flex items-center rounded-xl border border-gray-200 bg-white px-2">
-                                        <button type="button" class="px-2 text-gray-500 text-sm"
-                                            onclick="const input = this.parentElement.querySelector('input'); if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;">
-                                            -
-                                        </button>
-                                        <input type="number" name="quantity" value="1" min="1"
-                                            class="w-12 text-center border-0 focus:ring-0 text-sm text-gray-800">
-                                        <button type="button" class="px-2 text-gray-500 text-sm"
-                                            onclick="const input = this.parentElement.querySelector('input'); input.value = parseInt(input.value || 1) + 1;">
-                                            +
+                                    <div class="flex-1">
+                                        <label
+                                            class="block text-[11px] font-bold uppercase tracking-widest text-transparent mb-3">
+                                            &nbsp;
+                                        </label>
+                                        <button type="submit"
+                                            class="w-full h-14 bg-[#1a1a1a] text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-3 group">
+                                            <span>Add to Cart</span>
+                                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                            </svg>
                                         </button>
                                     </div>
                                 </div>
+                            </form>
 
-                                {{-- Add to cart 按钮 --}}
-                                <div class="flex-1">
-                                    <label class="block text-[11px] uppercase tracking-wide text-transparent mb-1">
-                                        &nbsp;
-                                    </label>
-                                    <button type="submit"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full
-                           bg-[#D4AF37] text-white text-sm font-semibold
-                           shadow-[0_10px_25px_rgba(0,0,0,0.18)]
-                           hover:bg-[#b8942f] transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M2.25 3.75h2.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75l2.25-7.5H6.106M7.5 14.25L5.706 6.022M7.5 14.25l-1.5 4.5m0 0h12.75m-12.75 0a1.5 1.5 0 1 0 3 0m-9.75 0a1.5 1.5 0 1 0 3 0" />
-                                        </svg>
-                                        Add to Cart
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            {{-- Tabs & Specs Section --}}
+            <div class="mt-16">
+
+                <div
+                    class="bg-white rounded-[2rem] border border-gray-100 shadow-[0_18px_40px_rgba(0,0,0,0.04)] p-6 sm:p-8">
+
+                    {{-- Tabs Header --}}
+                    <div class="flex justify-center gap-12 border-b border-gray-100 mb-8">
+                        <button onclick="switchTab('desc')" id="tab-btn-desc"
+                            class="pb-4 text-sm font-bold uppercase tracking-widest border-b-2 border-[#D4AF37] text-gray-900">
+                            Long Description
+                        </button>
+                        <button onclick="switchTab('info')" id="tab-btn-info"
+                            class="pb-4 text-sm font-bold uppercase tracking-widest border-b-2 border-transparent text-gray-400 hover:text-gray-900 transition">
+                            Additional Info
+                        </button>
                     </div>
 
-                </div>
-            </div>
+                    {{-- Description Tab --}}
+                    <div id="tab-desc" class="prose prose-base max-w-none text-gray-600 leading-relaxed">
+                        @if ($product->description)
+                            {!! $product->description !!}
+                        @else
+                            <p class="text-gray-500 text-sm">No description for this product yet.</p>
+                        @endif
+                    </div>
 
-            {{-- Tabs Section --}}
-            <div
-                class="mt-8 bg-white rounded-2xl border border-[#D4AF37]/18 shadow-[0_18px_40px_rgba(0,0,0,0.06)] p-6">
+                    {{-- Specs Tab --}}
+                    <div id="tab-info" class="hidden">
+                        @if (!empty($product->specs))
+                            <div class="rounded-2xl border border-gray-100 bg-white shadow-sm">
 
-                {{-- Tab Headers --}}
-                <div class="flex border-b border-gray-200 mb-4">
-                    <button type="button" id="tab-btn-desc" onclick="switchTab('desc')"
-                        class="px-4 py-2 text-base font-semibold border-b-2
-               text-gray-700 border-[#D4AF37]">
-                        Long Description
-                    </button>
+                                <div class="px-4 py-3 border-b bg-gray-50 rounded-t-2xl">
+                                    <h4 class="font-semibold text-base text-gray-700">
+                                        Product Specifications
+                                    </h4>
+                                </div>
 
-                    <button type="button" id="tab-btn-info" onclick="switchTab('info')"
-                        class="px-4 py-2 text-base font-semibold border-b-2
-               text-gray-500 border-transparent hover:text-[#8f6a10]">
-                        Additional Info
-                    </button>
-                </div>
+                                <dl class="divide-y">
+                                    @foreach ($product->specs as $row)
+                                        <div
+                                            class="grid grid-cols-[160px,1fr] gap-6 px-4 py-3 hover:bg-gray-50 transition">
+                                            <dt class="text-sm font-medium text-gray-600">
+                                                {{ $row['name'] ?? '-' }}
+                                            </dt>
+                                            <dd class="text-sm text-gray-800">
+                                                {{ $row['value'] ?? '-' }}
+                                            </dd>
+                                        </div>
+                                    @endforeach
+                                </dl>
 
-
-                {{-- Content: Description --}}
-                <div id="tab-desc" class="text-sm text-gray-700 leading-relaxed space-y-2 break-words">
-                    @if ($product->description)
-                        {!! $product->description !!}
-                    @else
-                        <p class="text-gray-500 text-sm">No description for this product yet.</p>
-                    @endif
-                </div>
-
-                {{-- Content: Additional Info --}}
-                <div id="tab-info" class="hidden text-sm leading-relaxed">
-
-                    @if (!empty($product->specs))
-                        <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
-
-                            <div class="px-4 py-3 border-b bg-gray-50 rounded-t-2xl">
-                                <h4 class="font-semibold text-base text-gray-700">Product Specifications</h4>
                             </div>
+                        @else
+                            <p class="text-center text-gray-400 py-10">
+                                No additional info yet.
+                            </p>
+                        @endif
+                    </div>
 
-                            <dl class="divide-y">
-                                @foreach ($product->specs as $row)
-                                    <div
-                                        class="grid grid-cols-[160px,1fr] gap-6 px-4 py-2 hover:bg-gray-50 transition">
-                                        <dt class="font-medium text-gray-500">
-                                            {{ $row['name'] ?? '-' }}
-                                        </dt>
-                                        <dd class="text-gray-800">
-                                            {{ $row['value'] ?? '-' }}
-                                        </dd>
-                                    </div>
-                                @endforeach
-                            </dl>
-
-                        </div>
-                    @else
-                        <p class="text-gray-500 text-sm">No additional info yet.</p>
-                    @endif
 
                 </div>
-
-
             </div>
 
 
-            {{-- 以后可以在这里加 related products --}}
             {{-- Related Products --}}
             @if ($related->count())
-                <div class="mt-10">
+                <div class="mt-12">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">
                         Related Products
                     </h2>
 
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6">
                         @foreach ($related as $item)
+                            @php
+                                $itemFavorited = auth()->check()
+                                    ? auth()->user()->favorites->contains('product_id', $item->id)
+                                    : false;
+                            @endphp
+
                             <a href="{{ route('shop.show', $item->slug) }}"
                                 class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#D4AF37]/60 transition overflow-hidden flex flex-col">
                                 {{-- Product image --}}
-                                <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                                <div class="relative aspect-square bg-gray-100 overflow-hidden">
                                     @if ($item->image ?? false)
                                         <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -409,53 +427,41 @@
 
                                     {{-- ❤️ Favorite --}}
                                     @auth
-                                        @php
-                                            $isFavorited = auth()
-                                                ->user()
-                                                ->favorites->contains('product_id', $product->id);
-                                        @endphp
-
                                         <form
-                                            action="{{ $isFavorited ? route('account.favorites.destroy', $product) : route('account.favorites.store', $product) }}"
+                                            action="{{ $itemFavorited ? route('account.favorites.destroy', $item) : route('account.favorites.store', $item) }}"
                                             method="POST" class="absolute top-2 right-2 z-20">
                                             @csrf
-                                            @if ($isFavorited)
+                                            @if ($itemFavorited)
                                                 @method('DELETE')
                                             @endif
 
                                             <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur
-                   hover:bg-white shadow-sm">
-
-                                                @if ($isFavorited)
-                                                    {{-- 已收藏：金色 ♥ --}}
+                                                class="w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur hover:bg-white shadow-sm">
+                                                @if ($itemFavorited)
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
-                                                        <path
-                                                            d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                                                 2 12.28 2 8.5 2 5.42 4.42
-                                                                                                 3 7.5 3c1.74 0 3.41.81 4.5
-                                                                                                 2.09C13.09 3.81 14.76 3 16.5
-                                                                                                 3 19.58 3 22 5.42 22 8.5c0
-                                                                                                 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36
+                                                                       2 12.28 2 8.5 2 5.42 4.42
+                                                                       3 7.5 3c1.74 0 3.41.81 4.5
+                                                                       2.09C13.09 3.81 14.76 3 16.5
+                                                                       3 19.58 3 22 5.42 22 8.5c0
+                                                                       3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
-                                                    {{-- 未收藏：空心 ♥ --}}
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                         stroke="#8f6a10" stroke-width="1.8" viewBox="0 0 24 24"
                                                         class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                                                               0-3.6 1-4.5 2.5C10.6 4.5
-                                                                                               8.9 3.5 7 3.5 4.2 3.5 2
-                                                                                               5.7 2 8.5c0 5.2 5.5 8.9
-                                                                                               9.8 12.7.1.1.3.1.4 0C15.5
-                                                                                               17.4 21 13.7 21 8.5z" />
+                                                                         0-3.6 1-4.5 2.5C10.6 4.5
+                                                                         8.9 3.5 7 3.5 4.2 3.5 2
+                                                                         5.7 2 8.5c0 5.2 5.5 8.9
+                                                                         9.8 12.7.1.1.3.1.4 0C15.5
+                                                                         17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
                                         </form>
                                     @endauth
-
 
                                     <div
                                         class="absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition">
@@ -488,8 +494,10 @@
                     </div>
                 </div>
             @endif
+
         </div>
     </div>
+
 
     <style>
         /* Chrome / Edge / Safari */
