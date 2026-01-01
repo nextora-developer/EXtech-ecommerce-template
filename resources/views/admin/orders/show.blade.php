@@ -87,26 +87,56 @@
                             <thead
                                 class="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
                                 <tr>
-                                    <th class="px-4 py-3 text-left font-bold">Product Details</th>
-                                    <th class="px-4 py-3 text-center font-bold">Qty</th>
-                                    <th class="px-4 py-3 text-right font-bold">Price</th>
-                                    <th class="px-4 py-3 text-right font-bold">Total</th>
+                                    <th class="px-4 py-3 font-bold text-left">Photo</th>
+                                    <th class="px-4 py-3 font-bold text-left">Product Details</th>
+                                    <th class="px-4 py-3 font-bold text-center">Qty</th>
+                                    <th class="px-4 py-3 font-bold text-right">Price</th>
+                                    <th class="px-4 py-3 font-bold text-right">Total</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @forelse ($order->items as $item)
                                     <tr>
+                                        {{-- Photo --}}
+                                        <td class="px-4 py-4">
+                                            @if ($item->product?->image)
+                                                <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                    class="w-12 h-12 rounded object-cover border border-gray-200">
+                                            @else
+                                                <div
+                                                    class="w-12 h-12 rounded bg-gray-100 border border-gray-200 flex items-center justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="w-6 h-6 text-gray-300" fill="none"
+                                                            viewBox="0 0 24 24" stroke-width="1.8"
+                                                            stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                                        </svg>
+                                                </div>
+                                            @endif
+                                        </td>
+
+                                        {{-- Product Details (文字单独一格) --}}
                                         <td class="px-4 py-4">
                                             <div class="font-bold text-gray-900 text-sm">
                                                 {{ $item->product_name ?? ($item->product->name ?? 'Unknown Product') }}
                                             </div>
+
                                             @if ($item->variant_label || $item->variant_value)
                                                 <div class="flex gap-1 mt-1.5">
-                                                    @php $parts = explode('&', ($item->variant_label ?? '') . ' & ' . ($item->variant_value ?? '')); @endphp
+                                                    @php
+                                                        $parts = explode(
+                                                            '&',
+                                                            ($item->variant_label ?? '') .
+                                                                ' & ' .
+                                                                ($item->variant_value ?? ''),
+                                                        );
+                                                    @endphp
                                                     @foreach ($parts as $part)
                                                         @if (trim($part))
                                                             <span
-                                                                class="inline-block px-2 py-0.5 bg-[#D4AF37]/5 border border-[#D4AF37]/20 text-[#8f6a10] text-[10px] font-bold rounded-md uppercase">
+                                                                class="inline-block px-2 py-0.5 bg-[#D4AF37]/5 border border-[#D4AF37]/20
+                                   text-[#8f6a10] text-[10px] font-bold rounded-md uppercase">
                                                                 {{ trim($part) }}
                                                             </span>
                                                         @endif
@@ -114,13 +144,23 @@
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-4 text-center font-medium text-gray-600">x{{ $item->qty ?? 1 }}
+
+                                        {{-- Qty --}}
+                                        <td class="px-4 py-4 text-center font-medium text-gray-600">
+                                            x{{ $item->qty ?? 1 }}
                                         </td>
-                                        <td class="px-4 py-4 text-right text-gray-600 font-medium italic">RM
-                                            {{ number_format($item->unit_price, 2) }}</td>
-                                        <td class="px-4 py-4 text-right font-bold text-gray-900">RM
-                                            {{ number_format($item->subtotal, 2) }}</td>
+
+                                        {{-- Price --}}
+                                        <td class="px-4 py-4 text-right text-gray-600 italic">
+                                            RM {{ number_format($item->unit_price, 2) }}
+                                        </td>
+
+                                        {{-- Total --}}
+                                        <td class="px-4 py-4 text-right font-bold text-gray-900">
+                                            RM {{ number_format($item->subtotal, 2) }}
+                                        </td>
                                     </tr>
+
                                 @empty
                                     <tr>
                                         <td colspan="4" class="px-4 py-8 text-center text-gray-400 italic">No items

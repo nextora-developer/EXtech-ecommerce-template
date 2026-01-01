@@ -159,25 +159,94 @@
                         </svg>
                         Shopping Activity
                     </h2>
-                    <span class="text-xs font-bold text-gray-300 uppercase tracking-widest">Modules Pending</span>
+                    <span class="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                        @if ($recentOrders->count())
+                            Last {{ $recentOrders->count() }} Orders
+                        @else
+                            No Orders Yet
+                        @endif
+                    </span>
                 </div>
 
-                <div
-                    class="flex-1 flex flex-col items-center justify-center text-center space-y-3 py-10 border-2 border-dashed border-gray-50 rounded-2xl bg-gray-50/30">
-                    <div class="p-3 bg-white rounded-full shadow-sm border border-gray-100 text-gray-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-8 h-8">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
+                @if ($recentOrders->count())
+                    {{-- ✅ 有订单时：订单列表 --}}
+                    <div class="flex-1 -mx-3">
+                        <ul class="divide-y divide-gray-100">
+                            @foreach ($recentOrders as $order)
+                                <li class="px-3 py-3 flex items-center justify-between gap-4">
+                                    <div>
+                                        <div class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                            <span>Order #{{ $order->order_no }}</span>
+
+                                            {{-- status badge --}}
+                                            <span
+                                                class="text-[10px] px-2 py-0.5 rounded-full
+                                    @switch($order->status)
+                                        @case('pending') bg-amber-100 text-amber-700 @break
+                                        @case('paid') bg-emerald-100 text-emerald-700 @break
+                                        @case('processing') bg-blue-100 text-blue-700 @break
+                                        @case('shipped') bg-indigo-100 text-indigo-700 @break
+                                        @case('completed') bg-emerald-100 text-emerald-700 @break
+                                        @case('cancelled') bg-red-100 text-red-600 @break
+                                        @default bg-gray-100 text-gray-500
+                                    @endswitch
+                                ">
+                                                {{ ucfirst($order->status) }}
+                                            </span>
+                                        </div>
+
+                                        <p class="text-xs text-gray-400 mt-1">
+                                            {{ $order->created_at->format('d M Y, H:i') }}
+                                            @if ($order->items_count ?? false)
+                                                · {{ $order->items_count }} item(s)
+                                            @endif
+                                        </p>
+                                    </div>
+
+                                    <div class="flex items-center gap-4">
+                                        <div class="text-right">
+                                            <div class="text-sm font-bold text-gray-900">
+                                                RM {{ number_format($order->total, 2) }}
+                                            </div>
+                                            @if ($order->payment_method_name ?? null)
+                                                <div class="text-[11px] text-gray-400">
+                                                    {{ $order->payment_method_name }}
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        {{-- 管理员查看订单详情 --}}
+                                        <a href="{{ route('admin.orders.show', $order) }}"
+                                            class="inline-flex items-center px-3 py-1.5 rounded-full border border-gray-200
+                                      text-xs font-semibold text-gray-700 hover:border-[#D4AF37]/60 hover:text-[#8f6a10] transition">
+                                            View
+                                        </a>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
-                    <div>
-                        <p class="text-sm font-bold text-gray-500">Order History Locked</p>
-                        <p class="text-xs text-gray-400 max-w-xs mx-auto mt-1">Order synchronization is currently being
-                            configured for this profile.</p>
+                @else
+                    {{-- 🚫 没有订单：用一个简单空状态（你也可以沿用之前那套 Locked 文案） --}}
+                    <div
+                        class="flex-1 flex flex-col items-center justify-center text-center space-y-3 py-10 border-2 border-dashed border-gray-50 rounded-2xl bg-gray-50/30">
+                        <div class="p-3 bg-white rounded-full shadow-sm border border-gray-100 text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-8 h-8">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-500">No orders found</p>
+                            <p class="text-xs text-gray-400 max-w-xs mx-auto mt-1">
+                                This customer has not placed any orders yet.
+                            </p>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
+
         </div>
     </div>
 @endsection

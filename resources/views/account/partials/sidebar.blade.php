@@ -6,7 +6,7 @@
     $itemBase = 'flex items-center gap-2 px-5 py-2.5 text-base rounded-xl mx-3 mt-3';
 @endphp
 
-<div class="bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col">
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col sticky top-28">
 
     {{-- Top User Info --}}
     <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
