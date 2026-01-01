@@ -81,12 +81,12 @@
 
                 <div class="rounded-xl bg-gray-50/80 border border-gray-100 px-4 py-3">
                     <p class="text-xs uppercase font-bold tracking-widest text-gray-400 mb-1">Created date</p>
-                    <p class="text-gray-900 font-semibold">{{ $user->created_at?->format('M d, Y') ?? '—' }}</p>
+                    <p class="text-gray-900 font-semibold">{{ $user->created_at?->format('d M Y') ?? '—' }}</p>
                 </div>
 
                 <div class="rounded-xl bg-gray-50/80 border border-gray-100 px-4 py-3">
                     <p class="text-xs uppercase font-bold tracking-widest text-gray-400 mb-1">Last Updated</p>
-                    <p class="text-gray-900 font-semibold">{{ $user->updated_at?->format('M d, Y') ?? '—' }}</p>
+                    <p class="text-gray-900 font-semibold">{{ $user->updated_at?->format('d M Y') ?? '—' }}</p>
                 </div>
             </div>
         </div>
