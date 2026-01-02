@@ -6,15 +6,49 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class CartController extends Controller
 {
-    public function index(Request $request)
+    /*
+    |--------------------------------------------------------------------------
+    | 共用方法：当前 Cart 的查询
+    |--------------------------------------------------------------------------
+    */
+
+    protected function currentCartQuery()
     {
-        // 根据 user 或 session 拿 cart（简单示范，你可以自己优化）
-        $cart = Cart::query()
-            ->when(auth()->check(), fn($q) => $q->where('user_id', auth()->id()))
-            ->when(!auth()->check(), fn($q) => $q->where('session_id', $request->session()->getId()))
+        if (auth()->check()) {
+            // 已登录：用 user_id
+            return Cart::where('user_id', auth()->id());
+        }
+
+        // 游客：用 session_id
+        return Cart::where('session_id', session()->getId());
+    }
+
+    protected function getOrCreateCart(): Cart
+    {
+        if (auth()->check()) {
+            return Cart::firstOrCreate([
+                'user_id' => auth()->id(),
+            ]);
+        }
+
+        return Cart::firstOrCreate([
+            'session_id' => session()->getId(),
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cart 页面
+    |--------------------------------------------------------------------------
+    */
+
+    public function index()
+    {
+        $cart = $this->currentCartQuery()
             ->with('items.product')
             ->first();
 
@@ -28,13 +62,16 @@ class CartController extends Controller
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | 加入购物车
+    |--------------------------------------------------------------------------
+    */
+
     public function add(Request $request, Product $product)
     {
-        // 找 / 建 cart
-        $cart = Cart::firstOrCreate([
-            'user_id'    => auth()->id(),
-            'session_id' => $request->session()->getId(),
-        ]);
+        // 统一入口：游客 / 会员都可以
+        $cart = $this->getOrCreateCart();
 
         $qty = max(1, (int) $request->input('quantity', 1));
 
@@ -42,6 +79,7 @@ class CartController extends Controller
         $variantLabel = null;
         $unitPrice    = $product->price;
 
+        // 有 variant 的情况
         if ($product->has_variants) {
             $variantId = $request->input('variant_id');
 
@@ -49,25 +87,21 @@ class CartController extends Controller
                 return back()->with('error', 'Please select a variant before adding to cart.');
             }
 
-            $variant = $product->variants()->where('id', $variantId)->firstOrFail();
-
+            $variant   = $product->variants()->where('id', $variantId)->firstOrFail();
             $unitPrice = $variant->price;
 
-            // 这边如果你喜欢可以继续用 label/value 组合的文字
-            $label  = explode('/', $variant->options['label']  ?? '');
-            $value  = explode('/', $variant->options['value']  ?? '');
+            // 组 variant 显示文字
+            $label = explode('/', $variant->options['label'] ?? '');
+            $value = explode('/', $variant->options['value'] ?? '');
 
             $parts = [];
-
             foreach ($label as $i => $name) {
                 $name = trim($name);
                 $val  = trim($value[$i] ?? '');
-
                 if ($name !== '' && $val !== '') {
                     $parts[] = "{$name}: {$val}";
                 }
             }
-
             $variantLabel = implode(' & ', $parts);
         }
 
@@ -75,7 +109,7 @@ class CartController extends Controller
             return back()->with('error', 'This product or variant does not have a price set.');
         }
 
-        // ✅ 同一个 product + 同一个 variant 合并数量
+        // 同 product + variant 合并数量
         $query = $cart->items()->where('product_id', $product->id);
 
         if ($variantId) {
@@ -102,9 +136,20 @@ class CartController extends Controller
         return back()->with('success', 'Added to cart');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | 更新数量
+    |--------------------------------------------------------------------------
+    */
 
     public function update(Request $request, CartItem $item)
     {
+        // 确保是当前用户/当前 session 的 cart item（简单校验）
+        $currentCart = $this->currentCartQuery()->first();
+        if (!$currentCart || $item->cart_id !== $currentCart->id) {
+            abort(403);
+        }
+
         $action = $request->input('action');
 
         if ($action === 'increase') {
@@ -112,12 +157,12 @@ class CartController extends Controller
         } elseif ($action === 'decrease') {
             if ($item->qty > 1) {
                 $item->qty--;
+            } else {
+                // 数量减到 0 直接删掉
+                $item->delete();
+
+                return redirect()->route('cart.index');
             }
-            // 如果你想 qty 到 0 就删掉，也可以在这里判断：
-            // else {
-            //     $item->delete();
-            //     return redirect()->route('cart.index');
-            // }
         }
 
         $item->save();
@@ -125,21 +170,47 @@ class CartController extends Controller
         return redirect()->route('cart.index');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | 移除项目
+    |--------------------------------------------------------------------------
+    */
 
     public function remove(CartItem $item)
     {
-        // 先记住它属于哪一个 cart
-        $cart = $item->cart;   // 确保 CartItem 有 cart() 关系
+        $currentCart = $this->currentCartQuery()->first();
+        if (!$currentCart || $item->cart_id !== $currentCart->id) {
+            abort(403);
+        }
 
-        // 删掉这条 item
+        $cart = $item->cart;
+
         $item->delete();
 
-        // 如果这个 cart 已经没有任何 item 了，就把 cart 也删掉
         if ($cart && !$cart->items()->exists()) {
             $cart->delete();
         }
 
         return redirect()->route('cart.index')
             ->with('success', 'Item removed.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 购物车数量（给 navbar 用）
+    |--------------------------------------------------------------------------
+    */
+
+    public function count(): JsonResponse
+    {
+        $cart = $this->currentCartQuery()
+            ->withCount('items')
+            ->first();
+
+        $count = $cart->items_count ?? 0;
+
+        return response()->json([
+            'count' => $count,
+        ]);
     }
 }

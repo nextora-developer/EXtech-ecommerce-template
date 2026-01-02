@@ -34,6 +34,26 @@ Route::get('/', [ShopController::class, 'home'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/product/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
 
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
+Route::get('/cart/count', function () {
+
+    if (auth()->check()) {
+        $cart = \App\Models\Cart::where('user_id', auth()->id())->first();
+    } else {
+        $cart = \App\Models\Cart::where('session_id', session()->getId())->first();
+    }
+
+    $count = $cart?->items()?->count() ?? 0;
+
+    return response()->json([
+        'count' => $count,
+    ]);
+})->name('cart.count');
+
+
 /*
 |--------------------------------------------------------------------------
 | Customer (需要登录的功能：Cart + Checkout + Account
@@ -41,17 +61,14 @@ Route::get('/product/{product:slug}', [ShopController::class, 'show'])->name('sh
 */
 Route::middleware('auth')->group(function () {
 
-    // Cart 全部要登录
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-    Route::patch('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::get('/cart/count', function () {$count = auth()->user()?->cart?->items()?->count() ?? 0;
 
-        return response()->json([
-            'count' => $count,
-        ]);
-    })->name('cart.count');
+    // Route::get('/cart/count', function () {
+    //     $count = auth()->user()?->cart?->items()?->count() ?? 0;
+
+    //     return response()->json([
+    //         'count' => $count,
+    //     ]);
+    // })->name('cart.count');
 
     // Checkout 也要登录
     Route::get('/checkout', [CheckoutController::class, 'index'])
