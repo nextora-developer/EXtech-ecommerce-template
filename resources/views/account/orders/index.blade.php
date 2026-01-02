@@ -117,7 +117,8 @@
                                                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                                             stroke-width="1" stroke-linecap="round"
                                                             stroke-linejoin="round" />
-                                                    </svg></div>
+                                                    </svg>
+                                                </div>
                                             @endif
                                         </div>
                                         {{-- Visual Stack Effect for multiple items --}}
@@ -181,10 +182,26 @@
                                 </div>
                             </a>
                         @empty
-                            <div class="bg-white rounded-3xl border border-dashed border-gray-200 p-20 text-center">
-                                <p class="text-gray-400 font-medium">No orders found matching these criteria.</p>
-                                <a href="{{ route('account.orders.index') }}"
-                                    class="text-sm font-bold text-[#8f6a10] mt-2 inline-block">Clear all filters</a>
+                            <div class="bg-white rounded-3xl border border-dashed border-gray-200 p-12 text-center">
+                                <div
+                                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-50 text-gray-300 mb-4">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-gray-900 font-bold">No orders found</h3>
+                                <p class="text-sm text-gray-500 mt-1">When you buy something, it will appear here.
+                                </p>
+                                <a href="{{ route('shop.index') }}"
+                                    class="mt-6 inline-flex items-center px-6 py-2.5
+                                                bg-black text-white text-sm font-bold rounded-xl
+                                                transition-all duration-300 ease-out
+                                                hover:bg-black hover:text-white
+                                                hover:-translate-y-0.5 hover:scale-[1.03]
+                                                hover:shadow-xl hover:shadow-gray/30">
+                                    Start Shopping
+                                </a>
                             </div>
                         @endforelse
 

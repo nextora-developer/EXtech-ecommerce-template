@@ -44,22 +44,27 @@
 
                     {{-- Favorites Grid --}}
                     @if ($favorites->isEmpty())
-                        <section class="bg-white rounded-3xl border border-gray-100 shadow-sm p-20 text-center">
+                        <section class="bg-white rounded-3xl border border-gray-100 shadow-sm p-12 text-center">
                             <div class="max-w-xs mx-auto">
                                 <div
-                                    class="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <svg class="w-10 h-10 text-[#D4AF37]" fill="none" stroke="currentColor"
+                                    class="w-16 h-16 bg-gray-50 text-gray-300 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <svg class="w-8 h-8 " fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path
                                             d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                                             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-bold text-gray-900">Your wishlist is empty</h3>
-                                <p class="text-gray-500 mt-2 mb-8">Start exploring our collection and save your favorite
+                                <h3 class="font-bold text-gray-900">Your wishlist is empty</h3>
+                                <p class="text-gray-500 text-sm mt-1">Start exploring our collection and save your favorite
                                     pieces.</p>
                                 <a href="{{ route('shop.index') }}"
-                                    class="inline-block px-8 py-4 bg-black text-white rounded-2xl font-bold hover:bg-[#8f6a10] transition-colors shadow-lg shadow-black/10">
+                                    class="mt-6 inline-flex items-center px-6 py-2.5
+                                                bg-black text-white text-sm font-bold rounded-xl
+                                                transition-all duration-300 ease-out
+                                                hover:bg-black hover:text-white
+                                                hover:-translate-y-0.5 hover:scale-[1.03]
+                                                hover:shadow-xl hover:shadow-gray/30">
                                     Start Shopping
                                 </a>
                             </div>
