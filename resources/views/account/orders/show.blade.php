@@ -181,9 +181,29 @@
 
                                 {{-- Shipping Address --}}
                                 <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
-                                    <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
-                                        Shipping Address
-                                    </h2>
+                                    {{-- 标题 + Button 同一行 --}}
+                                    <div class="flex items-center justify-between">
+                                        <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
+                                            Shipping Address
+                                        </h2>
+
+                                        @if ($order->shipping_courier || $order->tracking_number)
+                                            <button type="button" onclick="openTrackingModal({{ $order->id }})"
+                                                class="inline-flex items-center px-3 py-1.5 rounded-lg border border-indigo-200
+                                                        bg-indigo-50 text-xs font-semibold text-indigo-700 hover:bg-indigo-100">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 mr-1.5"
+                                                    fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                                </svg>
+                                                View Tracking Info
+                                            </button>
+                                        @endif
+                                    </div>
+
 
                                     <div class="mt-3 text-gray-900 leading-relaxed text-sm">
                                         {{ $order->address_line1 }}<br>
@@ -195,6 +215,7 @@
                                         {{ $order->postcode }} {{ $order->city }}<br>
                                         {{ $order->state }}
                                     </div>
+
                                 </div>
 
                             </div>
@@ -253,6 +274,8 @@
                                 </div>
                             </div>
                         </div>
+
+
 
 
                         {{-- Items --}}
@@ -355,6 +378,68 @@
         </div>
     @endif
 
+    @if ($order->shipping_courier || $order->tracking_number)
+        <div id="trackingModal-{{ $order->id }}" class="fixed inset-0 z-50 hidden bg-black/50">
+            {{-- 点击背景关闭 --}}
+            <div class="flex items-center justify-center min-h-screen"
+                onclick="closeTrackingModal({{ $order->id }})">
+
+                {{-- 内容卡片，阻止冒泡 --}}
+                <div class="bg-white rounded-2xl shadow-xl max-w-md w-[90%] overflow-hidden"
+                    onclick="event.stopPropagation()">
+
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                        <h3 class="text-sm font-semibold text-gray-900">
+                            Tracking Information
+                        </h3>
+                        <button type="button" class="text-gray-400 hover:text-gray-600"
+                            onclick="closeTrackingModal({{ $order->id }})">
+                            ✕
+                        </button>
+                    </div>
+
+                    <div class="p-4 space-y-3 text-sm text-gray-900">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Courier</span>
+                            <span class="font-semibold">
+                                {{ $order->shipping_courier ?? '-' }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Tracking No.</span>
+                            <span class="font-semibold">
+                                {{ $order->tracking_number ?? '-' }}
+                            </span>
+                        </div>
+
+                        @if ($order->shipped_at)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Shipped At</span>
+                                <span class="font-semibold">
+                                    {{ \Illuminate\Support\Carbon::parse($order->shipped_at)->timezone('Asia/Kuala_Lumpur')->format('d M Y, h:i A') }}
+                                </span>
+                            </div>
+                        @endif
+
+                        @if ($order->tracking_number)
+                            <div class="pt-2">
+                                <a target="_blank"
+                                    href="https://www.tracking.my/{{ urlencode($order->tracking_number) }}"
+                                    class="inline-flex items-center px-3 py-1.5 rounded-lg bg-indigo-600
+                                      text-white text-xs font-semibold hover:bg-indigo-700">
+                                    Track Parcel
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
+
     <script>
         function openReceiptModal(orderId) {
             const el = document.getElementById('receiptModal-' + orderId);
@@ -365,6 +450,21 @@
 
         function closeReceiptModal(orderId) {
             const el = document.getElementById('receiptModal-' + orderId);
+            if (el) {
+                el.classList.add('hidden');
+            }
+        }
+
+        // 👇 新增这两个
+        function openTrackingModal(orderId) {
+            const el = document.getElementById('trackingModal-' + orderId);
+            if (el) {
+                el.classList.remove('hidden');
+            }
+        }
+
+        function closeTrackingModal(orderId) {
+            const el = document.getElementById('trackingModal-' + orderId);
             if (el) {
                 el.classList.add('hidden');
             }

@@ -17,23 +17,30 @@ class Order extends Model
 
         'customer_name',
         'customer_phone',
-        'customer_email',          // 🆕 新增
+        'customer_email',
 
         'address_line1',
         'address_line2',
         'city',
         'state',
         'postcode',
-        'country',                 // 🆕 新增
+        'country',
 
         'subtotal',
         'shipping_fee',
+        'shipping_courier',
+        'tracking_number',
+        'shipped_at',
         'total',
         'status',
 
-        'payment_method_code',     // 🆕 新增
-        'payment_method_name',     // 🆕 新增
-        'payment_receipt_path',    // 🆕 新增
+        'payment_method_code',
+        'payment_method_name',
+        'payment_receipt_path',
+    ];
+
+    protected $casts = [
+        'shipped_at' => 'datetime',
     ];
 
     public function items(): HasMany

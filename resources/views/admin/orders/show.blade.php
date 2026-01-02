@@ -52,7 +52,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {{-- LEFT COLUMN: Details & Items --}}
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-6 ">
+
 
             {{-- Customer & Shipping Card --}}
             <div class="bg-white border border-[#D4AF37]/20 rounded-2xl shadow-[0_18px_40px_rgba(0,0,0,0.04)]">
@@ -105,13 +106,12 @@
                                             @else
                                                 <div
                                                     class="w-12 h-12 rounded bg-gray-100 border border-gray-200 flex items-center justify-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="w-6 h-6 text-gray-300" fill="none"
-                                                            viewBox="0 0 24 24" stroke-width="1.8"
-                                                            stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                                                        </svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300"
+                                                        fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                                                        stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                                    </svg>
                                                 </div>
                                             @endif
                                         </td>
@@ -172,6 +172,7 @@
                     </div>
                 </div>
 
+
                 {{-- Totals Area --}}
                 <div class="p-6 bg-white border-t border-gray-100 flex justify-end">
                     <div class="w-full max-w-xs space-y-3">
@@ -206,9 +207,10 @@
                 <form method="POST" action="{{ route('admin.orders.status', $order) }}" class="space-y-4">
                     @csrf
                     <div>
-                        <label class="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-2">Order
-                            Status</label>
-                        <select name="status"
+                        <label class="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-2">
+                            Order Status
+                        </label>
+                        <select id="order-status-select" name="status"
                             class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm font-semibold">
                             @foreach (['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'] as $s)
                                 <option value="{{ $s }}" @selected($order->status === $s)>{{ strtoupper($s) }}
@@ -217,11 +219,54 @@
                         </select>
                     </div>
 
+                    {{-- 物流信息区块 --}}
+                    <div id="shipping-fields" class="space-y-3 mt-3 hidden">
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400">
+                                Shipping Information
+                            </h4>
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-[10px] font-bold text-blue-700 border border-blue-200">
+                                Required when SHIPPED
+                            </span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">
+                                Courier / Shipping Provider
+                            </label>
+                            <input type="text" name="shipping_courier"
+                                value="{{ old('shipping_courier', $order->shipping_courier) }}"
+                                class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm"
+                                placeholder="e.g. J&T, Ninja Van, PosLaju">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">
+                                Tracking Number
+                            </label>
+                            <input type="text" name="tracking_number"
+                                value="{{ old('tracking_number', $order->tracking_number) }}"
+                                class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm"
+                                placeholder="e.g. JV0123456789MY">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">
+                                Shipped At
+                            </label>
+                            <input type="datetime-local" name="shipped_at"
+                                value="{{ old('shipped_at', $order->shipped_at ? $order->shipped_at->format('Y-m-d\TH:i') : '') }}"
+                                class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm">
+                        </div>
+                    </div>
+
                     <button
                         class="w-full py-3 rounded-xl bg-[#D4AF37] text-white font-bold text-sm hover:bg-[#c29c2f] transition-all shadow-lg shadow-[#D4AF37]/20 active:scale-[0.98]">
                         Update Progress
                     </button>
                 </form>
+
             </div>
 
             {{-- Payment Metadata --}}
@@ -293,3 +338,36 @@
     @endif
 
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelect = document.getElementById('order-status-select');
+            const shippingFields = document.getElementById('shipping-fields');
+            const courierInput = document.querySelector('input[name="shipping_courier"]');
+            const trackingInput = document.querySelector('input[name="tracking_number"]');
+            const shippedAtInput = document.querySelector('input[name="shipped_at"]');
+
+            function toggleShippingFields() {
+                const value = statusSelect.value;
+
+                const needShipping = (value === 'shipped' || value === 'completed');
+
+                if (needShipping) {
+                    shippingFields.classList.remove('hidden');
+                    courierInput?.setAttribute('required', 'required');
+                    trackingInput?.setAttribute('required', 'required');
+                } else {
+                    shippingFields.classList.add('hidden');
+                    courierInput?.removeAttribute('required');
+                    trackingInput?.removeAttribute('required');
+                }
+            }
+
+            statusSelect.addEventListener('change', toggleShippingFields);
+
+            // 初次载入时根据当前状态决定要不要显示（例如订单已经是 shipped）
+            toggleShippingFields();
+        });
+    </script>
+@endpush
