@@ -5,7 +5,9 @@
             {{-- Breadcrumb --}}
             <nav class="flex items-center space-x-2 uppercase text-sm text-gray-500 mb-6">
                 <a href="{{ route('shop.index') }}" class="hover:text-[#8f6a10] transition-colors">Shop</a>
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
                 <span class="text-gray-900 font-medium">{{ $product->name }}</span>
             </nav>
 
@@ -62,89 +64,90 @@
                                                 stroke="{{ $isFavorited ? '#D4AF37' : '#8f6a10' }}" stroke-width="1.5"
                                                 viewBox="0 0 24 24" class="h-6 w-6">
                                                 <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                               2 12.28 2 8.5 2 5.42 4.42
-                                                               3 7.5 3c1.74 0 3.41.81 4.5
-                                                               2.09C13.09 3.81 14.76 3 16.5
-                                                               3 19.58 3 22 5.42 22 8.5c0
-                                                               3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                                           2 12.28 2 8.5 2 5.42 4.42
+                                                                           3 7.5 3c1.74 0 3.41.81 4.5
+                                                                           2.09C13.09 3.81 14.76 3 16.5
+                                                                           3 19.58 3 22 5.42 22 8.5c0
+                                                                           3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                             </svg>
                                         </button>
                                     </form>
                                 @endauth
+                                <div data-gallery class="relative">
+                                    {{-- Main Image Display（已缩小调整） --}}
+                                    <div
+                                        class="relative rounded-3xl overflow-hidden aspect-[4/3] max-h-[520px] bg-white shadow-inner mb-6">
 
-                                {{-- Main Image Display（已缩小调整） --}}
-                                <div
-                                    class="relative rounded-3xl overflow-hidden aspect-[4/3] max-h-[520px] bg-white shadow-inner mb-6">
-
-                                    <div class="flex h-full transition-transform duration-700 ease-out"
-                                        data-gallery-track>
-                                        @foreach ($gallery as $url)
-                                            <div class="w-full h-full shrink-0">
-                                                @if ($url)
-                                                    <img src="{{ $url }}"
-                                                        class="w-full h-full object-contain select-none"
-                                                        alt="{{ $product->name }}">
-                                                @else
-                                                    <div
-                                                        class="w-full h-full flex flex-col items-center justify-center text-gray-300 bg-gray-50">
-                                                        <svg class="w-10 h-10 mb-2 opacity-20" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path
-                                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
-                                                        </svg>
-                                                        <span class="text-xs tracking-widest uppercase">
-                                                            Image Coming Soon
-                                                        </span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                {{-- 左右按钮 --}}
-                                @if (count($gallery) > 1)
-                                    <button type="button"
-                                        class="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2
-                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
-                   text-white items-center justify-center text-sm shadow
-                   backdrop-blur-sm transition"
-                                        data-gallery-prev>
-                                        ‹
-                                    </button>
-
-                                    <button type="button"
-                                        class="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2
-                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
-                   text-white items-center justify-center text-sm shadow
-                   backdrop-blur-sm transition"
-                                        data-gallery-next>
-                                        ›
-                                    </button>
-                                @endif
-
-                                {{-- Thumbnails --}}
-                                @if (count($gallery) > 1)
-                                    <div class="flex gap-4 justify-center" data-gallery-thumbs>
-                                        @foreach ($gallery as $i => $url)
-                                            <button type="button" data-thumb-index="{{ $i }}"
-                                                class="group relative w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all {{ $loop->first ? 'border-[#D4AF37]' : 'border-transparent' }}">
-                                                @if ($url)
-                                                    <img src="{{ $url }}" class="w-full h-full object-cover">
-                                                @else
-                                                    <div
-                                                        class="w-full h-full flex items-center justify-center text-xs text-gray-400">
-                                                        -
-                                                    </div>
-                                                @endif
-                                                <div
-                                                    class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition">
+                                        <div class="flex h-full transition-transform duration-700 ease-out"
+                                            data-gallery-track>
+                                            @foreach ($gallery as $url)
+                                                <div class="w-full h-full shrink-0">
+                                                    @if ($url)
+                                                        <img src="{{ $url }}"
+                                                            class="w-full h-full object-contain select-none"
+                                                            alt="{{ $product->name }}">
+                                                    @else
+                                                        <div
+                                                            class="w-full h-full flex flex-col items-center justify-center text-gray-300 bg-gray-50">
+                                                            <svg class="w-10 h-10 mb-2 opacity-20" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path
+                                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
+                                                            </svg>
+                                                            <span class="text-xs tracking-widest uppercase">
+                                                                Image Coming Soon
+                                                            </span>
+                                                        </div>
+                                                    @endif
                                                 </div>
-                                            </button>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
                                     </div>
-                                @endif
 
+                                    {{-- 左右按钮 --}}
+                                    @if (count($gallery) > 1)
+                                        <button type="button"
+                                            class="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2
+                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
+                   text-white items-center justify-center text-sm shadow
+                   backdrop-blur-sm transition"
+                                            data-gallery-prev>
+                                            ‹
+                                        </button>
+
+                                        <button type="button"
+                                            class="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2
+                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
+                   text-white items-center justify-center text-sm shadow
+                   backdrop-blur-sm transition"
+                                            data-gallery-next>
+                                            ›
+                                        </button>
+                                    @endif
+
+                                    {{-- Thumbnails --}}
+                                    @if (count($gallery) > 1)
+                                        <div class="flex gap-4 justify-center" data-gallery-thumbs>
+                                            @foreach ($gallery as $i => $url)
+                                                <button type="button" data-thumb-index="{{ $i }}"
+                                                    class="group relative w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all {{ $loop->first ? 'border-[#D4AF37]' : 'border-transparent' }}">
+                                                    @if ($url)
+                                                        <img src="{{ $url }}"
+                                                            class="w-full h-full object-cover">
+                                                    @else
+                                                        <div
+                                                            class="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                                                            -
+                                                        </div>
+                                                    @endif
+                                                    <div
+                                                        class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition">
+                                                    </div>
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -441,22 +444,22 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36
-                                                                       2 12.28 2 8.5 2 5.42 4.42
-                                                                       3 7.5 3c1.74 0 3.41.81 4.5
-                                                                       2.09C13.09 3.81 14.76 3 16.5
-                                                                       3 19.58 3 22 5.42 22 8.5c0
-                                                                       3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                                                   2 12.28 2 8.5 2 5.42 4.42
+                                                                                   3 7.5 3c1.74 0 3.41.81 4.5
+                                                                                   2.09C13.09 3.81 14.76 3 16.5
+                                                                                   3 19.58 3 22 5.42 22 8.5c0
+                                                                                   3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                         stroke="#8f6a10" stroke-width="1.8" viewBox="0 0 24 24"
                                                         class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                                         0-3.6 1-4.5 2.5C10.6 4.5
-                                                                         8.9 3.5 7 3.5 4.2 3.5 2
-                                                                         5.7 2 8.5c0 5.2 5.5 8.9
-                                                                         9.8 12.7.1.1.3.1.4 0C15.5
-                                                                         17.4 21 13.7 21 8.5z" />
+                                                                                     0-3.6 1-4.5 2.5C10.6 4.5
+                                                                                     8.9 3.5 7 3.5 4.2 3.5 2
+                                                                                     5.7 2 8.5c0 5.2 5.5 8.9
+                                                                                     9.8 12.7.1.1.3.1.4 0C15.5
+                                                                                     17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
@@ -689,11 +692,19 @@
                 });
             });
 
-            // 这里保留你之前的 gallery / 数量 JS...
+            
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
             const gallery = document.querySelector("[data-gallery]");
             if (!gallery) return;
 
             const track = gallery.querySelector("[data-gallery-track]");
+            if (!track) return;
+
             const slides = Array.from(track.children);
             const prev = gallery.querySelector("[data-gallery-prev]");
             const next = gallery.querySelector("[data-gallery-next]");
@@ -702,6 +713,8 @@
             let index = 0;
 
             const go = (i) => {
+                if (!slides.length) return;
+
                 index = (i + slides.length) % slides.length;
                 track.style.transform = `translateX(-${index * 100}%)`;
 
@@ -717,9 +730,12 @@
             next?.addEventListener("click", () => go(index + 1));
 
             thumbs.forEach((t) => {
-                t.addEventListener("click", () => go(parseInt(t.dataset.thumbIndex) || 0));
+                t.addEventListener("click", () =>
+                    go(parseInt(t.dataset.thumbIndex) || 0)
+                );
             });
 
+            // Swipe on mobile
             let sx = 0;
             track.addEventListener("touchstart", (e) => sx = e.touches[0].clientX);
             track.addEventListener("touchend", (e) => {

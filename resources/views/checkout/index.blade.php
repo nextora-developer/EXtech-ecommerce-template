@@ -380,13 +380,13 @@
                                                         @endif
 
                                                         {{-- Step 3 Receipt --}}
-                                                        <div class="flex gap-4">
+                                                        <div class="flex gap-4 items-start">
                                                             <span
                                                                 class="flex-shrink-0 w-6 h-6 rounded-full bg-[#D4AF37] text-white text-xs font-bold flex items-center justify-center">
                                                                 {{ $method->duitnow_qr_path ? '3' : '2' }}
                                                             </span>
 
-                                                            <div class="flex-grow">
+                                                            <div class="flex-1 min-w-0">
                                                                 <h4 class="text-sm font-bold text-gray-900 mb-2">
                                                                     Upload Transaction Receipt
                                                                 </h4>
@@ -396,17 +396,21 @@
                                                                     transfer.
                                                                 </p>
 
-                                                                <input type="file" name="payment_receipt" required
-                                                                    class=" text-sm text-gray-700
-                                                                    border border-gray-200 rounded-2xl
-                                                                        file:mr-4 file:py-2 file:px-4
-                                                                    file:rounded-full file:border-0
-                                                                    file:text-xs file:font-bold
-                                                                            file:bg-[#D4AF37] file:text-white
-                                                                    hover:file:bg-[#b9962c]
-                                                                    focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30
-                                                                        focus:outline-none
-                                                                    transition">
+                                                                <div class="max-w-full">
+
+                                                                    <input type="file" name="payment_receipt"
+                                                                        required
+                                                                        class="block w-full max-w-full text-sm text-gray-700
+                                                                                border border-gray-200 rounded-2xl
+                                                                                file:mr-4 file:py-2 file:px-4
+                                                                                file:rounded-full file:border-0
+                                                                                file:text-xs file:font-bold
+                                                                                file:bg-[#D4AF37] file:text-white
+                                                                                hover:file:bg-[#b9962c]
+                                                                                focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30
+                                                                                focus:outline-none
+                                                                                transition">
+                                                                </div>
 
                                                             </div>
                                                         </div>
