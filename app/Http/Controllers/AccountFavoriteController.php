@@ -29,7 +29,8 @@ class AccountFavoriteController extends Controller
             'product_id' => $product->id,
         ]);
 
-        return back()->with('status', 'favorite-added');
+        // return back()->with('status', 'favorite-added');
+        return back()->with('success', 'Added to wistlist');
     }
 
     // 移除收藏
@@ -40,6 +41,7 @@ class AccountFavoriteController extends Controller
             ->where('product_id', $product->id)
             ->delete();
 
-        return back()->with('status', 'favorite-removed');
+        // return back()->with('status', 'favorite-removed');
+        return back()->with('success', 'Remove from wistlist');
     }
 }

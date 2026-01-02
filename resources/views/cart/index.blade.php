@@ -14,7 +14,7 @@
             @if ($items->isEmpty())
                 {{-- Empty State --}}
                 <section
-                    class="bg-white rounded-3xl border border-gray-100 shadow-sm p-12 text-center max-w-2xl mx-auto">
+                    class="bg-white rounded-3xl border border-gray-100 shadow-sm p-12 text-center w-full ">
                     <div class="flex flex-col items-center">
                         <div class="w-20 h-20 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-6">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#8f6a10]" fill="none"
@@ -24,7 +24,7 @@
                             </svg>
                         </div>
                         <h1 class="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h1>
-                        <p class="text-gray-500 mb-8 max-w-xs mx-auto">
+                        <p class="text-gray-500 mb-8  mx-auto">
                             It looks like you haven't added anything yet. Discover our latest arrivals and find your
                             favorites!
                         </p>

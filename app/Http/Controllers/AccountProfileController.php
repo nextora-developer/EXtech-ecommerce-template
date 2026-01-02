@@ -28,7 +28,8 @@ class AccountProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('account.profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('account.profile.edit')
+            ->with('success', 'Profile update successfully.');
     }
 
     public function destroy(Request $request): RedirectResponse

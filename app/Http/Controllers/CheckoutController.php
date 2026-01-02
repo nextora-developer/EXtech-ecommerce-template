@@ -186,6 +186,6 @@ class CheckoutController extends Controller
         });
 
         return redirect()->route('account.orders.index')
-            ->with('success', 'Order placed successfully. We will contact you to verify your payment.');
+            ->with('success', 'Order placed successfully.');
     }
 }
