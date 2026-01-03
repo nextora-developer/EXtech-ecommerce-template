@@ -88,10 +88,32 @@ class AdminOrderController extends Controller
 
         // ✅ 如果 status 有改变，而且有客户 email，就寄通知信
         if ($oldStatus !== $newStatus && $order->customer_email) {
-            Mail::to($order->customer_email)
-                ->send(new OrderStatusUpdatedMail($order, $oldStatus, $newStatus));
-            // 以后要用 queue 可以改成 ->queue(...)
+
+            \Log::info('Order status update mail triggered', [
+                'order_no'   => $order->order_no,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'email'      => $order->customer_email,
+            ]);
+
+            try {
+                Mail::to($order->customer_email)
+                    ->send(new OrderStatusUpdatedMail($order, $oldStatus, $newStatus));
+
+                \Log::info('Order status email sent successfully', [
+                    'order_no' => $order->order_no,
+                    'to'       => $order->customer_email,
+                ]);
+            } catch (\Throwable $e) {
+
+                \Log::error('Order status email FAILED', [
+                    'order_no' => $order->order_no,
+                    'to'       => $order->customer_email,
+                    'error'    => $e->getMessage(),
+                ]);
+            }
         }
+
 
         return back()->with('success', 'Order status updated.');
     }

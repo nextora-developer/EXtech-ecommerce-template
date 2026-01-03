@@ -49,8 +49,6 @@ Shipping: **RM {{ number_format($order->shipping_fee, 2) }}**
 @endforeach
 </x-mail::table>
 
-@if($order->payment_receipt_path)
----
 
 You can review this order in your admin panel.
 
