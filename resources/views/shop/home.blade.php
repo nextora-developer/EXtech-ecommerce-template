@@ -1,52 +1,60 @@
 <x-app-layout>
     <div class="bg-white">
         {{-- Banner：可滑动轮播，图片来自数据库 --}}
-        <section class="w-full h-[260px] sm:h-[360px] lg:h-[420px] relative z-0 bg-white" data-banner-slider>
-            <div class="max-w-7xl5 mx-auto h-full px-4 sm:px-6 lg:px-8 pt-5">
-                <div class="relative h-full rounded-3xl overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.25)]">
+        <section class="w-full relative z-0 bg-white" data-banner-slider>
+            <div class="max-w-7xl5 mx-auto px-4 sm:px-6 lg:px-8 pt-5">
+                <div class="relative rounded-3xl overflow-hidden shadow-[0_18px_40px_rgba(0,0,0,0.25)]">
 
                     @if (isset($banners) && $banners->count())
-                        {{-- 轨道 --}}
-                        <div class="flex h-full transition-transform duration-700 ease-out" data-banner-track>
-                            @foreach ($banners as $banner)
-                                @php
-                                    $url = $banner->link_url ?: route('shop.index');
-                                @endphp
+                        {{-- 用固定比例，避免不同 breakpoint 高度不一样导致裁切不同 --}}
+                        <div class="relative w-full aspect-[21/10] sm:aspect-[21/9] lg:aspect-auto lg:h-[420px]">
+                            {{-- 轨道 --}}
+                            <div class="absolute inset-0 flex h-full transition-transform duration-700 ease-out"
+                                data-banner-track>
+                                @foreach ($banners as $banner)
+                                    @php
+                                        $url = $banner->link_url ?: route('shop.index');
+                                    @endphp
 
-                                <a href="{{ $url }}" class="relative w-full h-full shrink-0 block group">
-                                    <div class="w-full h-full bg-cover bg-center bg-no-repeat"
-                                        style="background-image: url('{{ asset('storage/' . $banner->image_path) }}');">
-                                    </div>
-                                </a>
-                            @endforeach
-                        </div>
-
-                        {{-- 左右箭头 --}}
-                        @if ($banners->count() > 1)
-                            <button type="button"
-                                class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/45 hover:bg-black/70 text-white items-center justify-center text-sm"
-                                data-banner-prev>
-                                ‹
-                            </button>
-
-                            <button type="button"
-                                class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/45 hover:bg-black/70 text-white items-center justify-center text-sm"
-                                data-banner-next>
-                                ›
-                            </button>
-
-                            {{-- 小点点 --}}
-                            <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2" data-banner-dots>
-                                @foreach ($banners as $index => $banner)
-                                    <button type="button"
-                                        class="w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/80 transition"
-                                        data-banner-dot="{{ $index }}"></button>
+                                    <a href="{{ $url }}" class="relative w-full h-full shrink-0 block group">
+                                        <img src="{{ asset('storage/' . $banner->image_path) }}" alt="Banner"
+                                            class="w-full h-full object-cover object-center block">
+                                    </a>
                                 @endforeach
                             </div>
-                        @endif
+
+                            {{-- 左右箭头 --}}
+                            @if ($banners->count() > 1)
+                                <button type="button"
+                                    class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2
+                                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
+                                   text-white items-center justify-center text-sm"
+                                    data-banner-prev>
+                                    ‹
+                                </button>
+
+                                <button type="button"
+                                    class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2
+                                   w-9 h-9 rounded-full bg-black/45 hover:bg-black/70
+                                   text-white items-center justify-center text-sm"
+                                    data-banner-next>
+                                    ›
+                                </button>
+
+                                {{-- 小点点 --}}
+                                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2"
+                                    data-banner-dots>
+                                    @foreach ($banners as $index => $banner)
+                                        <button type="button"
+                                            class="w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-white/80 transition"
+                                            data-banner-dot="{{ $index }}"></button>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
                     @else
-                        {{-- 没有 banner 的时候显示一个占位背景（你要可以再改） --}}
-                        <div class="w-full h-full bg-[#F5F5F7] flex items-center justify-center">
+                        {{-- 没有 banner 的时候显示一个占位背景 --}}
+                        <div class="w-full aspect-[21/10] sm:aspect-[21/9] lg:aspect-auto lg:h-[420px] bg-[#F5F5F7] flex items-center justify-center rounded-3xl">
                             <p class="text-gray-400 text-sm">Shop Banner coming soon</p>
                         </div>
                     @endif
@@ -54,8 +62,6 @@
                 </div>
             </div>
         </section>
-
-
 
 
         {{-- Category 区块 --}}
@@ -182,20 +188,20 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="#D4AF37"
                                                         viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42
-                                                        4.42 3 7.5 3c1.74 0 3.41.81 4.5
-                                                        2.09C13.09 3.81 14.76 3 16.5
-                                                        3 19.58 3 22 5.42 22 8.5c0
-                                                        3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                            4.42 3 7.5 3c1.74 0 3.41.81 4.5
+                                                            2.09C13.09 3.81 14.76 3 16.5
+                                                            3 19.58 3 22 5.42 22 8.5c0
+                                                            3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                                     </svg>
                                                 @else
                                                     {{-- empty heart --}}
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#8f6a10"
                                                         stroke-width="1.8" viewBox="0 0 24 24" class="h-5 w-5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.5c0-2.8-2.2-5-5-5-1.9
-                                                        0-3.6 1-4.5 2.5C10.6 4.5 8.9 3.5
-                                                        7 3.5 4.2 3.5 2 5.7 2 8.5c0 5.2
-                                                        5.5 8.9 9.8 12.7.1.1.3.1.4
-                                                        0C15.5 17.4 21 13.7 21 8.5z" />
+                                                            0-3.6 1-4.5 2.5C10.6 4.5 8.9 3.5
+                                                            7 3.5 4.2 3.5 2 5.7 2 8.5c0 5.2
+                                                            5.5 8.9 9.8 12.7.1.1.3.1.4
+                                                            0C15.5 17.4 21 13.7 21 8.5z" />
                                                     </svg>
                                                 @endif
                                             </button>
@@ -218,27 +224,26 @@
 
                                     <div class="mt-2 flex items-center justify-between">
                                         <p class="text-sm font-semibold text-[#8f6a10]">
-                                                    @if ($product->has_variants && $product->variants->count())
-                                                        @php
-                                                            $variantPrices = $product->variants->whereNotNull('price');
-                                                            $min = $variantPrices->min('price');
-                                                            $max = $variantPrices->max('price');
-                                                        @endphp
+                                            @if ($product->has_variants && $product->variants->count())
+                                                @php
+                                                    $variantPrices = $product->variants->whereNotNull('price');
+                                                    $min = $variantPrices->min('price');
+                                                    $max = $variantPrices->max('price');
+                                                @endphp
 
-                                                        @if ($min == $max)
-                                                            {{-- 所有 variant 同价 --}}
-                                                            RM {{ number_format($min, 2) }}
-                                                        @else
-                                                            {{-- 显示最低价，加 From --}}
-                                                            <span
-                                                                class="text-xs font-normal text-gray-400 mr-1">From</span>
-                                                            RM {{ number_format($min, 2) }}
-                                                        @endif
-                                                    @else
-                                                        {{-- 没有 variants --}}
-                                                        RM {{ number_format($product->price ?? 0, 2) }}
-                                                    @endif
-                                                </p>
+                                                @if ($min == $max)
+                                                    {{-- 所有 variant 同价 --}}
+                                                    RM {{ number_format($min, 2) }}
+                                                @else
+                                                    {{-- 显示最低价，加 From --}}
+                                                    <span class="text-xs font-normal text-gray-400 mr-1">From</span>
+                                                    RM {{ number_format($min, 2) }}
+                                                @endif
+                                            @else
+                                                {{-- 没有 variants --}}
+                                                RM {{ number_format($product->price ?? 0, 2) }}
+                                            @endif
+                                        </p>
 
                                         <button type="button"
                                             class="inline-flex items-center rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-700 group-hover:border-[#D4AF37]/70 group-hover:text-[#8f6a10]">
