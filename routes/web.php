@@ -23,6 +23,8 @@ use App\Http\Controllers\AccountAddressController;
 use App\Http\Controllers\AccountProfileController;
 use App\Http\Controllers\AccountFavoriteController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +54,15 @@ Route::get('/cart/count', function () {
         'count' => $count,
     ]);
 })->name('cart.count');
+
+Route::get('/test-mail', function () {
+    Mail::raw('This is a simple test email from Extech Ecommerce.', function ($message) {
+        $message->to('test@example.com') // 收件人随便写，反正 Mailtrap 会拦截
+            ->subject('Test Email from Extech');
+    });
+
+    return 'Test mail sent!';
+});
 
 
 /*
