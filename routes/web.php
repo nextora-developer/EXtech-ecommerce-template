@@ -55,14 +55,17 @@ Route::get('/cart/count', function () {
     ]);
 })->name('cart.count');
 
-Route::get('/test-mail', function () {
-    Mail::raw('This is a simple test email from Extech Ecommerce.', function ($message) {
-        $message->to('test@example.com') // 收件人随便写，反正 Mailtrap 会拦截
-            ->subject('Test Email from Extech');
-    });
+if (app()->environment('local')) {
+    Route::get('/test-mail', function () {
+        Mail::raw('This is a simple test email from Extech Ecommerce.', function ($message) {
+            $message->to('test@example.com')
+                ->subject('Test Email from Extech');
+        });
 
-    return 'Test mail sent!';
-});
+        return 'Test mail sent!';
+    });
+}
+
 
 
 /*

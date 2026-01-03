@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderStatusUpdatedMail;
 use Illuminate\Validation\Rule;
 
 class AdminOrderController extends Controller
@@ -53,6 +55,9 @@ class AdminOrderController extends Controller
     {
         $statuses = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'];
 
+        // 先记住旧的 status，用来判断有没有改变
+        $oldStatus = $order->status;
+
         $validated = $request->validate([
             'status'           => ['required', Rule::in($statuses)],
             'shipping_courier' => ['required_if:status,shipped,completed', 'nullable', 'string', 'max:100'],
@@ -66,7 +71,6 @@ class AdminOrderController extends Controller
 
         // 如果订单进入 shipped / completed 阶段 → 一并保存物流资料
         if (in_array($validated['status'], ['shipped', 'completed'])) {
-
             $data['shipping_courier'] = $validated['shipping_courier'] ?? $order->shipping_courier;
             $data['tracking_number']  = $validated['tracking_number'] ?? $order->tracking_number;
 
@@ -74,7 +78,20 @@ class AdminOrderController extends Controller
             $data['shipped_at'] = $validated['shipped_at'] ?? ($order->shipped_at ?? now());
         }
 
+        // 更新订单
         $order->update($data);
+
+        // 刷新一下，确保关系 / 字段是最新的（给 mail 用）
+        $order->refresh();
+
+        $newStatus = $order->status;
+
+        // ✅ 如果 status 有改变，而且有客户 email，就寄通知信
+        if ($oldStatus !== $newStatus && $order->customer_email) {
+            Mail::to($order->customer_email)
+                ->send(new OrderStatusUpdatedMail($order, $oldStatus, $newStatus));
+            // 以后要用 queue 可以改成 ->queue(...)
+        }
 
         return back()->with('success', 'Order status updated.');
     }

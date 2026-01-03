@@ -205,10 +205,10 @@ class CheckoutController extends Controller
             \Log::info('Config admin_address is: ' . config('mail.admin_address'));
 
             try {
-                // if ($order->customer_email) {
-                //     \Log::info('Sending customer email for order: ' . $order->order_no);
-                //     Mail::to($order->customer_email)->send(new OrderPlacedMail($order));
-                // }
+                if ($order->customer_email) {
+                    \Log::info('Sending customer email for order: ' . $order->order_no);
+                    Mail::to($order->customer_email)->send(new OrderPlacedMail($order));
+                }
 
                 if (config('mail.admin_address')) {
                     \Log::info('Sending admin email for order: ' . $order->order_no);
