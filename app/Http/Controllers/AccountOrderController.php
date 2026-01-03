@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminOrderCompletedMail;
 use Illuminate\Http\Request;
 
 class AccountOrderController extends Controller
@@ -66,9 +69,34 @@ class AccountOrderController extends Controller
             return back()->with('error', 'Order is not shipped yet.');
         }
 
+        $oldStatus = $order->status;
+
+        // 更新为 completed
         $order->update([
             'status' => 'completed',
         ]);
+
+        $order->refresh();
+
+        // ✅ 通知 Admin（用户确认收货）
+        if ($order->customer_email) {
+
+            Log::info('📩 Sending AdminOrderCompletedMail', [
+                'order_no' => $order->order_no,
+                'user'     => $order->customer_email,
+                'to'       => config('mail.admin_address', env('MAIL_ADMIN_ADDRESS')),
+                'old'      => $oldStatus,
+                'new'      => $order->status,
+            ]);
+
+            Mail::to(config('mail.admin_address', env('MAIL_ADMIN_ADDRESS')))
+                ->send(new AdminOrderCompletedMail($order, $oldStatus, $order->status));
+
+            Log::info('✅ AdminOrderCompletedMail sent successfully', [
+                'order_no' => $order->order_no,
+            ]);
+        }
+
 
         return back()->with('success', 'Order marked as received. Thank you!');
     }
