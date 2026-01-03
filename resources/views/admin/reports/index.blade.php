@@ -2,41 +2,70 @@
 
 @section('content')
     {{-- Header --}}
+    {{-- Header --}}
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
         <div>
             <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Analytics Overview</h1>
-            <p class="text-sm text-gray-500 mt-1">Real-time insight into your sales performance and customer growth.</p>
+            {{-- <p class="text-sm text-gray-500 mt-1">
+                Real-time insight into your sales performance and customer growth.
+            </p> --}}
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+        {{-- Filters --}}
+        <div class="flex flex-col md:flex-row md:items-center gap-3 w-full md:w-auto justify-end">
             {{-- Quick Range --}}
-            <div class="inline-flex p-1 bg-gray-100/50 rounded-xl border border-gray-200/60 backdrop-blur-sm">
+            <div
+                class="inline-flex p-1 bg-gray-100/50 rounded-2xl border border-gray-200/60 backdrop-blur-sm self-stretch md:self-auto">
                 @foreach (['today' => 'Today', '7d' => '7 Days', '30d' => '30 Days'] as $val => $label)
                     <a href="{{ route('admin.reports.index', ['range' => $val]) }}"
-                        class="px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 {{ ($activeRange ?? '30d') === $val ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 {{ ($activeRange ?? '30d') === $val ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
                         {{ $label }}
                     </a>
                 @endforeach
             </div>
 
-            {{-- Custom Date Form --}}
-            <form method="GET" action="{{ route('admin.reports.index') }}" class="flex items-center gap-2">
+            {{-- Date Range + Apply + Export --}}
+            <form method="GET" action="{{ route('admin.reports.index') }}" class="flex items-center gap-2 justify-end">
                 <input type="hidden" name="range" value="custom">
+
+                {{-- Date inputs --}}
                 <div
-                    class="flex items-center bg-white border border-gray-200 rounded-xl px-2 shadow-sm focus-within:ring-2 focus-within:ring-[#D4AF37]/20">
+                    class="flex items-center bg-white border border-gray-200 rounded-2xl px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-[#D4AF37]/20">
                     <input type="date" name="start_date" value="{{ request('start_date') }}"
-                        class="border-none text-xs bg-transparent py-2 focus:ring-0">
-                    <span class="text-gray-300 px-1">/</span>
+                        class="border-none text-xs bg-transparent py-1 focus:ring-0 min-w-[110px]">
+                    <span class="text-gray-300 px-1 text-xs">/</span>
                     <input type="date" name="end_date" value="{{ request('end_date') }}"
-                        class="border-none text-xs bg-transparent py-2 focus:ring-0">
+                        class="border-none text-xs bg-transparent py-1 focus:ring-0 min-w-[110px]">
                 </div>
+
+                {{-- Apply --}}
                 <button type="submit"
-                    class="bg-[#D4AF37] hover:bg-[#bfa032] text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-[#D4AF37]/20 transition-all active:scale-95">
+                    class="bg-[#D4AF37] hover:bg-[#bfa032] text-white px-5 py-2 rounded-2xl text-xs font-bold shadow-lg shadow-[#D4AF37]/20 transition-all active:scale-95 whitespace-nowrap">
                     Apply
                 </button>
+
+                {{-- Export CSV：同一个 form，只是换 action --}}
+                <button type="submit" formaction="{{ route('admin.reports.export') }}" formmethod="GET"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl
+                        text-xs font-bold whitespace-nowrap
+                        text-white
+                        bg-[#217346]
+                        border border-[#1b5c39]
+                        hover:bg-[#1b5c39]
+                        active:scale-95
+                        shadow-lg shadow-[#217346]/25
+                        transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                    Export CSV
+                </button>
+
             </form>
         </div>
     </div>
+
 
     @php
         $cardClass =
@@ -134,8 +163,7 @@
                             <div class="flex justify-between mt-1">
                                 <span class="text-xs text-gray-400 font-bold">{{ number_format($row['orders']) }}
                                     Orders</span>
-                                <span
-                                    class="text-xs text-gray-500 font-black">{{ number_format($percentage, 1) }}%</span>
+                                <span class="text-xs text-gray-500 font-black">{{ number_format($percentage, 1) }}%</span>
                             </div>
                         </div>
                     @empty

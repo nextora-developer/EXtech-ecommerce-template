@@ -197,6 +197,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/reports/products', [AdminReportController::class, 'products'])->name('reports.products');
     Route::get('/reports/orders', [AdminReportController::class, 'orders'])->name('reports.orders');
     Route::get('/reports/customers', [AdminReportController::class, 'customers'])->name('reports.customers');
+    Route::get('/reports/export', [AdminReportController::class, 'export'])->name('reports.export');
 
     // Banner
     Route::resource('banners', AdminBannerController::class);

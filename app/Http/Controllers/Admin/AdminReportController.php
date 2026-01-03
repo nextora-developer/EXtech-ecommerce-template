@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class AdminReportController extends Controller
 {
@@ -163,49 +164,122 @@ class AdminReportController extends Controller
         ]);
     }
 
-    public function sales()
+    public function export(Request $request)
     {
-        $today = Carbon::today();
+        // 1) 跟 index 一样的时间过滤逻辑
+        $range = $request->get('range', '30d');
+        $startDateInput = $request->get('start_date');
+        $endDateInput   = $request->get('end_date');
 
-        $totalSales = Order::where('status', 'COMPLETED')->sum('total_amount');
-        $totalOrders = Order::count();
-        $todaySales = Order::whereDate('created_at', $today)->sum('total_amount');
+        $end   = now();
+        $start = now()->subDays(29)->startOfDay();
+        $reportRangeLabel = 'Last 30 Days';
 
-        return view('admin.reports.sales', compact(
-            'totalSales',
-            'totalOrders',
-            'todaySales',
-        ));
-    }
+        switch ($range) {
+            case 'today':
+                $start = now()->startOfDay();
+                $end   = now()->endOfDay();
+                $reportRangeLabel = 'Today';
+                break;
 
-    public function products()
-    {
-        $topProducts = Product::withCount(['orderItems as sold_qty' => function ($q) {
-            $q->select(DB::raw('SUM(quantity)'));
-        }])
-            ->orderByDesc('sold_qty')
-            ->take(10)
-            ->get();
+            case '7d':
+                $start = now()->subDays(6)->startOfDay();
+                $end   = now()->endOfDay();
+                $reportRangeLabel = 'Last 7 Days';
+                break;
 
-        return view('admin.reports.products', compact('topProducts'));
-    }
+            case '30d':
+                $start = now()->subDays(29)->startOfDay();
+                $end   = now()->endOfDay();
+                $reportRangeLabel = 'Last 30 Days';
+                break;
 
-    public function orders()
-    {
-        $statusCounts = Order::selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
+            case 'custom':
+                if ($startDateInput && $endDateInput) {
+                    $start = Carbon::parse($startDateInput)->startOfDay();
+                    $end   = Carbon::parse($endDateInput)->endOfDay();
+                    $reportRangeLabel = $start->format('d M Y') . ' - ' . $end->format('d M Y');
+                } else {
+                    $range = '30d';
+                }
+                break;
+        }
 
-        return view('admin.reports.orders', compact('statusCounts'));
-    }
+        // 2) 基础订单查询
+        $ordersQuery = Order::query()
+            ->whereNotNull('created_at')
+            ->whereBetween('created_at', [$start, $end]);
 
-    public function customers()
-    {
-        $topCustomers = User::withSum('orders as total_spent', 'total_amount')
-            ->orderByDesc('total_spent')
-            ->take(10)
-            ->get();
+        // 3) 先从 DB 拿「按天汇总」的 raw 数据
+        //    注意：DATE(created_at) 会变成类似 '2026-01-01'
+        $rawDaily = (clone $ordersQuery)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as orders, SUM(total) as total')
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date'); // 方便后面用日期当 key 找
 
-        return view('admin.reports.customers', compact('topCustomers'));
+        // 4) 用 CarbonPeriod 从 start ~ end 生成每一天，填补没有订单的天（变 0）
+        $period = CarbonPeriod::create(
+            $start->copy()->startOfDay(),
+            $end->copy()->startOfDay()
+        );
+
+        $dailyStats = [];
+
+        foreach ($period as $date) {
+            $key = $date->format('Y-m-d');
+
+            $row = $rawDaily->get($key); // 可能是 null（那天没订单）
+
+            $ordersCount = $row ? (int) $row->orders : 0;
+            $totalSales  = $row ? (float) $row->total : 0.0;
+            $avgOrder    = $ordersCount > 0 ? $totalSales / $ordersCount : 0.0;
+
+            $dailyStats[] = [
+                'date'           => $key,
+                'orders'         => $ordersCount,
+                'total_sales'    => $totalSales,
+                'avg_order'      => $avgOrder,
+            ];
+        }
+
+        // 5) 生成 CSV 下载（一行 = 一天）
+        $filename = 'daily_sales_' . now()->format('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($dailyStats, $reportRangeLabel) {
+            $handle = fopen('php://output', 'w');
+
+            // 标题 + 时间范围
+            fputcsv($handle, ['Daily Sales Report', $reportRangeLabel]);
+            fputcsv($handle, []); // 空行
+
+            // 表头
+            fputcsv($handle, [
+                'Date',
+                'Orders',
+                'Total Sales',
+                'Average Order Value',
+            ]);
+
+            // 每天一行
+            foreach ($dailyStats as $day) {
+                fputcsv($handle, [
+                    $day['date'],
+                    $day['orders'],
+                    number_format($day['total_sales'], 2, '.', ''),    // 例如 123.45
+                    number_format($day['avg_order'], 2, '.', ''),
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->streamDownload($callback, $filename, $headers);
     }
 }
