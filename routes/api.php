@@ -9,4 +9,5 @@ Route::get('/ping', function () {
 });
 
 // HitPay Webhook
-Route::post('/hitpay/webhook', [HitpayController::class, 'handleWebhook']);
+Route::post('/hitpay/webhook', [HitpayController::class, 'handleWebhook'])
+    ->name('hitpay.webhook');
