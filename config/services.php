@@ -41,17 +41,12 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    // 'hitpay' => [
-    //     'key'  => env('HITPAY_API_KEY'),
-    //     'salt' => env('HITPAY_SALT'),
-    //     'url'  => env('HITPAY_API_URL', 'https://api.sandbox.hit-pay.com'),
-    // ],
-
     'hitpay' => [
-        'url'           => env('HITPAY_API_URL'),
-        'api_key'       => env('HITPAY_API_KEY'),
-        'salt'          => env('HITPAY_API_SALT'),          // 发 payment-requests 用
-        'webhook_salt'  => env('HITPAY_WEBHOOK_SALT'),      // 收 event webhooks 用
+        'url'          => env('HITPAY_API_URL'),
+        'api_key'      => env('HITPAY_API_KEY'),
+        'salt'         => env('HITPAY_SALT'),          // 👈 跟你 .env 里的 HITPAY_SALT 对应
+        'webhook_salt' => env('HITPAY_WEBHOOK_SALT'),  // 👈 v2 JSON event 用的签名 key（以后要用可以）
     ],
+
 
 ];

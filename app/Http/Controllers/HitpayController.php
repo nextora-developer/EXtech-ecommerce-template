@@ -165,7 +165,7 @@ class HitpayController extends Controller
 
             // 使用 dashboard API Keys 里的 Salt（HITPAY_API_SALT）
             $secret = config('services.hitpay.salt')    // env('HITPAY_API_SALT')
-                ?: env('HITPAY_API_SALT');
+                ?: env('HITPAY_SALT');
 
             if (! $secret) {
                 Log::error('HitPay webhook: missing API salt configuration');
