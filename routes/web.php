@@ -230,6 +230,7 @@ Route::get('/payment/hitpay/return', [HitpayController::class, 'handleReturn'])
     ->name('hitpay.return');
 
 // HitPay 服务器 Webhook（必须允许未登录访问）
-Route::post('/hitpay/webhook', [HitpayController::class, 'handleWebhook']);
+Route::post('/hitpay/webhook', [HitpayController::class, 'handleWebhook'])
+    ->name('hitpay.webhook');
 
 require __DIR__ . '/auth.php';
