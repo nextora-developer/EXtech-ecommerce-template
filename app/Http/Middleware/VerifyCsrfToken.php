@@ -12,10 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        // 这里写的是「路径」，不要写开头的 /
-        'payment/hitpay/webhook',
-        // 如果以后你有其它 webhook，可以继续加在这里
-        // 'stripe/*',
-        // 'payment/ipn/*',
+        'hitpay/webhook',   // ✅ 没有前面的斜杠
     ];
 }
