@@ -39,7 +39,7 @@ class AdminOrderController extends Controller
 
         $orders = $q->latest()->paginate(10)->withQueryString();
 
-        $statuses = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'];
+        $statuses = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled', 'failed'];
 
         return view('admin.orders.index', compact('orders', 'statuses'));
     }
@@ -53,7 +53,7 @@ class AdminOrderController extends Controller
 
     public function updateStatus(Request $request, Order $order)
     {
-        $statuses = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'];
+        $statuses = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled', 'failed'];
 
         // 先记住旧的 status，用来判断有没有改变
         $oldStatus = $order->status;

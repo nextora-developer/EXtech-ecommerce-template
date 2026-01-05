@@ -105,6 +105,10 @@ class HitpayController extends Controller
     {
         $payload = $request->all();
 
+        // 先记 log，方便调试
+        Log::info('HitPay webhook received', $payload);
+
+        // 1) 验证签名
         $hmac = $payload['hmac'] ?? null;
         unset($payload['hmac']);
 
@@ -123,6 +127,7 @@ class HitpayController extends Controller
             return response('Invalid signature', 400);
         }
 
+        // 2) 用 reference_number 找订单
         $reference = $payload['reference_number'] ?? null;
         if (! $reference) {
             return response('No reference', 400);
@@ -136,15 +141,18 @@ class HitpayController extends Controller
             return response('Order not found', 404);
         }
 
-        $status = $payload['status'] ?? null; // succeeded / failed / pending
+        // 3) 处理状态
+        $status = $payload['status'] ?? null;   // 可能是 completed / failed / pending 等
 
-        if ($status === 'succeeded') {
+        // ✅ 把 completed 也当成成功
+        if (in_array($status, ['succeeded', 'completed'], true)) {
             $order->update([
-                'status' => 'paid', // 你的订单 status 从 pending → paid
+                'status'         => 'paid',
+                'payment_status' => $status,
             ]);
         } elseif ($status === 'failed') {
             $order->update([
-                'status' => 'pending', // 或者 failed，看你系统定义
+                'payment_status' => 'failed',
             ]);
         }
 

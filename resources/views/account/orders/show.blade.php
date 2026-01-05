@@ -45,6 +45,7 @@
                                     'shipped' => 'bg-indigo-100 text-indigo-700',
                                     'completed' => 'bg-emerald-100 text-emerald-700',
                                     'cancelled' => 'bg-red-100 text-red-600',
+                                    'failed' => 'bg-rose-100 text-rose-700',
                                 ];
                             @endphp
 
@@ -96,6 +97,10 @@
                                         'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4',
                                 ],
                                 'completed' => ['label' => 'Received', 'icon' => 'M5 13l4 4L19 7'],
+                                'failed' => [
+                                    'label' => 'Failed',
+                                    'icon' => 'M6 18L18 6M6 6l12 12', // ✖ cross icon
+                                ],
                             ];
 
                             $orderFlow = array_keys($steps);

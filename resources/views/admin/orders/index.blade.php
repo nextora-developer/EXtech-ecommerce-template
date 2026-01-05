@@ -84,6 +84,7 @@
                                 'SHIPPED' => 'bg-blue-50 text-blue-700 border border-blue-200',
                                 'COMPLETED' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
                                 'CANCELLED' => 'bg-red-50 text-red-600 border border-red-200',
+                                'FAILED'    => 'bg-rose-50 text-rose-700 border border-rose-200',
                             ];
                             $style = $colors[$status] ?? 'bg-gray-50 text-gray-500 border border-gray-200';
                         @endphp

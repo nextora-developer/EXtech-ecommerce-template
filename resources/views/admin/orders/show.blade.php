@@ -21,6 +21,7 @@
             'SHIPPED' => 'border-blue-500 bg-blue-50 text-blue-700',
             'COMPLETED' => 'border-emerald-500 bg-emerald-50 text-emerald-700',
             'CANCELLED' => 'border-red-500 bg-red-50 text-red-700',
+            'FAILED' => 'border-rose-500 bg-rose-50 text-rose-700',
         ];
         $badgeColor = $styles[$status] ?? 'border-gray-400 bg-gray-100 text-gray-700';
     @endphp
