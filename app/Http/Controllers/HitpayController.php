@@ -109,30 +109,49 @@ class HitpayController extends Controller
     {
         $payload = $request->all();
 
-        // 0️⃣ 先记 log，确认 HitPay / Postman 送了什么
         Log::info('HitPay webhook received', [
-            'payload' => $payload,
-            'headers' => $request->headers->all(),
+            'payload'    => $payload,
+            'headers'    => $request->headers->all(),
             'user_agent' => $request->userAgent(),
         ]);
 
+        // 🔎 区分几种来源：
+        $userAgent = $request->userAgent() ?? '';
+        $headers   = array_change_key_case($request->headers->all(), CASE_LOWER);
+
+        $isPostman = str_contains($userAgent, 'PostmanRuntime');
+        $isJsonEventV2 = isset($headers['hitpay-event-object']);   // HitPay v2 JSON Event
+
         /**
-         * 1️⃣ 是否要跳过 HMAC（方便用 Postman 测试）
-         *
-         * - local 环境：直接跳过
-         * - User-Agent 包含 PostmanRuntime：视为你在用 Postman 调试，也跳过
-         * - 其他情况（真正 HitPay 调用）：一定要过 HMAC
+         * 1️⃣ 处理 HitPay JSON Event v2（payment_request event，有 Hitpay-Signature）
+         *    —— 你目前用不到它更新订单，可以直接记 log 然后回 200，避免一直 retry。
          */
-        $skipHmac = app()->environment('local')
-            || str_contains($request->userAgent() ?? '', 'PostmanRuntime');
+        if ($isJsonEventV2) {
+            Log::info('HitPay JSON event v2 received (ignored for status update)', [
+                'event_type'   => $headers['hitpay-event-type'][0] ?? null,
+                'event_object' => $headers['hitpay-event-object'][0] ?? null,
+            ]);
+
+            // 不改订单，只回 200，避免 HitPay 重试
+            return response('OK (event v2 ignored)', 200);
+        }
+
+        /**
+         * 2️⃣ 其他情况：走旧版 x-www-form-urlencoded webhook（Status 更新用）
+         *    - 这里会带 hmac 字段
+         *    - Content-Type = application/x-www-form-urlencoded
+         */
+
+        // 👉 Postman / local 环境：为了 debug，跳过 HMAC 验证
+        $skipHmac = app()->environment('local') || $isPostman;
 
         if ($skipHmac) {
             Log::info('HitPay webhook: skip HMAC verification (debug mode)', [
                 'env'        => app()->environment(),
-                'user_agent' => $request->userAgent(),
+                'user_agent' => $userAgent,
             ]);
         } else {
-            // 2️⃣ HMAC 验证（生产用，防止被乱 call）
+            // ✅ 正式环境：严格 HMAC 验证
 
             $receivedHmac = $payload['hmac'] ?? null;
 
@@ -141,26 +160,42 @@ class HitpayController extends Controller
                 return response('Missing hmac', 400);
             }
 
-            // 验签时不能包含 hmac 自己
+            // 签名前必须排除 hmac 本身
             unset($payload['hmac']);
 
-            // 🔑 这里用的是 config/services.php 里的 webhook_salt
-            //   'hitpay' => [
-            //       'webhook_salt' => env('HITPAY_WEBHOOK_SALT'),
-            //   ]
-            $secret = config('services.hitpay.webhook_salt')
-                ?: config('services.hitpay.salt'); // 没设就 fallback
+            // 使用 dashboard API Keys 里的 Salt（HITPAY_API_SALT）
+            $secret = config('services.hitpay.salt')    // env('HITPAY_API_SALT')
+                ?: env('HITPAY_API_SALT');
 
-            // 为了稳定，先按 key 排序再 build query
-            ksort($payload);
-            $queryString = http_build_query($payload);
+            if (! $secret) {
+                Log::error('HitPay webhook: missing API salt configuration');
+                return response('Server configuration error', 500);
+            }
 
-            $calculated = hash_hmac('sha256', $queryString, $secret);
+            // 🔐 HitPay 正式算法： key + value, 然后按 key 排序，全部串起来
+            $hmacSource = [];
+
+            foreach ($payload as $key => $val) {
+                // null 转成空字串，布林转 0/1，统一成 string
+                if (is_bool($val)) {
+                    $val = $val ? '1' : '0';
+                } elseif ($val === null) {
+                    $val = '';
+                }
+
+                $hmacSource[$key] = $key . (string) $val;
+            }
+
+            ksort($hmacSource);
+
+            $signingString = implode('', array_values($hmacSource));
+
+            $calculated = hash_hmac('sha256', $signingString, $secret);
 
             if (! hash_equals($calculated, $receivedHmac)) {
                 Log::warning('HitPay webhook invalid signature', [
                     'payload'    => $payload,
-                    'query'      => $queryString,
+                    'signing'    => $signingString,
                     'calculated' => $calculated,
                     'received'   => $receivedHmac,
                 ]);
@@ -173,7 +208,7 @@ class HitpayController extends Controller
 
         /**
          * 3️⃣ 用 reference_number 找订单
-         *    （你 createPayment 那边已经把 order_no 放在 reference_number）
+         *    你 createPayment 那边已经把 order_no 放在 reference_number
          */
         $reference = $payload['reference_number'] ?? null;
 
@@ -192,7 +227,6 @@ class HitpayController extends Controller
 
         $oldStatus = $order->status;
 
-        // HitPay 回来的 status（可能是 completed / succeeded / failed / pending 等）
         $statusRaw = $payload['status'] ?? '';
         $status    = strtolower($statusRaw);
 
@@ -209,20 +243,19 @@ class HitpayController extends Controller
         // ✅ 付款成功
         if (in_array($status, ['succeeded', 'completed', 'success', 'paid'], true)) {
 
-            // 避免重复改 & 重复发信
             $alreadyPaid = $order->status === 'paid';
 
             $order->update([
-                'status'         => 'paid',                              // 你的业务状态
-                'payment_status' => $statusRaw ?: 'completed',          // 记录第三方原始状态（如果你有这栏位）
+                'status'         => 'paid',
+                'payment_status' => $statusRaw ?: 'completed',
             ]);
 
             Log::info('HitPay webhook set order to paid', [
-                'order_no'      => $order->order_no,
-                'already_paid'  => $alreadyPaid,
+                'order_no'     => $order->order_no,
+                'already_paid' => $alreadyPaid,
             ]);
 
-            // 只在第一次从「非 paid」变成 paid 的时候发邮件
+            // 只在第一次从非 paid 变成 paid 的时候发 email
             if (! $alreadyPaid) {
                 try {
                     if ($order->customer_email) {
@@ -241,11 +274,9 @@ class HitpayController extends Controller
                 }
             }
         }
-        // ❌ 付款失败 / 取消
+        // ❌ 付款失败 / 被取消
         elseif (in_array($status, ['failed', 'cancelled', 'canceled', 'void'], true)) {
             $order->update([
-                // 看你自己业务要不要把 status 也改成 failed
-                // 'status' => 'failed',
                 'payment_status' => $statusRaw ?: 'failed',
             ]);
 
@@ -253,7 +284,7 @@ class HitpayController extends Controller
                 'order_no' => $order->order_no,
             ]);
         }
-        // 其他状态（pending、refund 等），先只记 log，不改状态
+        // 其他状态先只记 log
         else {
             Log::info('HitPay webhook unhandled status', [
                 'order_no' => $order->order_no,
@@ -264,6 +295,7 @@ class HitpayController extends Controller
         // 5️⃣ 一定要回 200，HitPay 才不会一直 retry
         return response('OK', 200);
     }
+
 
 
 
