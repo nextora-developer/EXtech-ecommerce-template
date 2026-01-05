@@ -78,9 +78,25 @@ class HitpayController extends Controller
      */
     public function handleReturn(Request $request)
     {
-        // 这里只做前端提示，实际订单状态以 Webhook 为准
-        return view('payments.hitpay-return'); // 你可以先简单做一个「谢谢，付款处理中」页面
+        $reference = $request->query('reference');
+
+        // 如果拿到 reference，就尽量带用户去那一张订单
+        if ($reference) {
+            $order = Order::where('order_no', $reference)->first();
+
+            if ($order) {
+                return redirect()
+                    ->route('account.orders.show', $order)
+                    ->with('success', 'We have received your payment result. If the status is still pending, it will update shortly.');
+            }
+        }
+
+        // 找不到就回订单列表
+        return redirect()
+            ->route('account.orders.index')
+            ->with('success', 'We have received your payment result. Please check your orders.');
     }
+
 
     /**
      * HitPay Webhook 接收端
