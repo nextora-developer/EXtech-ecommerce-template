@@ -215,11 +215,12 @@ class HitpayController extends Controller
 
     public function handleWebhook(Request $request)
     {
-        Log::info('HitPay webhook PING', [
+        Log::info('HitPay API webhook hit', [
             'payload' => $request->all(),
-            'ip'      => $request->ip(),
+            'headers' => $request->headers->all(),
         ]);
 
-        return response('OK', 200);
+        // 先简单回一个 200
+        return response()->json(['ok' => true]);
     }
 }
