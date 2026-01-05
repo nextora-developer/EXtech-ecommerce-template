@@ -23,6 +23,7 @@ use App\Http\Controllers\AccountProfileController;
 use App\Http\Controllers\AccountFavoriteController;
 
 use App\Http\Controllers\HitpayController;
+use App\Http\Middleware\VerifyCsrfToken;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -234,7 +235,8 @@ Route::get('/payment/hitpay/return', [HitpayController::class, 'handleReturn'])
 //     ->name('hitpay.webhook');
 
 Route::post('/payment/hitpay/webhook', [HitpayController::class, 'handleWebhook'])
-    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+    ->name('hitpay.webhook')
+    ->withoutMiddleware([VerifyCsrfToken::class]);
 
 
 require __DIR__ . '/auth.php';
