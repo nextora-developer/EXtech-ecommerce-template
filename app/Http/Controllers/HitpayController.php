@@ -42,9 +42,10 @@ class HitpayController extends Controller
 
         // 调 HitPay API
         $response = Http::withHeaders([
-            'X-BUSINESS-API-KEY' => config('services.hitpay.key'),
+            'X-BUSINESS-API-KEY' => config('services.hitpay.api_key'),
             'accept'             => 'application/json',
         ])->post(config('services.hitpay.url') . '/v1/payment-requests', $payload);
+
 
         if (! $response->successful()) {
             Log::error('HitPay create payment failed', [
@@ -125,7 +126,7 @@ class HitpayController extends Controller
         $calculated = hash_hmac(
             'sha256',
             http_build_query($payload),
-            config('services.hitpay.salt')    // 对应 .env 里的 HITPAY_SALT
+            config('services.hitpay.webhook_salt')   // 对应 .env 里的 HITPAY_SALT
         );
 
         if (! hash_equals($calculated, $receivedHmac)) {
