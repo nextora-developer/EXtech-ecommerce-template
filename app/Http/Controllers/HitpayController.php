@@ -277,11 +277,13 @@ class HitpayController extends Controller
         // ❌ 付款失败 / 被取消
         elseif (in_array($status, ['failed', 'cancelled', 'canceled', 'void'], true)) {
             $order->update([
+                'status'         => 'failed',                     
                 'payment_status' => $statusRaw ?: 'failed',
             ]);
 
-            Log::info('HitPay webhook marked payment as failed', [
-                'order_no' => $order->order_no,
+            Log::info('HitPay webhook marked payment as FAILED', [
+                'order_no'      => $order->order_no,
+                'hitpay_status' => $statusRaw,
             ]);
         }
         // 其他状态先只记 log
@@ -292,10 +294,8 @@ class HitpayController extends Controller
             ]);
         }
 
-        // 5️⃣ 一定要回 200，HitPay 才不会一直 retry
         return response('OK', 200);
     }
-
 
 
 
