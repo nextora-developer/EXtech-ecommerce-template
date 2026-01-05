@@ -27,7 +27,7 @@ class HitpayController extends Controller
             'purpose'          => 'Order ' . $order->order_no,
             'redirect_url'     => route('hitpay.return'),
             'webhook'          => route('hitpay.webhook'),
-            'payment_methods'  => 'card,paynow',
+            'payment_methods'  => ['card', 'paynow'],
         ];
 
         // 生成签名
