@@ -218,7 +218,6 @@ class HitpayController extends Controller
         Log::info('HitPay webhook PING', [
             'payload' => $request->all(),
             'ip'      => $request->ip(),
-            'headers' => $request->headers->all(),
         ]);
 
         return response('OK', 200);

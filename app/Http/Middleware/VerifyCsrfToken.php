@@ -12,6 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        'hitpay/webhook',   // ✅ 没有前面的斜杠
+        // 'hitpay/webhook',   // ✅ 没有前面的斜杠
     ];
 }
