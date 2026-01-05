@@ -19,10 +19,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        // ⚠️ HitPay Webhook —— 必须允许外部系统访问
         'payment/hitpay/webhook',
-
-        // （如果以后还有其他支付回调，也可以放在这里）
-        // 'payment/xxxxx/webhook',
+        'payment/hitpay/webhook/*',
     ];
 }
