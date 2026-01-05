@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Mail\OrderPlacedMail;
+use App\Mail\AdminOrderNotificationMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -104,62 +107,94 @@ class HitpayController extends Controller
     public function handleWebhook(Request $request)
     {
         $payload = $request->all();
+        \Log::info('HitPay webhook received', $payload);
 
-        // 先记 log，方便调试
-        Log::info('HitPay webhook received', $payload);
+        // 1️⃣ 验证 HMAC 签名
+        $receivedHmac = $payload['hmac'] ?? null;
 
-        // 1) 验证签名
-        $hmac = $payload['hmac'] ?? null;
+        if (! $receivedHmac) {
+            \Log::warning('HitPay webhook missing hmac', $payload);
+            return response('Missing hmac', 400);
+        }
+
+        // 计算签名前，要先移除 hmac 本身
         unset($payload['hmac']);
 
         $calculated = hash_hmac(
             'sha256',
             http_build_query($payload),
-            config('services.hitpay.salt')
+            config('services.hitpay.salt')   // 确认跟 HitPay 后台的一样
         );
 
-        if (! $hmac || ! hash_equals($calculated, $hmac)) {
-            Log::warning('HitPay webhook invalid signature', [
-                'hmac'       => $hmac,
-                'calculated' => $calculated,
+        if (! hash_equals($calculated, $receivedHmac)) {
+            \Log::warning('HitPay webhook invalid signature', [
                 'payload'    => $payload,
+                'calculated' => $calculated,
+                'received'   => $receivedHmac,
             ]);
+
             return response('Invalid signature', 400);
         }
 
-        // 2) 用 reference_number 找订单
+        // 2️⃣ 用 reference_number 找订单
         $reference = $payload['reference_number'] ?? null;
+
         if (! $reference) {
-            return response('No reference', 400);
+            \Log::warning('HitPay webhook missing reference_number', $payload);
+            return response('Missing reference_number', 400);
         }
 
-        /** @var Order|null $order */
+        /** @var \App\Models\Order|null $order */
         $order = Order::where('order_no', $reference)->first();
 
         if (! $order) {
-            Log::warning('HitPay webhook: order not found', ['reference' => $reference]);
+            \Log::warning('HitPay webhook order not found', ['reference' => $reference]);
             return response('Order not found', 404);
         }
 
-        // 3) 处理状态
-        $status = $payload['status'] ?? null;   // 可能是 completed / failed / pending 等
+        $oldStatus = $order->status;
+        $status    = $payload['status'] ?? null;   // completed / succeeded / failed / pending...
 
-        // ✅ 把 completed 也当成成功
+        \Log::info('HitPay webhook order status', [
+            'order_no'      => $order->order_no,
+            'hitpay_status' => $status,
+            'old_status'    => $oldStatus,
+        ]);
+
+        // 3️⃣ 根据 HitPay 返回状态更新订单
         if (in_array($status, ['succeeded', 'completed'], true)) {
             $order->update([
                 'status'         => 'paid',
                 'payment_status' => $status,
             ]);
+
+            // 4️⃣ 只有第一次从 pending → paid 才发邮件，避免重复
+            if ($oldStatus !== 'paid') {
+                try {
+                    if ($order->customer_email) {
+                        Mail::to($order->customer_email)->send(new OrderPlacedMail($order));
+                    }
+
+                    if (config('mail.admin_address')) {
+                        Mail::to(config('mail.admin_address'))->send(new AdminOrderNotificationMail($order));
+                    }
+
+                    \Log::info('HitPay webhook emails sent for order ' . $order->order_no);
+                } catch (\Throwable $e) {
+                    \Log::error('HitPay webhook email failed for ' . $order->order_no . ' : ' . $e->getMessage());
+                }
+            }
         } elseif ($status === 'failed') {
             $order->update([
                 'payment_status' => 'failed',
             ]);
+        } else {
+            // 其他状态，先只记录
+            \Log::info('HitPay webhook unhandled status', [
+                'order_no' => $order->order_no,
+                'status'   => $status,
+            ]);
         }
-
-        Log::info('HitPay webhook processed', [
-            'order_id' => $order->id,
-            'status'   => $status,
-        ]);
 
         return response('OK');
     }

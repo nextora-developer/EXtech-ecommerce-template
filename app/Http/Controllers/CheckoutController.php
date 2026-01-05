@@ -224,33 +224,35 @@ class CheckoutController extends Controller
         });
 
 
-        /**
-         * 7️⃣ 发邮件（不改）
-         */
+        // 7️⃣ 发邮件
+        $isHitpay = $paymentMethod->code === 'hitpay';
+
         if ($order) {
             \Log::info('Checkout order created: ' . $order->order_no);
             \Log::info('Config admin_address is: ' . config('mail.admin_address'));
 
-            try {
-                if ($order->customer_email) {
-                    \Log::info('Sending customer email for order: ' . $order->order_no);
-                    Mail::to($order->customer_email)->send(new OrderPlacedMail($order));
-                }
+            // ⛔ HitPay 的订单先不要这里发邮件
+            if (! $isHitpay) {
+                try {
+                    if ($order->customer_email) {
+                        \Log::info('Sending customer email for order: ' . $order->order_no);
+                        Mail::to($order->customer_email)->send(new OrderPlacedMail($order));
+                    }
 
-                if (config('mail.admin_address')) {
-                    \Log::info('Sending admin email for order: ' . $order->order_no);
-                    Mail::to(config('mail.admin_address'))->send(new AdminOrderNotificationMail($order));
+                    if (config('mail.admin_address')) {
+                        \Log::info('Sending admin email for order: ' . $order->order_no);
+                        Mail::to(config('mail.admin_address'))->send(new AdminOrderNotificationMail($order));
+                    }
+                } catch (\Throwable $e) {
+                    \Log::error('Order email send failed for ' . $order->order_no . ' : ' . $e->getMessage());
                 }
-            } catch (\Throwable $e) {
-                \Log::error('Order email send failed for ' . $order->order_no . ' : ' . $e->getMessage());
             }
         }
 
-
         /**
-         * 8️⃣ ❗ HitPay 付款方式：下单完成后直接跳 HitPay
+         * 8️⃣ HitPay 付款方式：下单完成后直接跳 HitPay
          */
-        if ($paymentMethod->code === 'hitpay') {
+        if ($isHitpay) {
             return redirect()->route('hitpay.pay', $order);
         }
 
