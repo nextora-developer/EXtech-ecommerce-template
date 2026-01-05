@@ -16,12 +16,14 @@ use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminPaymentMethodController;
 use App\Http\Controllers\Admin\AdminShippingController;
 
-
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountOrderController;
 use App\Http\Controllers\AccountAddressController;
 use App\Http\Controllers\AccountProfileController;
 use App\Http\Controllers\AccountFavoriteController;
+
+use App\Http\Controllers\HitpayController;
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
@@ -212,5 +214,23 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/shipping/{rate}/edit', [AdminShippingController::class, 'edit'])->name('shipping.edit');
     Route::put('/shipping/{rate}', [AdminShippingController::class, 'update'])->name('shipping.update');
 });
+
+/*
+|--------------------------------------------------------------------------
+| HitPay Payment Routes
+|--------------------------------------------------------------------------
+*/
+
+// 用户点击「去付款」→ 生成 HitPay Checkout Link
+Route::get('/pay/hitpay/{order}', [HitpayController::class, 'createPayment'])
+    ->name('hitpay.pay');
+
+// 付款完成后浏览器跳回
+Route::get('/payment/hitpay/return', [HitpayController::class, 'handleReturn'])
+    ->name('hitpay.return');
+
+// HitPay 服务器 Webhook（必须允许未登录访问）
+Route::post('/payment/hitpay/webhook', [HitpayController::class, 'handleWebhook'])
+    ->name('hitpay.webhook');
 
 require __DIR__ . '/auth.php';

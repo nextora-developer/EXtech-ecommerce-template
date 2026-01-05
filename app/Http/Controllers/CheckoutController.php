@@ -88,23 +88,43 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name'            => 'required',
-            'phone'           => 'required',
-            'email'           => 'required|email',
-            'address_line1'   => 'required',
-            'postcode'        => 'required',
-            'city'            => 'required',
-            'state'           => 'required',
-            'country'         => 'required',
-            'payment_method'  => 'required|exists:payment_methods,code',
-            'payment_receipt' => 'nullable|image|max:4096', // 4MB
-        ]);
+        /**
+         * 1️⃣ 验证规则（HitPay 不需要收据，Bank Transfer 才强制收据）
+         */
+        $rules = [
+            'name'           => 'required',
+            'phone'          => 'required',
+            'email'          => 'required|email',
+            'address_line1'  => 'required',
+            'postcode'       => 'required',
+            'city'           => 'required',
+            'state'          => 'required',
+            'country'        => 'required',
+            'payment_method' => 'required|exists:payment_methods,code',
+        ];
 
+        // 默认：收据可空（给 HitPay 用）
+        $rules['payment_receipt'] = 'nullable|image|max:4096';
+
+        // Bank Transfer（online_transfer）才强制上传收据
+        if ($request->input('payment_method') === 'online_transfer') {
+            $rules['payment_receipt'] = 'required|image|max:4096';
+        }
+
+        $request->validate($rules);
+
+
+        /**
+         * 2️⃣ 读取 Payment Method
+         */
         $paymentMethod = PaymentMethod::where('code', $request->payment_method)
             ->where('is_active', true)
             ->firstOrFail();
 
+
+        /**
+         * 3️⃣ 读取购物车 + 计算金额
+         */
         $cart = Cart::with('items.product')
             ->where('user_id', auth()->id())
             ->firstOrFail();
@@ -112,43 +132,48 @@ class CheckoutController extends Controller
         $items    = $cart->items;
         $subtotal = $items->sum(fn($i) => $i->unit_price * $i->qty);
 
-        // 1️⃣ 检查有没有实体产品
-        $hasPhysical = $items->contains(function ($item) {
-            return !$item->product->is_digital; // 没设 true 就当实体
-        });
+        // 是否包含实体产品
+        $hasPhysical = $items->contains(fn($item) => !$item->product->is_digital);
 
-        // 默认运费
         $shippingFee = 0;
 
         if ($hasPhysical) {
-            // 2️⃣ 根据 state 判断东马 / 西马
             $eastStates = ['Sabah', 'Sarawak', 'Labuan'];
 
             $zoneCode = in_array($request->state, $eastStates)
                 ? 'east_my'
                 : 'west_my';
 
-            // 3️⃣ 去 DB 拿 rate，找不到就当 0
-            $rate = ShippingRate::where('code', $zoneCode)->value('rate') ?? 0;
-
-            $shippingFee = $rate;
+            $shippingFee = ShippingRate::where('code', $zoneCode)->value('rate') ?? 0;
         } else {
-            // 全部 digital
             $shippingFee = ShippingRate::where('code', 'digital')->value('rate') ?? 0;
         }
 
         $total = $subtotal + $shippingFee;
 
+
+        /**
+         * 4️⃣ 处理收据文件（HitPay 通常不会有）
+         */
         $receiptPath = null;
+
         if ($request->hasFile('payment_receipt')) {
             $receiptPath = $request->file('payment_receipt')
                 ->store('payment_receipts', 'public');
         }
 
+
+        /**
+         * 5️⃣ 生成订单编号
+         */
         do {
             $orderNo = 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6));
-        } while (\App\Models\Order::where('order_no', $orderNo)->exists());
+        } while (Order::where('order_no', $orderNo)->exists());
 
+
+        /**
+         * 6️⃣ 建立订单（事务）
+         */
         $order = null;
 
         DB::transaction(function () use (
@@ -198,8 +223,10 @@ class CheckoutController extends Controller
             $cart->items()->delete();
         });
 
-        // 4️⃣ 事务完成后寄 Email
 
+        /**
+         * 7️⃣ 发邮件（不改）
+         */
         if ($order) {
             \Log::info('Checkout order created: ' . $order->order_no);
             \Log::info('Config admin_address is: ' . config('mail.admin_address'));
@@ -220,6 +247,17 @@ class CheckoutController extends Controller
         }
 
 
+        /**
+         * 8️⃣ ❗ HitPay 付款方式：下单完成后直接跳 HitPay
+         */
+        if ($paymentMethod->code === 'hitpay') {
+            return redirect()->route('hitpay.pay', $order);
+        }
+
+
+        /**
+         * 9️⃣ 其他付款方式 → 回订单列表
+         */
         return redirect()->route('account.orders.index')
             ->with('success', 'Order placed successfully.');
     }

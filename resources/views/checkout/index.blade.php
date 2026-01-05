@@ -399,7 +399,6 @@
                                                                 <div class="max-w-full">
 
                                                                     <input type="file" name="payment_receipt"
-                                                                        required
                                                                         class="block w-full max-w-full text-sm text-gray-700
                                                                                 border border-gray-200 rounded-2xl
                                                                                 file:mr-4 file:py-2 file:px-4
@@ -711,11 +710,13 @@
 
             const radios = container.querySelectorAll('.payment-radio');
             const details = container.querySelectorAll('.payment-detail');
+            const groups = container.querySelectorAll('.payment-group');
 
-            function refreshPaymentDetails() {
+            function refreshPaymentUI() {
                 const checked = container.querySelector('.payment-radio:checked');
                 const activeCode = checked ? checked.value : null;
 
+                // 1) 展开 / 收起下面的 detail
                 details.forEach(detail => {
                     if (detail.dataset.code === activeCode) {
                         detail.classList.remove('hidden');
@@ -723,16 +724,35 @@
                         detail.classList.add('hidden');
                     }
                 });
+
+                // 2) 上面卡片边框高亮跟着 radio 走
+                groups.forEach(group => {
+                    const radio = group.querySelector('.payment-radio');
+                    const card = group.querySelector('label');
+
+                    if (!radio || !card) return;
+
+                    if (radio.checked) {
+                        // 选中的：金边 + 淡黄背景
+                        card.classList.remove('border-gray-100', 'bg-white', 'hover:border-gray-200');
+                        card.classList.add('border-[#D4AF37]', 'bg-[#FDFBF7]');
+                    } else {
+                        // 未选中的：灰边 + 白底
+                        card.classList.remove('border-[#D4AF37]', 'bg-[#FDFBF7]');
+                        card.classList.add('border-gray-100', 'bg-white', 'hover:border-gray-200');
+                    }
+                });
             }
 
             radios.forEach(r => {
-                r.addEventListener('change', refreshPaymentDetails);
+                r.addEventListener('change', refreshPaymentUI);
             });
 
-            // 初始化：默认选中的那一个展开
-            refreshPaymentDetails();
+            // 初始化：页面加载时根据默认选中的 payment method 调整一次
+            refreshPaymentUI();
         });
     </script>
+
 
     <script>
         document.querySelector('form').addEventListener('submit', function(e) {

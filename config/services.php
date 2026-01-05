@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | HitPay Gateway Sandbox
+    |--------------------------------------------------------------------------
+    */
+
+    'hitpay' => [
+        'key'  => env('HITPAY_API_KEY'),
+        'salt' => env('HITPAY_SALT'),
+        'url'  => env('HITPAY_API_URL', 'https://api.sandbox.hit-pay.com'),
+    ],
+
 ];
