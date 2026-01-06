@@ -34,8 +34,6 @@ class HitpayController extends Controller
                 'card',
                 'fpx',
                 'touch_n_go',
-                'alipay',
-
             ],
 
         ];
