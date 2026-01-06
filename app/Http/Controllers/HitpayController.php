@@ -33,7 +33,7 @@ class HitpayController extends Controller
             'payment_methods' => [
                 'card',
                 'fpx',
-                'tng',
+                'touch_n_go',
             ],
 
         ];
