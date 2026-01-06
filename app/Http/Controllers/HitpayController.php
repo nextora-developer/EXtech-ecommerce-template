@@ -21,7 +21,7 @@ class HitpayController extends Controller
 
         // 2) 组 payload
         $payload = [
-            'amount'           => (float) $amount,
+            'amount'           => $amount,
             'currency'         => $currency,
             'reference_number' => $order->order_no,
             'name'             => $order->customer_name ?? 'Customer',
@@ -30,6 +30,7 @@ class HitpayController extends Controller
             'purpose'          => 'Order ' . $order->order_no,
             'redirect_url'     => route('hitpay.return'),
             'webhook'          => route('hitpay.webhook'),
+
             'address' => [
                 'line_1'      => $order->address_line1 ?? '',
                 'line_2'      => $order->address_line2 ?? '',
@@ -38,6 +39,7 @@ class HitpayController extends Controller
                 'postal_code' => $order->postcode ?? '',
                 'country'     => $order->country ?? 'MY',
             ],
+
             'payment_methods' => [
                 'card',
             ],
@@ -47,11 +49,12 @@ class HitpayController extends Controller
         $baseUrl = rtrim(config('services.hitpay.url'), '/'); // eg: https://api.hit-pay.com
 
         // 3) 调 HitPay API
-        $response = Http::withHeaders([
-            'X-BUSINESS-API-KEY' => config('services.hitpay.api_key'),
-            'Accept'             => 'application/json',
-            'Content-Type'       => 'application/json',
-        ])
+        $response = Http::asForm()
+            ->withHeaders([
+                'X-BUSINESS-API-KEY' => config('services.hitpay.api_key'),
+                'Accept'             => 'application/json',
+                'X-Requested-With'   => 'XMLHttpRequest',
+            ])
             ->post($baseUrl . '/v1/payment-requests', $payload);
 
         if (! $response->successful()) {
