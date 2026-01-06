@@ -41,10 +41,6 @@ class HitpayController extends Controller
             'payment_methods' => [
                 'card',
                 'fpx',
-                'tng',
-                'paynow_online',
-                'qris',
-                'alipay_plus',
             ],
 
         ];
