@@ -392,11 +392,30 @@ class AdminProductController extends Controller
             $this->syncOptionsFromVariants($product, []);
         }
 
-        // 更新时追加新图片；旧的图片保留
+        // =========================
+        // 图片处理（有新图片就整组替换）
+        // =========================
         if (!empty($imagesInput)) {
-            $currentMaxOrder = $product->images()->max('sort_order') ?? 0;
-            $hasPrimary      = $product->images()->where('is_primary', true)->exists();
-            $primaryPath     = null;
+
+            // 1) 先删旧图片文件 + DB 记录
+            foreach ($product->images as $img) {
+                if ($img->path) {
+                    Storage::disk('public')->delete($img->path);
+                }
+            }
+
+            // 删掉 product_images 记录
+            $product->images()->delete();
+
+            // 如果 products.image 也有封面路径，一起删
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+                $product->image = null;
+                $product->save();
+            }
+
+            // 2) 再存新的图片
+            $primaryPath = null;
 
             foreach ($imagesInput as $index => $file) {
                 if (!$file) {
@@ -405,25 +424,23 @@ class AdminProductController extends Controller
 
                 $path = $file->store('products', 'public');
 
-                $isPrimary = false;
-                if (!$hasPrimary && $primaryPath === null && $index === 0) {
-                    $isPrimary  = true;
-                    $primaryPath = $path;
-                    $hasPrimary = true;
-                }
-
                 $product->images()->create([
                     'path'       => $path,
-                    'is_primary' => $isPrimary,
-                    'sort_order' => $currentMaxOrder + $index + 1,
+                    'is_primary' => $index === 0,  // 第一张当封面
+                    'sort_order' => $index,        // 从 0 开始排
                 ]);
+
+                if ($index === 0) {
+                    $primaryPath = $path;
+                }
             }
 
-            // 如果这次有设到新的 primary，同步到 products.image
+            // 同步封面到 products.image 字段
             if ($primaryPath) {
                 $product->update(['image' => $primaryPath]);
             }
         }
+
 
         return redirect()
             ->route('admin.products.index')
