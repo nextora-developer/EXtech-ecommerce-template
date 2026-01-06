@@ -142,6 +142,7 @@
                                         'SHIPPED' => 'bg-purple-50 text-purple-700 border-purple-100',
                                         'COMPLETED' => 'bg-gray-100 text-gray-700 border-gray-200',
                                         'CANCELLED' => 'bg-red-50 text-red-700 border-red-100',
+                                        'FAILED' => 'border-rose-500 bg-rose-50 text-rose-700',
                                     ];
                                     $statusStyle =
                                         $statusColors[strtoupper($o->status)] ??
