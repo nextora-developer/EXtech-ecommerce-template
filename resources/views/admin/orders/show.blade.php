@@ -272,7 +272,8 @@
 
             {{-- Payment Metadata --}}
             <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6">
-                <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Payment & System</h3>
+                <h3 class="text-base font-bold tracking-widest text-black-400">Payment</h3>
+                <p class="text-sm text-gray-400 mb-6">No display transaction id mean failed.</p>
 
                 <div class="space-y-5">
                     {{-- Payment Method --}}
@@ -283,27 +284,20 @@
                         </span>
                     </div>
 
-                    {{-- Payment Status --}}
+                    {{-- Payment Result (HitPay Webhook) --}}
                     <div class="flex justify-between">
-                        <span class="text-sm text-gray-500 font-medium">Payment Status:</span>
+                        <span class="text-sm text-gray-500 font-medium">Status (Gateway):</span>
+
                         <span
-                            class="text-sm font-bold 
-                @if ($order->status === 'paid') text-green-700 
-                @elseif($order->status === 'failed') text-red-600
-                @else text-gray-900 @endif">
-                            {{ ucfirst($order->payment_status ?? ($order->status ?? '—')) }}
+                            class="text-sm font-bold
+                                @if ($order->payment_status === 'completed') text-green-700
+                                @elseif ($order->payment_status === 'failed') text-red-600
+                                @else text-gray-900 @endif">
+                            {{ ucfirst($order->payment_status ?? 'Payment failed') }}
                         </span>
                     </div>
 
-                    {{-- Gateway (HitPay / Manual etc) --}}
-                    <div class="flex justify-between">
-                        <span class="text-sm text-gray-500 font-medium">Gateway:</span>
-                        <span class="text-sm font-bold text-gray-900">
-                            {{ $order->gateway ? strtoupper($order->gateway) : '—' }}
-                        </span>
-                    </div>
-
-                    {{-- HitPay Payment Reference --}}
+                    {{-- Transaction ID (Copyable) --}}
                     @if ($order->payment_reference)
                         <div class="flex justify-between">
                             <span class="text-sm text-gray-500 font-medium">Transaction ID:</span>
