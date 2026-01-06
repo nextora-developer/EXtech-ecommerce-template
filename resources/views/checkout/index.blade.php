@@ -261,7 +261,10 @@
                                 <div class="space-y-4" id="payment-methods-container"
                                     data-default="{{ $defaultCode }}">
                                     @foreach ($paymentMethods as $method)
-                                        @php $isOnlineTransfer = $method->code === 'online_transfer'; @endphp
+                                        @php
+                                            $isOnlineTransfer = $method->code === 'online_transfer';
+                                            $isHitpay = $method->code === 'hitpay';
+                                        @endphp
 
                                         <div class="payment-group">
                                             {{-- 选择卡片 --}}
@@ -289,10 +292,20 @@
                                                     <div class="hidden sm:flex items-center gap-1 opacity-60">
                                                         <div
                                                             class="px-2 py-1 rounded bg-white border border-gray-100 text-[10px] font-bold text-blue-800">
-                                                            FPX
+                                                            Online Banking
                                                         </div>
                                                     </div>
                                                 @endif
+
+                                                {{-- @if ($isHitpay)
+                                                    <div class="hidden sm:flex items-center gap-1 opacity-70">
+                                                        <div
+                                                            class="px-2 py-1 rounded-2xl bg-[#f5f1ff] border border-purple-200 text-[10px] font-black tracking-wide text-purple-700">
+                                                            HITPAY PAYMENT
+                                                        </div>
+                                                    </div>
+                                                @endif --}}
+
                                             </label>
 
                                             {{-- 详情展开 --}}
