@@ -30,11 +30,12 @@ class HitpayController extends Controller
             'purpose'          => 'Order ' . $order->order_no,
             'redirect_url'     => route('hitpay.return'),
             'webhook'          => route('hitpay.webhook'),
-            'payment_methods'  => [
+            'payment_methods' => [
                 'card',
                 'fpx',
                 'touch_n_go',
             ],
+
         ];
 
         $baseUrl = rtrim(config('services.hitpay.url'), '/'); // eg: https://api.hit-pay.com
@@ -48,25 +49,16 @@ class HitpayController extends Controller
             ])
             ->post($baseUrl . '/v1/payment-requests', $payload);
 
-        // ❌ HitPay 建立 payment 失败
         if (! $response->successful()) {
-
             Log::error('HitPay create payment failed', [
                 'order_no' => $order->order_no,
                 'status'   => $response->status(),
                 'body'     => $response->body(),
             ]);
 
-            // 👉 这里把订单标记为失败
-            $order->update([
-                'status'         => 'failed',
-                'payment_status' => 'gateway_error',   // 或者 'failed'
-                'gateway'        => $order->gateway ?? 'hitpay',
-            ]);
-
             return redirect()
                 ->route('account.orders.show', $order)
-                ->with('error', 'Unable to create HitPay payment. Please try again or choose another payment method.');
+                ->with('error', 'Unable to create HitPay payment. Please try again.');
         }
 
         $data        = $response->json();
@@ -75,22 +67,14 @@ class HitpayController extends Controller
         if (! $checkoutUrl) {
             Log::error('HitPay response missing checkout URL', $data);
 
-            // 这里同样当成失败处理
-            $order->update([
-                'status'         => 'failed',
-                'payment_status' => 'gateway_error',
-                'gateway'        => $order->gateway ?? 'hitpay',
-            ]);
-
             return redirect()
                 ->route('account.orders.show', $order)
-                ->with('error', 'HitPay response invalid. Please contact support or choose another payment method.');
+                ->with('error', 'HitPay response invalid. Please contact support.');
         }
 
-        // 4) 存 payment_request_id，方便 webhook / 对账
+        // 4) 建议：存 payment_request_id，方便 webhook / 对账
         $order->update([
             'payment_reference' => $data['id'] ?? null,
-            'gateway'           => 'hitpay',
         ]);
 
         // 5) Redirect 到 HitPay Hosted Checkout
