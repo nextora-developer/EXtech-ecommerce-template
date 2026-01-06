@@ -39,15 +39,38 @@
             <p class="text-sm text-gray-500 mt-1">Manage fulfillment and customer communications.</p>
         </div>
 
-        <a href="{{ route('admin.orders.index') }}"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-gray-200 
-                   text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-            </svg>
-            <span>Back to List</span>
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.orders.index') }}"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-gray-200 
+               text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                <span>Back to List</span>
+            </a>
+
+            {{-- Show HitPay Dashboard Button only if payment is HitPay --}}
+            @if ($order->gateway === 'hitpay' || str_contains(strtolower($order->payment_method_name ?? ''), 'hitpay'))
+                <a href="https://dashboard.hit-pay.com/payments/{{ $order->payment_reference }}" target="_blank"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0F172A] text-white
+                   text-sm font-bold hover:bg-black transition-all shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5
+                 c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639
+                 C20.577 16.49 16.64 19.5 12 19.5
+                 c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+
+                    View in HitPay
+                </a>
+            @endif
+        </div>
+
+
+
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
