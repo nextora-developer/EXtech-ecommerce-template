@@ -77,7 +77,7 @@
 
                         {{-- 🔥 REFINED ORDER STATUS BAR --}}
                         @php
-                            $steps = [
+                            $allSteps = [
                                 'pending' => [
                                     'label' => 'Pending',
                                     'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
@@ -96,16 +96,45 @@
                                     'icon' =>
                                         'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4',
                                 ],
-                                'completed' => ['label' => 'Received', 'icon' => 'M5 13l4 4L19 7'],
+                                'completed' => [
+                                    'label' => 'Received',
+                                    'icon' => 'M5 13l4 4L19 7',
+                                ],
+
+                                // 🟡 Cancelled
+                                'cancelled' => [
+                                    'label' => 'Cancelled',
+                                    'icon' => 'M12 2a10 10 0 110 20 10 10 0 010-20M9 9l6 6M15 9l-6 6',
+                                ],
+
+                                // 🔴 Failed
                                 'failed' => [
                                     'label' => 'Failed',
-                                    'icon' => 'M6 18L18 6M6 6l12 12', // ✖ cross icon
+                                    'icon' => 'M6 18L18 6M6 6l12 12',
                                 ],
                             ];
 
+                            $status = $order->status;
+
+                            // ⭐ 默认不显示 cancelled / failed
+                            $steps = $allSteps;
+                            unset($steps['cancelled'], $steps['failed']);
+
+                            // ⭐ 如果是 cancelled → 只加入 cancelled
+                            if ($status === 'cancelled') {
+                                $steps['cancelled'] = $allSteps['cancelled'];
+                            }
+
+                            // ⭐ 如果是 failed → 只加入 failed
+                            if ($status === 'failed') {
+                                $steps['failed'] = $allSteps['failed'];
+                            }
+
                             $orderFlow = array_keys($steps);
-                            $currentIndex = array_search($order->status, $orderFlow);
+                            $currentIndex = array_search($status, $orderFlow);
                         @endphp
+
+
 
                         <div class="mt-10 mb-12 px-2">
                             <div class="flex items-center">
