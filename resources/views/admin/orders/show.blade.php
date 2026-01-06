@@ -275,10 +275,45 @@
                 <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Payment & System</h3>
 
                 <div class="space-y-5">
+                    {{-- Payment Method --}}
                     <div class="flex justify-between">
                         <span class="text-sm text-gray-500 font-medium">Method:</span>
-                        <span class="text-sm font-bold text-gray-900">{{ $order->payment_method_name }}</span>
+                        <span class="text-sm font-bold text-gray-900">
+                            {{ $order->payment_method_name ?? '—' }}
+                        </span>
                     </div>
+
+                    {{-- Payment Status --}}
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-500 font-medium">Payment Status:</span>
+                        <span
+                            class="text-sm font-bold 
+                @if ($order->status === 'paid') text-green-700 
+                @elseif($order->status === 'failed') text-red-600
+                @else text-gray-900 @endif">
+                            {{ ucfirst($order->payment_status ?? ($order->status ?? '—')) }}
+                        </span>
+                    </div>
+
+                    {{-- Gateway (HitPay / Manual etc) --}}
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-500 font-medium">Gateway:</span>
+                        <span class="text-sm font-bold text-gray-900">
+                            {{ $order->gateway ? strtoupper($order->gateway) : '—' }}
+                        </span>
+                    </div>
+
+                    {{-- HitPay Payment Reference --}}
+                    @if ($order->payment_reference)
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500 font-medium">Transaction ID:</span>
+
+                            <button onclick="navigator.clipboard.writeText('{{ $order->payment_reference }}')"
+                                class="text-sm font-bold text-blue-600 hover:underline">
+                                {{ $order->payment_reference }}
+                            </button>
+                        </div>
+                    @endif
 
                     @if ($order->payment_receipt_path)
                         <div class="pt-4 border-t border-gray-200">
