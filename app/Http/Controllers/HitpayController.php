@@ -26,13 +26,28 @@ class HitpayController extends Controller
             'reference_number' => $order->order_no,
             'name'             => $order->customer_name ?? 'Customer',
             'email'            => $order->customer_email ?? null,
+            'phone'            => $order->customer_phone ?? null,
             'purpose'          => 'Order ' . $order->order_no,
             'redirect_url'     => route('hitpay.return'),
             'webhook'          => route('hitpay.webhook'),
-            'payment_methods'  => ['card'], // 以后要加 FPX / DuitNow 再加
-        ];
+            'address' => [
+                'line_1'      => $order->address_line1 ?? '',
+                'line_2'      => $order->address_line2 ?? '',
+                'city'        => $order->city ?? '',
+                'state'       => $order->state ?? '',
+                'postal_code' => $order->postcode ?? '',
+                'country'     => $order->country ?? 'MY',
+            ],
+            'payment_methods' => [
+                'card',
+                'fpx',
+                'tng',
+                'paynow_online',
+                'qris',
+                'alipay_plus',
+            ],
 
-        // ✅ 注意：Create Payment Request 不需要 signature 字段，删掉即可
+        ];
 
         $baseUrl = rtrim(config('services.hitpay.url'), '/'); // eg: https://api.hit-pay.com
 
