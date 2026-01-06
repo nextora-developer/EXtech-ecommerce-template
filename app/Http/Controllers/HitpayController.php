@@ -12,17 +12,16 @@ use Illuminate\Support\Facades\Log;
 
 class HitpayController extends Controller
 {
-    /**
-     * 创建 HitPay Payment Request，然后 redirect 去 HitPay 付款页
-     */
+
     public function createPayment(Order $order)
     {
-        // Sandbox 必须用 SGD
+        // 1) 金额 & 货币
         $amount   = number_format($order->total, 2, '.', '');
-        $currency = 'SGD';
+        $currency = config('services.hitpay.currency', 'MYR'); // .env 控制是 SGD / MYR
 
+        // 2) 组 payload
         $payload = [
-            'amount'           => $amount,
+            'amount'           => (float) $amount,
             'currency'         => $currency,
             'reference_number' => $order->order_no,
             'name'             => $order->customer_name ?? 'Customer',
@@ -30,26 +29,25 @@ class HitpayController extends Controller
             'purpose'          => 'Order ' . $order->order_no,
             'redirect_url'     => route('hitpay.return'),
             'webhook'          => route('hitpay.webhook'),
-            'payment_methods'  => ['card'],
+            'payment_methods'  => ['card'], // 以后要加 FPX / DuitNow 再加
         ];
 
-        // 生成签名
-        $payload['signature'] = hash_hmac(
-            'sha256',
-            http_build_query($payload),
-            config('services.hitpay.salt')
-        );
+        // ✅ 注意：Create Payment Request 不需要 signature 字段，删掉即可
 
-        // 调 HitPay API
+        $baseUrl = rtrim(config('services.hitpay.url'), '/'); // eg: https://api.hit-pay.com
+
+        // 3) 调 HitPay API
         $response = Http::withHeaders([
             'X-BUSINESS-API-KEY' => config('services.hitpay.api_key'),
-            'accept'             => 'application/json',
-        ])->post(config('services.hitpay.url') . '/v1/payment-requests', $payload);
-
+            'Accept'             => 'application/json',
+            'Content-Type'       => 'application/json',
+        ])
+            ->post($baseUrl . '/v1/payment-requests', $payload);
 
         if (! $response->successful()) {
             Log::error('HitPay create payment failed', [
                 'order_no' => $order->order_no,
+                'status'   => $response->status(),
                 'body'     => $response->body(),
             ]);
 
@@ -58,7 +56,7 @@ class HitpayController extends Controller
                 ->with('error', 'Unable to create HitPay payment. Please try again.');
         }
 
-        $data = $response->json();
+        $data        = $response->json();
         $checkoutUrl = $data['payment_url'] ?? $data['url'] ?? null;
 
         if (! $checkoutUrl) {
@@ -69,37 +67,46 @@ class HitpayController extends Controller
                 ->with('error', 'HitPay response invalid. Please contact support.');
         }
 
-        // 可以视情况把 HitPay 的 id 存进去（如果你以后要用）
-        // $order->update([
-        //     'payment_reference' => $data['id'] ?? null,
-        // ]);
+        // 4) 建议：存 payment_request_id，方便 webhook / 对账
+        $order->update([
+            'payment_reference' => $data['id'] ?? null,
+        ]);
 
+        // 5) Redirect 到 HitPay Hosted Checkout
         return redirect()->away($checkoutUrl);
     }
+
 
     /**
      * 用户付款后浏览器跳回来的页面（redirect_url）
      */
     public function handleReturn(Request $request)
     {
-        $reference = $request->query('reference');
+        // HitPay 可能会用 reference 或 reference_number（视实际回传而定）
+        $reference = $request->query('reference')
+            ?? $request->query('reference_number');
 
-        // 如果拿到 reference，就尽量带用户去那一张订单
         if ($reference) {
             $order = Order::where('order_no', $reference)->first();
 
             if ($order) {
                 return redirect()
                     ->route('account.orders.show', $order)
-                    ->with('success', 'We have received your payment result. If the status is still pending, it will update shortly.');
+                    ->with(
+                        'success',
+                        'We have received your payment result. If the order is still pending, it will be updated automatically once we confirm the payment.'
+                    );
             }
         }
 
-        // 找不到就回订单列表
         return redirect()
             ->route('account.orders.index')
-            ->with('success', 'We have received your payment result. Please check your orders.');
+            ->with(
+                'success',
+                'We have received your payment result. Please check your orders. If the status is still pending, it will update shortly after payment confirmation.'
+            );
     }
+
 
 
     /**
@@ -115,35 +122,31 @@ class HitpayController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        // 🔎 区分几种来源：
+        // 🔎 区分几种来源
         $userAgent = $request->userAgent() ?? '';
         $headers   = array_change_key_case($request->headers->all(), CASE_LOWER);
 
-        $isPostman = str_contains($userAgent, 'PostmanRuntime');
-        $isJsonEventV2 = isset($headers['hitpay-event-object']);   // HitPay v2 JSON Event
+        // v2 JSON Event（通常有 HitPay-Event-Object / HitPay-Event-Type 这些 header）
+        $isJsonEventV2 = isset($headers['hitpay-event-object']);
 
         /**
-         * 1️⃣ 处理 HitPay JSON Event v2（payment_request event，有 Hitpay-Signature）
-         *    —— 你目前用不到它更新订单，可以直接记 log 然后回 200，避免一直 retry。
+         * 1️⃣ HitPay JSON Event v2：目前不用来更新订单，只记 log + 回 200
          */
         if ($isJsonEventV2) {
             Log::info('HitPay JSON event v2 received (ignored for status update)', [
-                'event_type'   => $headers['hitpay-event-type'][0] ?? null,
+                'event_type'   => $headers['hitpay-event-type'][0]   ?? null,
                 'event_object' => $headers['hitpay-event-object'][0] ?? null,
             ]);
 
-            // 不改订单，只回 200，避免 HitPay 重试
             return response('OK (event v2 ignored)', 200);
         }
 
         /**
-         * 2️⃣ 其他情况：走旧版 x-www-form-urlencoded webhook（Status 更新用）
-         *    - 这里会带 hmac 字段
-         *    - Content-Type = application/x-www-form-urlencoded
+         * 2️⃣ 旧版 x-www-form-urlencoded webhook（带 hmac，用来更新订单 status）
          */
 
-        // 👉 Postman / local 环境：为了 debug，跳过 HMAC 验证
-        $skipHmac = app()->environment('local') || $isPostman;
+        // local 环境可以跳过 HMAC，production 一定要验
+        $skipHmac = app()->environment('local');
 
         if ($skipHmac) {
             Log::info('HitPay webhook: skip HMAC verification (debug mode)', [
@@ -160,23 +163,24 @@ class HitpayController extends Controller
                 return response('Missing hmac', 400);
             }
 
-            // 签名前必须排除 hmac 本身
+            // 计算签名前必须排除 hmac 本身
             unset($payload['hmac']);
 
-            // 使用 dashboard API Keys 里的 Salt（HITPAY_API_SALT）
-            $secret = config('services.hitpay.salt')    // env('HITPAY_API_SALT')
-                ?: env('HITPAY_SALT');
+            // 使用 config/services.php 里的 HITPAY_SALT
+            $secret = config('services.hitpay.salt');
 
             if (! $secret) {
-                Log::error('HitPay webhook: missing API salt configuration');
+                Log::error('HitPay webhook: missing salt configuration (services.hitpay.salt)');
                 return response('Server configuration error', 500);
             }
 
-            // 🔐 HitPay 正式算法： key + value, 然后按 key 排序，全部串起来
+            // 🔐 HitPay 官方算法：
+            // 1) 对每个 key，拼成 "key" . "value"
+            // 2) 按 key 排序
+            // 3) 全部串起来，然后用 HMAC-SHA256
             $hmacSource = [];
 
             foreach ($payload as $key => $val) {
-                // null 转成空字串，布林转 0/1，统一成 string
                 if (is_bool($val)) {
                     $val = $val ? '1' : '0';
                 } elseif ($val === null) {
@@ -277,7 +281,7 @@ class HitpayController extends Controller
         // ❌ 付款失败 / 被取消
         elseif (in_array($status, ['failed', 'cancelled', 'canceled', 'void'], true)) {
             $order->update([
-                'status'         => 'failed',                     
+                'status'         => 'failed',
                 'payment_status' => $statusRaw ?: 'failed',
             ]);
 
@@ -296,6 +300,7 @@ class HitpayController extends Controller
 
         return response('OK', 200);
     }
+
 
 
 

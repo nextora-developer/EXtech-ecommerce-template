@@ -37,15 +37,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | HitPay Gateway Sandbox
+    | HitPay Payment Gateway 
     |--------------------------------------------------------------------------
     */
 
     'hitpay' => [
         'url'          => env('HITPAY_API_URL'),
         'api_key'      => env('HITPAY_API_KEY'),
-        'salt'         => env('HITPAY_SALT'),          // 👈 跟你 .env 里的 HITPAY_SALT 对应
-        'webhook_salt' => env('HITPAY_WEBHOOK_SALT'),  // 👈 v2 JSON event 用的签名 key（以后要用可以）
+        'salt'         => env('HITPAY_SALT'),          
+        'webhook_salt' => env('HITPAY_WEBHOOK_SALT'), 
+        'currency' => env('HITPAY_CURRENCY'),  
     ],
 
 
