@@ -213,7 +213,7 @@
                         </label>
                         <select id="order-status-select" name="status"
                             class="w-full rounded-xl border-gray-200 focus:border-[#D4AF37] focus:ring-[#D4AF37]/30 text-sm font-semibold">
-                            @foreach (['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'] as $s)
+                            @foreach (['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled', 'failed'] as $s)
                                 <option value="{{ $s }}" @selected($order->status === $s)>{{ strtoupper($s) }}
                                 </option>
                             @endforeach
