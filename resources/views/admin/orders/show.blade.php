@@ -293,7 +293,7 @@
                                 @if ($order->payment_status === 'completed') text-green-700
                                 @elseif ($order->payment_status === 'failed') text-red-600
                                 @else text-gray-900 @endif">
-                            {{ ucfirst($order->payment_status ?? 'Payment failed') }}
+                            {{ ucfirst($order->payment_status ?? '—') }}
                         </span>
                     </div>
 
