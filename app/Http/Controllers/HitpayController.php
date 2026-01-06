@@ -32,6 +32,8 @@ class HitpayController extends Controller
             'webhook'          => route('hitpay.webhook'),
             'payment_methods' => [
                 'card',
+                'fpx',
+                'tng',
             ],
 
         ];
