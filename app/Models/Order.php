@@ -37,6 +37,10 @@ class Order extends Model
         'payment_method_code',
         'payment_method_name',
         'payment_receipt_path',
+
+        'payment_status',       // ex: pending / paid / failed
+        'payment_reference',    // HitPay payment_id
+        'gateway',
     ];
 
     protected $casts = [

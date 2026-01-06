@@ -252,6 +252,8 @@ class HitpayController extends Controller
             $order->update([
                 'status'         => 'paid',
                 'payment_status' => $statusRaw ?: 'completed',
+                'payment_reference' => $payload['payment_id'] ?? $order->payment_reference,
+                'gateway'           => 'hitpay',
             ]);
 
             Log::info('HitPay webhook set order to paid', [
@@ -283,6 +285,7 @@ class HitpayController extends Controller
             $order->update([
                 'status'         => 'failed',
                 'payment_status' => $statusRaw ?: 'failed',
+                'gateway'        => $order->gateway ?? 'hitpay',
             ]);
 
             Log::info('HitPay webhook marked payment as FAILED', [
