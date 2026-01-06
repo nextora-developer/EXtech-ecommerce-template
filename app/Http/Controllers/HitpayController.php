@@ -40,7 +40,6 @@ class HitpayController extends Controller
             ],
             'payment_methods' => [
                 'card',
-                'fpx',
             ],
 
         ];
