@@ -41,6 +41,8 @@ class Order extends Model
         'payment_status',       // ex: pending / paid / failed
         'payment_reference',    // HitPay payment_id
         'gateway',
+
+        'remark',
     ];
 
     protected $casts = [

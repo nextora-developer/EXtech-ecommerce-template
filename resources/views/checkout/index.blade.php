@@ -542,12 +542,23 @@
                                             <span class="text-xl font-black text-[#8f6a10]" data-total-text>
                                                 RM {{ number_format($subtotal, 2) }}
                                             </span>
-                                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">
+                                            <p class="text-[10px] text-gray-600 uppercase tracking-widest">
                                                 Inclusive of Tax
                                             </p>
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- Remark / Order Notes --}}
+                                <div class="mt-5">
+                                    <label class="block text-base font-bold text-gray-700 mb-2 ml-1">
+                                        Order Remark <span class="text-gray-400 font-normal">(optional)</span>
+                                    </label>
+
+                                    <textarea name="remark" rows="3" placeholder="Eg: Please ship together / Leave at doorstep / Send as gift"
+                                        class="w-full text-sm rounded-2xl border border-gray-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 px-4 py-3 resize-none">{{ old('remark') }}</textarea>
+                                </div>
+
 
                                 {{-- Checkout Button --}}
                                 <div class="mt-6">

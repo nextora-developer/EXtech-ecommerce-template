@@ -58,9 +58,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5
-                 c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639
-                 C20.577 16.49 16.64 19.5 12 19.5
-                 c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                 c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639
+                                 C20.577 16.49 16.64 19.5 12 19.5
+                                 c-4.638 0-8.573-3.007-9.963-7.178z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
 
@@ -102,6 +102,7 @@
                             {!! nl2br(e($fullAddress)) ?: '<span class="text-gray-400 italic">No address provided</span>' !!}
                         </div>
                     </div>
+
                 </div>
 
                 {{-- Order Items Table --}}
@@ -196,9 +197,86 @@
                     </div>
                 </div>
 
+                {{-- Totals + Remark Area --}}
+                <div class="p-8 bg-white border-t border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+
+                    {{-- 🟡 Order Remark (Left, Span 2) --}}
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="block text-xs uppercase tracking-[0.2em] text-red-600 font-extrabold">
+                            Order Remark
+                        </label>
+
+                        <div class="relative group">
+                            <div
+                                class="min-h-[80px] w-full text-sm leading-relaxed px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50/50 transition-colors group-hover:bg-gray-50">
+                                @if ($order->remark)
+                                    <p class="text-gray-700 whitespace-pre-line break-words">{{ trim($order->remark) }}</p>
+                                @else
+                                    <p class="text-gray-400 italic font-light">No special instructions provided for this
+                                        order.</p>
+                                @endif
+                            </div>
+                            {{-- Optional: Subtle Decorative Quote Icon --}}
+                            <div class="absolute top-3 right-4 opacity-[0.03] pointer-events-none">
+                                <svg class="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 7.55228 14.017 7V3L21.017 3C22.1216 3 23.017 3.89543 23.017 5V15C23.017 18.3137 20.3307 21 17.017 21H14.017ZM3.0166 21L3.0166 18C3.0166 16.8954 3.91203 16 5.0166 16H8.0166C8.56888 16 9.0166 15.5523 9.0166 15V9C9.0166 8.44772 8.56888 8 8.0166 8H4.0166C3.46432 8 3.0166 7.55228 3.0166 7V3L10.0166 3C11.1212 3 12.0166 3.89543 12.0166 5V15C12.0166 18.3137 9.33031 21 6.0166 21H3.0166Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 🟢 Totals (Right, Span 1) --}}
+                    <div class="md:col-span-1 flex md:justify-end">
+                        <div
+                            class="w-full max-w-xs bg-white rounded-2xl border border-gray-50 p-4 shadow-sm md:shadow-none md:border-none md:p-0">
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500 font-medium">Subtotal</span>
+                                    <span class="text-gray-900 font-bold tracking-tight">
+                                        <span
+                                            class="text-sm text-gray-400 mr-0.5 font-normal">RM </span>{{ number_format($order->subtotal ?? 0, 2) }}
+                                    </span>
+                                </div>
+
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-gray-500 font-medium">Shipping</span>
+                                    <span
+                                        class="font-bold tracking-tight {{ ($order->shipping_fee ?? 0) > 0 ? 'text-gray-900' : 'text-green-600' }}">
+                                        @if (($order->shipping_fee ?? 0) > 0)
+                                            <span
+                                                class="text-sm text-gray-400 mr-0.5 font-normal">RM </span>{{ number_format($order->shipping_fee, 2) }}
+                                        @else
+                                            FREE
+                                        @endif
+                                    </span>
+                                </div>
+
+                                <div class="pt-4 mt-2 border-t border-gray-100 flex justify-between items-end">
+                                    <div class="flex flex-col">
+                                        {{-- <span
+                                            class="text-[10px] uppercase tracking-widest text-gray-400 font-bold leading-none mb-1">Total
+                                            Amount</span> --}}
+                                        <span class="text-base font-black text-gray-900 leading-none">Grand Total</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-3xl font-black text-[#8f6a10] tracking-tighter">
+                                            <span
+                                                class="text-sm font-bold mr-1">RM</span>{{ number_format($order->total ?? 0, 2) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
 
                 {{-- Totals Area --}}
-                <div class="p-6 bg-white border-t border-gray-100 flex justify-end">
+                {{-- <div class="p-6 bg-white border-t border-gray-100 flex justify-end">
                     <div class="w-full max-w-xs space-y-3">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Subtotal</span>
@@ -216,7 +294,7 @@
                                 {{ number_format($order->total ?? 0, 2) }}</span>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
 

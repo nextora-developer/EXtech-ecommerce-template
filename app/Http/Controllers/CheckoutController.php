@@ -101,6 +101,7 @@ class CheckoutController extends Controller
             'state'          => 'required',
             'country'        => 'required',
             'payment_method' => 'required|exists:payment_methods,code',
+            'remark'         => 'nullable|string|max:500',
         ];
 
         // 默认：收据可空（给 HitPay 用）
@@ -207,6 +208,7 @@ class CheckoutController extends Controller
                 'payment_method_code' => $paymentMethod->code,
                 'payment_method_name' => $paymentMethod->name,
                 'payment_receipt_path' => $receiptPath,
+                'remark'               => $request->input('remark'),
             ]);
 
             foreach ($items as $item) {

@@ -26,12 +26,14 @@
 
                     {{-- Header --}}
                     <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                        <div class="flex items-start justify-between">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4">
 
+                            {{-- 左侧：订单号 + 时间 --}}
                             <div>
-                                <h1 class="text-2xl font-semibold text-[#0A0A0C] flex items-center gap-2">
+                                <h1 class="text-xl md:text-2xl font-semibold text-[#0A0A0C] flex items-center gap-2">
                                     Order <span class="text-[#8f6a10]">#{{ $order->order_no }}</span>
                                 </h1>
+
                                 <p class="text-sm text-gray-500 mt-1">
                                     Placed on {{ $order->created_at->format('d M Y, H:i') }}
                                 </p>
@@ -49,24 +51,26 @@
                                 ];
                             @endphp
 
-                            <div class="flex items-center gap-3">
+                            {{-- 右侧：状态 + 按钮（手机会自动掉到第二行） --}}
+                            <div class="flex items-center gap-2 md:gap-3 mt-1 md:mt-0">
 
                                 {{-- Status Badge --}}
                                 <span
-                                    class="px-3 py-1 rounded-full text-sm font-medium shadow-sm
-               {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
+                                    class="px-3 py-1 rounded-full text-xs md:text-sm font-medium shadow-sm
+                   {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-500' }}">
                                     {{ ucfirst($order->status) }}
                                 </span>
 
-                                {{-- Order Received Button --}}
+                                {{-- Order Received Button（只在 shipped 时出现） --}}
                                 @if ($order->status === 'shipped')
                                     <form method="POST" action="{{ route('account.orders.complete', $order) }}">
                                         @csrf
                                         <button
-                                            class="inline-flex items-center px-4 py-2 rounded-xl
-                       bg-emerald-600 text-white text-sm font-semibold
-                       hover:bg-emerald-700 transition">
-                                            ✓ Order Received
+                                            class="inline-flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 rounded-xl
+                           bg-emerald-600 text-white text-xs md:text-sm font-semibold
+                           hover:bg-emerald-700 active:scale-95 transition">
+                                            <span class="text-sm">✓</span>
+                                            <span>Order Received</span>
                                         </button>
                                     </form>
                                 @endif
@@ -74,6 +78,7 @@
                             </div>
 
                         </div>
+
 
                         {{-- 🔥 REFINED ORDER STATUS BAR --}}
                         @php
@@ -173,10 +178,10 @@
 
                                         {{-- Connector Line --}}
                                         @if (!$isLast)
-                                            <div class="flex-1 h-[2px] mx-4 rounded-full overflow-hidden bg-gray-100">
+                                            <div
+                                                class="h-[2px] mx-2 md:mx-4 rounded-full overflow-hidden bg-gray-100 w-[16px] md:flex-1 flex-none">
                                                 <div
-                                                    class="h-full transition-all duration-1000 ease-out 
-                            {{ $isDone && $currentIndex > $index ? 'w-full bg-[#D4AF37]' : 'w-0' }}">
+                                                    class="h-full transition-all duration-1000 ease-out {{ $isDone && $currentIndex > $index ? 'w-full bg-[#D4AF37]' : 'w-0' }}">
                                                 </div>
                                             </div>
                                         @endif
@@ -186,76 +191,74 @@
                         </div>
                         {{-- 🔥 END STATUS BAR --}}
 
-                        {{-- Info blocks --}}
-                        <div class="grid md:grid-cols-2 gap-6 mt-8">
+                        {{-- 3 : 2 Layout --}}
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 pt-5">
 
-                            {{-- 左侧：Customer + Shipping --}}
-                            <div class="space-y-4">
+                            {{-- 🟡 左侧（占 3） --}}
+                            <div class="md:col-span-3">
 
-                                {{-- Customer --}}
-                                <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
-                                    <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
-                                        Customer
-                                    </h2>
+                                {{-- 上排：Customer + Shipping --}}
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                    <div class="mt-3 space-y-1">
-                                        <p class="text-gray-900 font-medium">
-                                            {{ $order->customer_name }}
-                                        </p>
-
-                                        <p class="text-gray-600 text-sm">
-                                            {{ $order->customer_phone }}
-                                        </p>
-
-                                        <p class="text-gray-600 text-sm">
-                                            {{ $order->customer_email }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {{-- Shipping Address --}}
-                                <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
-                                    {{-- 标题 + Button 同一行 --}}
-                                    <div class="flex items-center justify-between">
+                                    {{-- Customer --}}
+                                    <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
                                         <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
-                                            Shipping Address
+                                            Customer
                                         </h2>
 
-                                        @if ($order->shipping_courier || $order->tracking_number)
-                                            <button type="button" onclick="openTrackingModal({{ $order->id }})"
-                                                class="inline-flex items-center px-3 py-1.5 rounded-lg border border-indigo-200
-                                                        bg-indigo-50 text-xs font-semibold text-indigo-700 hover:bg-indigo-100">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 mr-1.5"
-                                                    fill="none" viewBox="0 0 24 24" stroke-width="1.8"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                                </svg>
-                                                View Tracking Info
-                                            </button>
-                                        @endif
+                                        <div class="mt-3 space-y-1">
+                                            <p class="text-gray-900 font-medium">{{ $order->customer_name }}</p>
+                                            <p class="text-gray-600 text-sm">{{ $order->customer_phone }}</p>
+                                            <p class="text-gray-600 text-sm">{{ $order->customer_email }}</p>
+                                        </div>
                                     </div>
 
+                                    {{-- Shipping --}}
+                                    <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
+                                        <div class="flex items-center justify-between">
+                                            <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
+                                                Shipping Address
+                                            </h2>
 
-                                    <div class="mt-3 text-gray-900 leading-relaxed text-sm">
-                                        {{ $order->address_line1 }}<br>
+                                            @if ($order->shipping_courier || $order->tracking_number)
+                                                <button type="button" onclick="openTrackingModal({{ $order->id }})"
+                                                    class="text-xs font-semibold text-indigo-600 underline underline-offset-2 hover:text-indigo-700">
+                                                    View Tracking
+                                                </button>
+                                            @endif
+                                        </div>
 
-                                        @if ($order->address_line2)
-                                            {{ $order->address_line2 }}<br>
-                                        @endif
-
-                                        {{ $order->postcode }} {{ $order->city }}<br>
-                                        {{ $order->state }}
+                                        <div class="mt-3 text-gray-900 leading-relaxed text-sm">
+                                            {{ $order->address_line1 }}<br>
+                                            @if ($order->address_line2)
+                                                {{ $order->address_line2 }}<br>
+                                            @endif
+                                            {{ $order->postcode }} {{ $order->city }}<br>
+                                            {{ $order->state }}
+                                        </div>
                                     </div>
+
+                                    {{-- Remark（永远显示，全宽） --}}
+                                    <div
+                                        class="md:col-span-2 rounded-2xl border border-gray-200 bg-white/70 p-5 shadow-sm">
+
+                                        <h2 class="text-xs font-semibold text-gray-500 tracking-[0.16em] uppercase">
+                                            Order Remark
+                                        </h2>
+
+                                        <p
+                                            class="mt-2 text-sm leading-relaxed break-words whitespace-pre-line {{ $order->remark ? 'text-gray-900' : 'text-gray-400 italic' }}">{{ $order->remark ? trim($order->remark) : 'No remark' }}</p>
+                                    </div>
+
 
                                 </div>
-
                             </div>
 
-                            {{-- 右侧：Order Summary + Payment --}}
-                            <div class="bg-[#FFF9E6] border border-[#D4AF37]/30 rounded-2xl p-5 text-base shadow-sm">
+
+                            {{-- 🟣 右侧（占 2）：Order Summary --}}
+                            <div
+                                class="md:col-span-2 bg-[#FFF9E6] border border-[#D4AF37]/30 rounded-2xl p-5 text-base shadow-sm">
+
                                 <h2 class="font-semibold text-[#0A0A0C] text-base mb-4">Order Summary</h2>
 
                                 <div class="space-y-2 text-sm">
@@ -279,7 +282,7 @@
                                     </span>
                                 </div>
 
-                                {{-- Payment info --}}
+                                {{-- Payment --}}
                                 <div class="mt-5 pt-4 border-t border-[#D4AF37]/20 space-y-2 text-sm">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600">Payment Method</span>
@@ -290,32 +293,87 @@
 
                                     @if ($order->payment_receipt_path)
                                         <div class="flex items-center gap-2 pt-1">
-                                            {{-- 打开 modal --}}
                                             <button type="button" onclick="openReceiptModal({{ $order->id }})"
                                                 class="inline-flex items-center px-3 py-1.5 rounded-lg border border-gray-300
-                       bg-white/80 hover:bg-white text-xs font-medium text-gray-800">
+                               bg-white/80 hover:bg-white text-xs font-medium text-gray-800">
                                                 View Receipt
                                             </button>
 
-                                            {{-- 直接下载 --}}
                                             <a href="{{ asset('storage/' . $order->payment_receipt_path) }}" download
                                                 class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium
-                       bg-[#D4AF37] text-white hover:bg-[#C49A2F]">
+                               bg-[#D4AF37] text-white hover:bg-[#C49A2F]">
                                                 Download
                                             </a>
                                         </div>
                                     @endif
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
 
 
 
                         {{-- Items --}}
                         <h2 class="font-semibold text-[#0A0A0C] text-base mt-8 mb-4">Items</h2>
 
-                        <div class="border rounded-2xl overflow-hidden">
+                        {{-- 📱 Mobile：改成卡片列表 --}}
+                        <div class="space-y-3 md:hidden">
+                            @foreach ($order->items as $item)
+                                <div class="rounded-2xl border border-gray-200 bg-white/80 p-4 flex gap-3">
+
+                                    {{-- Image / Placeholder --}}
+                                    @if ($item->product?->image)
+                                        <img src="{{ asset('storage/' . $item->product->image) }}"
+                                            class="w-14 h-14 rounded-xl object-cover flex-shrink-0">
+                                    @else
+                                        <div
+                                            class="w-14 h-14 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300"
+                                                fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                            </svg>
+                                        </div>
+                                    @endif
+
+                                    <div class="flex-1 space-y-1">
+                                        {{-- 名称 + variant --}}
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900 leading-snug">
+                                                {{ $item->product_name }}
+                                            </p>
+                                            @if ($item->variant_label)
+                                                <p class="text-xs text-gray-500">
+                                                    {{ $item->variant_label }}
+                                                </p>
+                                            @endif
+                                        </div>
+
+                                        {{-- 小 summary 行 --}}
+                                        <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                                            <div class="text-gray-500">Qty</div>
+                                            <div class="text-right text-gray-900 font-medium">
+                                                {{ $item->qty }}
+                                            </div>
+
+                                            <div class="text-gray-500">Unit Price</div>
+                                            <div class="text-right text-gray-900">
+                                                RM {{ number_format($item->unit_price, 2) }}
+                                            </div>
+
+                                            <div class="text-gray-500">Subtotal</div>
+                                            <div class="text-right font-semibold text-gray-900">
+                                                RM {{ number_format($item->unit_price * $item->qty, 2) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- 💻 Desktop：保留 table --}}
+                        <div class="hidden md:block border rounded-2xl overflow-hidden">
                             <table class="w-full text-base">
                                 <thead class="bg-gray-50 text-sm text-gray-500">
                                     <tr>
@@ -337,7 +395,6 @@
                                                 @else
                                                     <div
                                                         class="w-12 h-12 rounded bg-gray-100 border border-gray-200 flex items-center justify-center">
-
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                             class="w-6 h-6 text-gray-300" fill="none"
                                                             viewBox="0 0 24 24" stroke-width="1.8"
@@ -345,7 +402,6 @@
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                                                         </svg>
-
                                                     </div>
                                                 @endif
 
@@ -359,7 +415,6 @@
                                                     @endif
                                                 </div>
                                             </td>
-
 
                                             <td class="px-4 py-3 text-right text-gray-700">
                                                 {{ $item->qty }}
@@ -377,7 +432,6 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </section>
 
                 </main>
