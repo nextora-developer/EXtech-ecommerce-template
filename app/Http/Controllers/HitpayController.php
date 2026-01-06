@@ -30,16 +30,6 @@ class HitpayController extends Controller
             'purpose'          => 'Order ' . $order->order_no,
             'redirect_url'     => route('hitpay.return'),
             'webhook'          => route('hitpay.webhook'),
-
-            'address' => [
-                'line_1'      => $order->address_line1 ?? '',
-                'line_2'      => $order->address_line2 ?? '',
-                'city'        => $order->city ?? '',
-                'state'       => $order->state ?? '',
-                'postal_code' => $order->postcode ?? '',
-                'country'     => $order->country ?? 'MY',
-            ],
-
             'payment_methods' => [
                 'card',
             ],
