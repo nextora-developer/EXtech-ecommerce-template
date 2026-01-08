@@ -12,8 +12,6 @@ use App\Mail\OrderPlacedMail;
 use App\Mail\AdminOrderNotificationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-
 
 class CheckoutController extends Controller
 {
@@ -161,37 +159,9 @@ class CheckoutController extends Controller
         $receiptPath = null;
 
         if ($request->hasFile('payment_receipt')) {
-            try {
-                $file = $request->file('payment_receipt');
-
-                if (! $file->isValid()) {
-                    \Log::error('Receipt upload invalid', [
-                        'error' => $file->getError(),
-                        'errorMessage' => $file->getErrorMessage(),
-                    ]);
-                    abort(422, 'Receipt upload failed.');
-                }
-
-                \Log::info('Receipt upload start', [
-                    'original' => $file->getClientOriginalName(),
-                    'size' => $file->getSize(),
-                    'mime' => $file->getMimeType(),
-                ]);
-
-                $receiptPath = $file->store('payment_receipts', 'public');
-
-                \Log::info('Receipt upload stored', [
-                    'path' => $receiptPath,
-                    'exists' => \Storage::disk('public')->exists($receiptPath),
-                ]);
-            } catch (\Throwable $e) {
-                \Log::error('Receipt upload exception: ' . $e->getMessage(), [
-                    'trace' => $e->getTraceAsString(),
-                ]);
-                throw $e; // 让你在 log 看到真实原因
-            }
+            $receiptPath = $request->file('payment_receipt')
+                ->store('payment_receipts', 'public');
         }
-
 
 
         /**
