@@ -48,15 +48,15 @@
                             <div class="max-w-xs mx-auto">
                                 <div
                                     class="w-16 h-16 bg-gray-50 text-gray-300 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <svg class="w-8 h-8 " fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-8 h-8 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path
                                             d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                                             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </div>
                                 <h3 class="font-bold text-gray-900">Your wishlist is empty</h3>
-                                <p class="text-gray-500 text-sm mt-1">Start exploring our collection and save your favorite
+                                <p class="text-gray-500 text-sm mt-1">Start exploring our collection and save your
+                                    favorite
                                     pieces.</p>
                                 <a href="{{ route('shop.index') }}"
                                     class="mt-6 inline-flex items-center px-6 py-2.5
@@ -124,7 +124,8 @@
                                                 {{ $product->name }}
                                             </h3>
 
-                                            <div class="mt-2 flex items-center justify-between">
+                                            <div
+                                                class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                                 <p class="text-sm font-semibold text-[#8f6a10]">
                                                     @if ($product->has_variants && $product->variants->count())
                                                         @php
@@ -134,23 +135,21 @@
                                                         @endphp
 
                                                         @if ($min == $max)
-                                                            {{-- 所有 variant 同价 --}}
                                                             RM {{ number_format($min, 2) }}
                                                         @else
-                                                            {{-- 显示最低价，加 From --}}
                                                             <span
                                                                 class="text-xs font-normal text-gray-400 mr-1">From</span>
                                                             RM {{ number_format($min, 2) }}
                                                         @endif
                                                     @else
-                                                        {{-- 没有 variants --}}
                                                         RM {{ number_format($product->price ?? 0, 2) }}
                                                     @endif
                                                 </p>
 
-
                                                 <span
-                                                    class="inline-flex items-center rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-700 group-hover:border-[#D4AF37]/70 group-hover:text-[#8f6a10]">
+                                                    class="inline-flex items-center justify-center rounded-full border border-gray-200 px-3 py-1.5 text-[11px] font-medium text-gray-700
+                                                w-full sm:w-auto
+                                                group-hover:border-[#D4AF37]/70 group-hover:text-[#8f6a10] transition">
                                                     View details
                                                 </span>
                                             </div>
