@@ -78,14 +78,14 @@
                     </div>
 
                     {{-- Buttons --}}
-                    <div class="flex items-end gap-2">
+                    <div class="flex items-end gap-2 mt-4">
                         <button type="submit"
                             class="px-4 py-2 rounded-xl bg-[#D4AF37]/90 text-white text-sm font-semibold hover:bg-[#b8942f] transition">
                             Apply
                         </button>
 
                         <a href="{{ route('shop.index') }}"
-                            class="px-3 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm text-gray-600 hover:bg-gray-50 transition">
+                            class="px-4 py-2 rounded-xl border border-gray-200 text-sm sm:text-sm text-gray-600 hover:bg-gray-50 transition">
                             Reset
                         </a>
                     </div>
