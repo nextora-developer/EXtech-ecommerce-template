@@ -79,8 +79,11 @@ class ShopController extends Controller
 
         $related = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
+            ->where('is_active', true) // ✅ 只拿 active
+            ->latest()
             ->limit(4)
             ->get();
+
 
         return view('shop.show', compact('product', 'related'));
     }
