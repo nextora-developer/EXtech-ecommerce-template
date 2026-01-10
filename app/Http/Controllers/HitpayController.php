@@ -34,6 +34,8 @@ class HitpayController extends Controller
                 'card',
                 'fpx',
                 'touch_n_go',
+                'shopee_pay',
+                'shopee_pay_later',
             ],
 
         ];
