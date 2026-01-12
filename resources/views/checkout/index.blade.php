@@ -362,12 +362,14 @@
                                                                             class="text-[10px] uppercase font-bold text-[#8f6a10] block mb-1">
                                                                             Exact Amount to Pay
                                                                         </span>
+
                                                                         <span
                                                                             class="text-xl font-black text-[#8f6a10]">
-                                                                            RM
-                                                                            {{ number_format($amountToTransfer, 2) }}
+                                                                            RM <span
+                                                                                data-transfer-amount>{{ number_format($subtotal, 2) }}</span>
                                                                         </span>
                                                                     </div>
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -800,16 +802,25 @@
             const stateSelect = document.querySelector('[data-state-select]');
             const shippingText = document.querySelector('[data-shipping-text]');
             const totalText = document.querySelector('[data-total-text]');
+
+            const transferAmountEl = document.querySelector('[data-transfer-amount]');
+            const shippingFeeInput = document.querySelector('[data-shipping-fee-input]');
+            const orderTotalInput = document.querySelector('[data-order-total-input]');
+
             const hasPhysical = @json($hasPhysical);
-            const shippingRates = @json($shippingRates); // { west_my: 8, east_my: 15, ... }
-            const subtotal = {{ $subtotal }}; // 纯数字
+            const shippingRates = @json($shippingRates);
+            const subtotal = Number({{ $subtotal }});
 
             if (!stateSelect || !shippingText || !totalText) return;
 
-            // 全部 digital → 永远 Free，Total = subtotal
+            // 全部 digital
             if (!hasPhysical) {
                 shippingText.textContent = 'Digital Product (Free)';
                 totalText.textContent = 'RM ' + subtotal.toFixed(2);
+
+                if (transferAmountEl) transferAmountEl.textContent = subtotal.toFixed(2);
+                if (shippingFeeInput) shippingFeeInput.value = 0;
+                if (orderTotalInput) orderTotalInput.value = subtotal.toFixed(2);
                 return;
             }
 
@@ -817,30 +828,40 @@
                 const selected = stateSelect.selectedOptions[0];
                 const zone = selected ? selected.dataset.zone : null;
 
-                // 还没选 / 没有 zone → 待确认
+                // 还没选
                 if (!zone) {
                     shippingText.textContent = 'To be confirmed';
                     totalText.textContent = 'RM ' + subtotal.toFixed(2);
+
+                    if (transferAmountEl) transferAmountEl.textContent = subtotal.toFixed(2);
+                    if (shippingFeeInput) shippingFeeInput.value = 0;
+                    if (orderTotalInput) orderTotalInput.value = subtotal.toFixed(2);
                     return;
                 }
 
                 const fee = Number(shippingRates[zone] ?? 0);
+                const total = subtotal + fee;
 
                 if (fee === 0) {
                     shippingText.textContent = 'Free';
-                    totalText.textContent = 'RM ' + subtotal.toFixed(2);
                 } else {
                     shippingText.textContent = 'RM ' + fee.toFixed(2);
-                    totalText.textContent = 'RM ' + (subtotal + fee).toFixed(2);
                 }
+                totalText.textContent = 'RM ' + total.toFixed(2);
+
+                // ✅ 同步 Online Transfer 的 Exact Amount
+                if (transferAmountEl) transferAmountEl.textContent = total.toFixed(2);
+
+                // ✅ 写入 hidden input 给后端
+                if (shippingFeeInput) shippingFeeInput.value = fee.toFixed(2);
+                if (orderTotalInput) orderTotalInput.value = total.toFixed(2);
             }
 
             stateSelect.addEventListener('change', updateShipping);
-
-            // 页面加载时根据默认 state 算一次
             updateShipping();
         });
     </script>
+
 
 
 
