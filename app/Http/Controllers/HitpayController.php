@@ -15,11 +15,9 @@ class HitpayController extends Controller
 
     public function createPayment(Order $order)
     {
-        // 1) 金额 & 货币
         $amount   = number_format($order->total, 2, '.', '');
-        $currency = config('services.hitpay.currency', 'MYR'); // .env 控制是 SGD / MYR
+        $currency = config('services.hitpay.currency', 'MYR');
 
-        // 2) 组 payload
         $payload = [
             'amount'           => $amount,
             'currency'         => $currency,
@@ -30,18 +28,13 @@ class HitpayController extends Controller
             'purpose'          => 'Order ' . $order->order_no,
             'redirect_url'     => route('hitpay.return'),
             'webhook'          => route('hitpay.webhook'),
-            'payment_methods' => [
-                'card',
-                'fpx',
-                'touch_n_go',
-                'shopee_pay',
-            ],
 
+            // 重点：不要再传 payment_methods，让 HitPay 回传可用 methods
+            // 'payment_methods' => [...],
         ];
 
-        $baseUrl = rtrim(config('services.hitpay.url'), '/'); // eg: https://api.hit-pay.com
+        $baseUrl = rtrim(config('services.hitpay.url'), '/');
 
-        // 3) 调 HitPay API
         $response = Http::asForm()
             ->withHeaders([
                 'X-BUSINESS-API-KEY' => config('services.hitpay.api_key'),
@@ -73,14 +66,23 @@ class HitpayController extends Controller
                 ->with('error', 'HitPay response invalid. Please contact support.');
         }
 
-        // 4) 建议：存 payment_request_id，方便 webhook / 对账
+        // 存 payment_request_id，方便 webhook / 对账
+        // 同时把 HitPay 回传的可用 methods 存起来（推荐：给前端用，避免显示不可用按钮）
         $order->update([
             'payment_reference' => $data['id'] ?? null,
+
+            // ✅ 如果你 orders 表有 json 欄位（例如 payment_meta / gateway_meta / meta），用这个存：
+            // 'payment_meta' => array_merge($order->payment_meta ?? [], [
+            //     'hitpay' => [
+            //         'available_methods' => $data['payment_methods'] ?? null,
+            //         'currency'          => $data['currency'] ?? $currency,
+            //     ],
+            // ]),
         ]);
 
-        // 5) Redirect 到 HitPay Hosted Checkout
         return redirect()->away($checkoutUrl);
     }
+
 
 
     /**
