@@ -85,63 +85,36 @@ class HitpayController extends Controller
 
 
 
-    /**
-     * 用户付款后浏览器跳回来的页面（redirect_url）
-     */
     public function handleReturn(Request $request)
     {
-        // 1) 找 reference（你原本这段 OK）
         $reference = $request->query('reference')
-            ?? $request->query('reference_number');
-
-        // 2) 尝试抓常见状态字段（不同 HitPay 配置可能不同）
-        $status = strtolower((string) (
-            $request->query('status')
-            ?? $request->query('payment_status')
-            ?? $request->query('result')
-            ?? ''
-        ));
-
-        // 一些常见“用户没付/取消”的关键词（宁愿保守）
-        $isCancelledOrFailed = in_array($status, ['canceled', 'cancelled', 'failed', 'error', 'expired'], true);
+            ?? $request->query('reference_number')
+            ?? session('hitpay_last_order_no');
 
         if ($reference) {
             $order = Order::where('order_no', $reference)->first();
 
             if ($order) {
-
-                // ✅ 若你已经在 webhook 把订单改成 paid，这里就显示真正成功
+                // 如果 webhook 已经把订单更新成 paid，就显示成功
                 if (in_array($order->status, ['paid', 'processing', 'completed'], true)) {
                     return redirect()
                         ->route('account.orders.show', $order)
                         ->with('success', 'Payment confirmed. Thank you! Your order has been updated.');
                 }
 
-                // ❌ 明确取消/失败
-                if ($isCancelledOrFailed) {
-                    return redirect()
-                        ->route('account.orders.show', $order)
-                        ->with('error', 'Payment was not completed. No charges were made. You may try again.');
-                }
-
-                // 🟡 其他情况：一律当作“已返回但未确认”
+                // 否则一律当作“未确认/可能没付”
                 return redirect()
                     ->route('account.orders.show', $order)
-                    ->with('info', 'We received your payment return. If you did not complete payment, you can try again. If you paid, the status will update automatically after confirmation.');
+                    ->with('info', 'Payment was not confirmed. If you did not complete payment, you can try again. If you paid, the order will update automatically after confirmation.');
             }
         }
 
-        // 找不到订单也不要用 success
         return redirect()
             ->route('account.orders.index')
             ->with('info', 'We received the payment return. Please check your orders. If you paid, the status will update automatically after confirmation.');
     }
 
 
-
-    /**
-     * HitPay Webhook 接收端
-     */
     public function handleWebhook(Request $request)
     {
         $payload = $request->all();
