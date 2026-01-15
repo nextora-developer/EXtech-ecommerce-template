@@ -85,36 +85,40 @@ class HitpayController extends Controller
 
 
 
+    /**
+     * 用户付款后浏览器跳回来的页面（redirect_url）
+     */
     public function handleReturn(Request $request)
     {
+        // HitPay 可能会用 reference 或 reference_number（视实际回传而定）
         $reference = $request->query('reference')
-            ?? $request->query('reference_number')
-            ?? session('hitpay_last_order_no');
+            ?? $request->query('reference_number');
 
         if ($reference) {
             $order = Order::where('order_no', $reference)->first();
 
             if ($order) {
-                // 如果 webhook 已经把订单更新成 paid，就显示成功
-                if (in_array($order->status, ['paid', 'processing', 'completed'], true)) {
-                    return redirect()
-                        ->route('account.orders.show', $order)
-                        ->with('success', 'Payment confirmed. Thank you! Your order has been updated.');
-                }
-
-                // 否则一律当作“未确认/可能没付”
                 return redirect()
                     ->route('account.orders.show', $order)
-                    ->with('info', 'Payment was not confirmed. If you did not complete payment, you can try again. If you paid, the order will update automatically after confirmation.');
+                    ->with(
+                        'success',
+                        'We have received your payment result. If the order is still pending, it will be updated automatically once we confirm the payment.'
+                    );
             }
         }
 
         return redirect()
             ->route('account.orders.index')
-            ->with('info', 'We received the payment return. Please check your orders. If you paid, the status will update automatically after confirmation.');
+            ->with(
+                'success',
+                'We have received your payment result. Please check your orders. If the status is still pending, it will update shortly after payment confirmation.'
+            );
     }
 
 
+    /**
+     * HitPay Webhook 接收端
+     */
     public function handleWebhook(Request $request)
     {
         $payload = $request->all();
